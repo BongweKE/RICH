@@ -18,10 +18,14 @@ from app.models import (
     ScenarioResult,
 )
 from app.services.lumens import (
+    LUMENSService,
+    run_lasem_tradeoff,
     run_preques_analysis,
     run_ques_biodiversity,
     run_ques_carbon,
+    run_ques_hydrology,
     run_scenario_simulation,
+    run_ta_profitability,
 )
 
 router = APIRouter()
@@ -37,6 +41,87 @@ def safe_uuid(val: Any) -> uuid.UUID | None:
         return uuid.UUID(str(val))
     except (ValueError, TypeError, AttributeError):
         return None
+
+
+@router.post("/interactive-preques")
+async def interactive_preques(
+    jurisdiction_code: str = Body("GH-AH", description="Jurisdiction code"),
+    year_t1: int = Body(2018, description="Start year"),
+    year_t2: int = Body(2024, description="End year"),
+    area_cutoff: float = Body(100.0, description="Area cutoff for Sankey (ha)"),
+    change_only: bool = Body(False, description="Exclude persistence in Sankey"),
+):
+    """Instant synchronous Pre-QuES analysis with Sankey, Transition Matrix, and Pontius decomposition"""
+    result = await run_preques_analysis(
+        raster_t1_path="",
+        raster_t2_path="",
+        year_t1=year_t1,
+        year_t2=year_t2,
+        area_cutoff=area_cutoff,
+        change_only=change_only,
+    )
+    result["jurisdiction_code"] = jurisdiction_code
+    return result
+
+
+@router.post("/interactive-carbon")
+async def interactive_carbon(
+    jurisdiction_code: str = Body("GH-AH", description="Jurisdiction code"),
+    carbon_factors: dict[str, float] | None = Body(None, description="Custom class carbon density in tC/ha"),
+):
+    """Instant synchronous QUES-C carbon assessment with 4-pool breakdown and VCM credit metrics"""
+    result = await run_ques_carbon(
+        base_scenario_id="interactive-session",
+        biomass_data_path="",
+        carbon_density_path=None,
+        emission_factors=carbon_factors,
+    )
+    result["jurisdiction_code"] = jurisdiction_code
+    # Add voluntary carbon credit market valuation (~$12 / tCO2e for agroforestry removals)
+    removals = result.get("gross_removals_tco2e", 0.0)
+    result["voluntary_carbon_credits_potential_usd"] = round(removals * 12.0, 2)
+    return result
+
+
+@router.post("/interactive-tradeoff")
+async def interactive_tradeoff(
+    jurisdiction_code: str = Body("GH-AH", description="Jurisdiction code"),
+    agroforestry_expansion_pct: float = Body(25.0, description="Target agroforestry expansion %"),
+    deforestation_enforcement_pct: float = Body(90.0, description="Deforestation enforcement rate %"),
+    riparian_restoration_pct: float = Body(75.0, description="Riparian buffer restoration %"),
+):
+    """LASEM 5-axis scenario tradeoff analysis (Carbon, Biodiversity, Hydrology, NPV, Social Equity)"""
+    return await run_lasem_tradeoff(
+        jurisdiction_code=jurisdiction_code,
+        agroforestry_expansion_pct=agroforestry_expansion_pct,
+        deforestation_enforcement_pct=deforestation_enforcement_pct,
+        riparian_restoration_pct=riparian_restoration_pct,
+    )
+
+
+@router.get("/hydrology")
+async def get_hydrology_analysis(
+    jurisdiction_code: str = Query("GH-AH", description="Jurisdiction code"),
+    annual_rainfall_mm: float = Query(1350.0, description="Annual rainfall mm"),
+):
+    """QUES-H: Hydrological and RUSLE soil erosion assessment"""
+    return await run_ques_hydrology(
+        jurisdiction_code=jurisdiction_code,
+        annual_rainfall_mm=annual_rainfall_mm,
+    )
+
+
+@router.get("/profitability")
+async def get_profitability_analysis(
+    jurisdiction_code: str = Query("GH-AH", description="Jurisdiction code"),
+    crop_subtype: str = Query("shade_cocoa", description="Agroforestry subtype"),
+):
+    """TA-Profit: Economic profitability, NPV, and Opportunity Cost Curve for REDD+"""
+    return await run_ta_profitability(
+        jurisdiction_code=jurisdiction_code,
+        agroforestry_subtype=crop_subtype,
+    )
+
 
 
 @router.post("/analysis/preques")

@@ -1,6 +1,16 @@
 import React from 'react';
-import { Globe, Layers, BarChart3, ShieldCheck, Sparkles } from 'lucide-react';
-import { Jurisdiction } from '../types';
+import {
+  Globe,
+  Layers,
+  BarChart3,
+  ShieldCheck,
+  Sparkles,
+  Video,
+  Eye,
+  Volume2,
+  VolumeX,
+} from 'lucide-react';
+import { Jurisdiction, SensorMode } from '../types';
 
 interface HeaderProps {
   jurisdictions: Jurisdiction[];
@@ -12,6 +22,12 @@ interface HeaderProps {
   onOpenPolicy: () => void;
   onToggleChat: () => void;
   isChatOpen: boolean;
+  sensorMode: SensorMode;
+  onSelectSensorMode: (mode: SensorMode) => void;
+  onOpenTour: () => void;
+  isTourOpen: boolean;
+  isAudioMuted: boolean;
+  onToggleAudio: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -24,9 +40,15 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenPolicy,
   onToggleChat,
   isChatOpen,
+  sensorMode,
+  onSelectSensorMode,
+  onOpenTour,
+  isTourOpen,
+  isAudioMuted,
+  onToggleAudio,
 }) => {
   return (
-    <header className="h-14 bg-slate-950/90 backdrop-blur border-b border-slate-800 px-4 flex items-center justify-between z-30 shrink-0 select-none">
+    <header className="h-14 bg-slate-950/90 backdrop-blur-md border-b border-slate-800 px-4 flex items-center justify-between z-30 shrink-0 select-none font-sans">
       {/* Brand & Logo */}
       <div className="flex items-center space-x-3">
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-green-700 flex items-center justify-center shadow-lg shadow-green-950/50">
@@ -68,51 +90,94 @@ export const Header: React.FC<HeaderProps> = ({
         </select>
       </div>
 
-      {/* Action Tools & Modals */}
+      {/* Action Tools & God's Eye View Interactivity Controls */}
       <div className="flex items-center space-x-2">
-        {/* 2D / 3D Mode Toggle */}
+        {/* Sensor Mode Selector */}
+        <div className="relative flex items-center bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs">
+          <Eye className="w-3.5 h-3.5 text-emerald-400 mr-1.5" />
+          <select
+            value={sensorMode}
+            onChange={(e) => onSelectSensorMode(e.target.value as SensorMode)}
+            className="bg-transparent text-slate-200 text-xs focus:outline-none cursor-pointer"
+            title="Sensor Mode (Hotkeys 1-5)"
+          >
+            <option value="normal" className="bg-slate-900">Sensor: Normal</option>
+            <option value="nvg" className="bg-slate-900">Sensor: NVG Green</option>
+            <option value="flir" className="bg-slate-900">Sensor: FLIR Thermal</option>
+            <option value="crt" className="bg-slate-900">Sensor: CRT Tactical</option>
+            <option value="noir" className="bg-slate-900">Sensor: Noir Recon</option>
+          </select>
+        </div>
+
+        {/* Scene Director Guided Tour */}
+        <button
+          onClick={onOpenTour}
+          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-medium border transition-all ${
+            isTourOpen
+              ? 'bg-purple-600/30 text-purple-300 border-purple-500/50 shadow-sm'
+              : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800'
+          }`}
+          title="Scene Director Cinematic Guided Tour"
+        >
+          <Video className="w-3.5 h-3.5 text-purple-400" />
+          <span className="hidden lg:inline">Cinematic Tour</span>
+        </button>
+
+        {/* 2D / 3D Extrusion Mode Toggle */}
         <button
           onClick={onToggle3D}
           className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-medium border transition-all ${
             is3DMode
-              ? 'bg-blue-600/20 text-blue-300 border-blue-500/40 shadow-sm shadow-blue-900/30'
-              : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-slate-200'
+              ? 'bg-blue-600/30 text-blue-300 border-blue-500/50 shadow-sm shadow-blue-900/30'
+              : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-slate-200'
           }`}
-          title="Toggle 2D / 3D Perspective"
+          title="Toggle 2D / 3D Canopy Extrusion (Key T)"
         >
           <Layers className="w-3.5 h-3.5" />
           <span>{is3DMode ? '3D View' : '2D Map'}</span>
         </button>
 
-        {/* LUMENS Analysis Button */}
+        {/* LUMENS Analysis Laboratory Button */}
         <button
           onClick={onOpenLumens}
-          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 transition-colors"
+          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 transition-colors"
+          title="Open LUMENS Scientific Analysis Suite"
         >
           <BarChart3 className="w-3.5 h-3.5 text-emerald-400" />
-          <span>LUMENS Analysis</span>
+          <span className="hidden sm:inline">LUMENS Analysis</span>
         </button>
 
         {/* Policy & EUDR Button */}
         <button
           onClick={onOpenPolicy}
           className="flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 transition-colors"
+          title="Open EUDR Compliance Verification"
         >
-          <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-          <span>Policy & EUDR</span>
+          <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
+          <span className="hidden md:inline">EUDR Audit</span>
         </button>
 
-        {/* AI Assistant Drawer Toggle */}
+        {/* Audio Mute Toggle */}
+        <button
+          onClick={onToggleAudio}
+          className="p-1.5 rounded-md bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition-colors"
+          title={isAudioMuted ? 'Unmute Tactical Audio' : 'Mute Tactical Audio'}
+        >
+          {isAudioMuted ? <VolumeX className="w-4 h-4 text-slate-500" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
+        </button>
+
+        {/* AI Assistant Chat Toggle */}
         <button
           onClick={onToggleChat}
-          className={`flex items-center space-x-1.5 px-3.5 py-1.5 rounded-md text-xs font-medium border transition-all ${
+          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-medium border transition-all ${
             isChatOpen
               ? 'bg-emerald-600 text-white border-emerald-500 shadow-md shadow-emerald-950/50'
-              : 'bg-gradient-to-r from-emerald-600/90 to-teal-600/90 hover:from-emerald-500 hover:to-teal-500 text-white border-transparent'
+              : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800'
           }`}
+          title="Toggle AI Geospatial Assistant"
         >
-          <Sparkles className="w-3.5 h-3.5 text-emerald-200 animate-pulse" />
-          <span>AI Assistant</span>
+          <Sparkles className="w-3.5 h-3.5 text-emerald-300" />
+          <span className="hidden sm:inline">AI Copilot</span>
         </button>
       </div>
     </header>
