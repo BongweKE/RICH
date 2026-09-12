@@ -1,0 +1,80 @@
+name: Feature Request
+description: Suggest a new feature or enhancement
+title: "[FEATURE]: "
+labels: ["type:feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! Please fill out the details below.
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Implementation Phase
+      description: Which phase does this feature belong to?
+      options:
+        - Phase 0: Foundation (Infrastructure, Data Research)
+        - Phase 1: Core Integration (LUMENS + GEV + AI)
+        - Phase 2: Enhancement (Advanced features, validation)
+        - Phase 3: Production (Hardening, documentation)
+        - Phase 4: Scale (Additional jurisdictions)
+        - Not sure / Cross-cutting
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature?
+      options:
+        - High (MVP blocker)
+        - Medium (Important for usability)
+        - Low (Nice to have)
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature Description
+      description: Describe the feature you'd like to see implemented
+      placeholder: A clear and concise description of the feature...
+    validations:
+      required: true
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use Case
+      description: What problem does this solve? Who benefits?
+      placeholder: As a [user type], I want to [action] so that [benefit]...
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How will we know this feature is complete?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+    validations:
+      required: true
+  - type: textarea
+    id: technical_notes
+    attributes:
+      label: Technical Notes (Optional)
+      description: Any technical considerations, dependencies, or implementation ideas
+      placeholder: |
+        - Dependencies: ...
+        - API changes needed: ...
+        - Database changes: ...
+        - UI components: ...
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues to avoid duplicates
+          required: true
+        - label: This feature aligns with the RICH project goals
+          required: true

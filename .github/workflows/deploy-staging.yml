@@ -1,0 +1,94 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: true
+
+env:
+  RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+  RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+  NEON_DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+  MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt pytest pytest-cov
+
+      - name: Run backend tests
+        run: |
+          cd backend
+          pytest tests/ --cov=app --cov-report=xml -x
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Run frontend tests
+        run: |
+          cd frontend
+          npm test
+
+  deploy:
+    name: Deploy to Railway
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Railway CLI
+        run: |
+          curl -sL https://github.com/railwayapp/cli/releases/latest/download/railway-linux-x64.zip -o railway.zip
+          unzip railway.zip
+          chmod +x railway
+          ./railway login --token $RAILWAY_API_TOKEN
+
+      - name: Deploy to Railway
+        run: |
+          ./railway up --project $RAILWAY_PROJECT_ID --environment staging
+
+      - name: Verify deployment
+        run: |
+          sleep 30
+          curl -I https://rich-staging.railway.app/health || echo "Health check failed"

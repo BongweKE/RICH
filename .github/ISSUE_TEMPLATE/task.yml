@@ -1,0 +1,119 @@
+name: Implementation Task
+description: Track implementation work for a specific feature or component
+title: "[TASK]: "
+labels: ["type:task"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for tracking implementation work. Link to the related feature issue.
+  - type: input
+    id: related_issue
+    attributes:
+      label: Related Issue
+      description: Link to the feature request or bug report this task implements
+      placeholder: "#123"
+    validations:
+      required: true
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Phase
+      description: Which implementation phase?
+      options:
+        - Phase 0: Foundation
+        - Phase 1: Core Integration
+        - Phase 2: Enhancement
+        - Phase 3: Production
+        - Phase 4: Scale
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which component is this task for?
+      options:
+        - Frontend (React/Vite)
+        - Backend (FastAPI)
+        - Database (PostgreSQL/PostGIS)
+        - AI/ML Pipeline
+        - GEV Integration
+        - LUMENS Analysis
+        - Deployment/Infrastructure
+        - Documentation
+        - Testing
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: Task priority
+      options:
+        - High (MVP blocker)
+        - Medium (Important)
+        - Low (Nice to have)
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Task Description
+      description: What needs to be done?
+      placeholder: Clear description of the implementation work...
+    validations:
+      required: true
+  - type: textarea
+    id: technical_approach
+    attributes:
+      label: Technical Approach
+      description: How will you implement this?
+      placeholder: |
+        - Step 1: ...
+        - Step 2: ...
+        - Step 3: ...
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How will we know this task is complete?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+    validations:
+      required: true
+  - type: textarea
+    id: testing
+    attributes:
+      label: Testing Plan
+      description: How will this be tested?
+      placeholder: |
+        - Unit tests: ...
+        - Integration tests: ...
+        - Manual testing: ...
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Any blocking tasks or dependencies?
+      placeholder: |
+        - Depends on #123
+        - Requires API key for ...
+        - Needs data from ...
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have read the related issue
+          required: true
+        - label: I understand the technical approach
+          required: true
+        - label: I will write tests for this implementation
+          required: true
+        - label: I will update documentation if needed
+          required: true

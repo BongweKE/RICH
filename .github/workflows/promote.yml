@@ -1,0 +1,68 @@
+name: Promote to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy (e.g., v1.0.0)'
+        required: true
+        type: string
+
+concurrency:
+  group: promote-production
+  cancel-in-progress: true
+
+env:
+  RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+  RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+  NEON_DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+  MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+jobs:
+  promote:
+    name: Promote to Production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Create Git Tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git tag ${{ inputs.version }}
+          git push origin ${{ inputs.version }}
+
+      - name: Install Railway CLI
+        run: |
+          curl -sL https://github.com/railwayapp/cli/releases/latest/download/railway-linux-x64.zip -o railway.zip
+          unzip railway.zip
+          chmod +x railway
+          ./railway login --token $RAILWAY_API_TOKEN
+
+      - name: Deploy to Production
+        run: |
+          ./railway up --project $RAILWAY_PROJECT_ID --environment production
+
+      - name: Verify production deployment
+        run: |
+          sleep 60
+          curl -I https://rich.acaicia.org/health || echo "Production health check failed"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ inputs.version }}
+          name: Release ${{ inputs.version }}
+          body: |
+            ## Changes
+            - [List major changes here]
+            
+            ## Deployment
+            - Staging: https://rich-staging.railway.app
+            - Production: https://rich.acaicia.org
+          draft: false
+          prerelease: false

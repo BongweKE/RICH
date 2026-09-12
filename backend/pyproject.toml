@@ -1,0 +1,21 @@
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = [
+    "F821",  # Forward references in SQLAlchemy string annotations
+    "E501",  # Line length handled by formatter
+    "F401",  # Unused imports in __init__.py files
+    "E402",  # Module level import after os.environ in tests
+    "E741",  # Ambiguous variable name (e.g. l for layer)
+    "W292",  # Missing trailing newline
+]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+pythonpath = ["."]

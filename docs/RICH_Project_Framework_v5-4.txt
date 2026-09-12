@@ -1,0 +1,605 @@
+                        DRAFT Concept Note
+         AI4D Research and Innovation for Climate Hub (RICH)
+
+
+Institutional Profile
+CIFOR-ICRAF (the Center for International Forestry Research and World Agroforestry) is a
+research centre with over 30 years of climate, land use, and agroforestry science across
+more than 30 countries. In Africa, CIFOR-ICRAF operates offices and field programmes in
+Kenya (Nairobi headquarters), Ethiopia, Cameroon, Ghana, Côte d’Ivoire, DRC, Tanzania,
+Rwanda, Uganda, and Zambia.
+CIFOR-ICRAF’s geospatial and land-use planning capacity spans more than a decade of
+production-level implementation. Starting from the ALLREDDI project (Ekadinata et al.,
+2010), the organisation built a full pipeline for spatially explicit, nationwide land-use and
+land-cover change analysis across Indonesia: field data collection, satellite image
+processing, classification, quality control, and integration into downstream policy analyses.
+This capacity was formalised in the LUMENS platform (Land Use Planning for Multiple
+Environmental Services), which has since been deployed across seven Indonesian
+provinces as a negotiation support system for multi-stakeholder spatial planning (Dewi et
+al., 2023).
+CIFOR-ICRAF brings to the RICH Hub a distinctive combination: deep climate science and
+policy knowledge at the forest-agriculture interface; continental-scale field presence in
+Africa; and proven institutional capacity for the full geospatial production pipeline from
+ground truth to policy-ready map.
+
+Research Approach
+Agroforestry as a Natural Climate Solution Blind Spot
+In the cocoa-growing regions of Ghana and Côte d’Ivoire, smallholder farmers have
+cultivated shade-grown cacao for generations beneath native and secondary forest trees
+(Van Noordwijk et al., 2025). These systems are productive, biodiverse, and carbon-storing
+across multiple canopy strata. Yet every satellite map of West African forests, including
+those used to enforce the EU Deforestation Regulation (EUDR), classifies these gardens as
+“forest.” Farmers growing cacao agroforestry face a legal fiction: their land is mapped as
+forest, so any cacao harvested from it appears as a conversion from forest, making it non-
+compliant under EUDR. The regulation was designed to stop deforestation. It is denying
+market access to farmers whose land use prevents deforestation (Van Noordwijk et al.,
+2025).
+This story repeats across tropical Africa. In Ethiopia and Kenya, coffee agroforestry is
+similarly misclassified (Dimobe et al., 2025). In the Sahel, parkland systems where farmers
+deliberately maintain native trees on grain fields have no recognised class in any
+continental land cover product (Boffa, 2000; Heiskanen et al., 2017). Homegardens across
+East Africa, where multiple crops and trees coexist in small, intensively managed plots,
+disappear entirely into the “cropland” category (Chirwa et al., 2024). The omission is
+systematic. Every global and regional land cover map treats agroforestry as forest,
+cropland, or an undifferentiated mosaic (Bourgoin et al., 2026; Lesiv et al., 2022). The maps
+have no class for what agroforestry is.
+Agroforestry, broadly defined as agricultural land where trees are deliberately integrated
+into cropping or livestock systems, occupied approximately 43% of global agricultural area
+in 2010, covering nearly 1 billion hectares where at least 10% tree cover was recorded
+(Zomer et al., 2016). This category of land use is widespread across tropical Africa, where
+surveys consistently find it present in 60–80% of smallholder farming households (Diouf et
+al., 2025). The reason it is invisible on maps is traceable: no labelled training data for
+agroforestry exists at tropical African scale. Recent initiatives such as Sample Earth
+(Vantalon et al., 2025) have begun assembling machine-learning-ready reference datasets
+for cocoa and coffee landscapes in Ghana and Vietnam, but coverage remains fragmentary
+and does not extend to the full diversity of African agroforestry systems. We term this the
+“dark matter of land cover maps.” Unlike dark matter in physics, the cause is tractable.
+This invisibility has three cascading consequences for African climate action. First, EUDR
+creates immediate trade barriers. In Ghana and Côte d’Ivoire, which together supply 56%
+of global cocoa, current EUDR reference maps classify shade-grown agroforestry as forest
+with roughly 63% probability (Van Noordwijk et al., 2025). Second, carbon markets cannot
+credit agroforestry’s climate contribution. Multistrata systems sequester carbon at 3.5–9.8
+MgCO2 /ha/year (Teo et al., 2025), yet no map records this contribution because the class
+does not exist. Smallholders cannot access climate finance for carbon that no map
+recognises. Third, restoration planning lacks a baseline. Policymakers adopting
+reforestation targets without knowing where agroforestry already exists risk displacing
+working agricultural systems.
+To our knowledge, no labelled training corpus grounded in community knowledge
+currently exists at tropical African scale for distinguishing agroforestry from secondary
+forest. Lesiv et al. (2022) produced the only global land cover product including
+agroforestry as a discrete class: 49% producer’s accuracy, 5.8% user’s accuracy. Paluba et
+al. (2026), using state-of-the-art AlphaEarth embeddings, achieves 91% overall accuracy
+but explicitly excludes cocoa and coffee due to “lack of high quality open-access global
+cocoa or coffee datasets.” African-specific studies confirm the pattern: remote sensing of
+agroforestry in West African savanna and forest-agriculture mosaics consistently reports
+the lowest per-class accuracy of any land cover type, driven by spectral overlap with closed
+forest and structural variability across farming households (Piiroinen et al., 2017; Tamga et
+al., 2022).
+Rather than treating datasets or maps as stand-alone outputs, CIFOR-ICRAF positions them
+as enabling infrastructure for a broader climate science and policy research agenda focused
+on responsible AI deployment in African climate contexts. The project’s core contribution is
+the generation of actionable knowledge on how AI systems shape climate adaptation,
+mitigation, governance, equity, and climate finance outcomes across African landscapes
+and policy systems.
+CIFOR-ICRAF’s Research Programme for RICH
+CIFOR-ICRAF will lead the synthesis of climate science evidence across the Hub, generating
+policy-relevant knowledge on the opportunities, risks, governance implications, and scaling
+pathways of AI-enabled climate systems in African contexts. CIFOR-ICRAF will also
+contribute synthesis outputs, policy briefs, and comparative analyses to the Hub’s evolving
+knowledge repository.
+In this role, CIFOR-ICRAF proposes a focused research programme around three tracks,
+described below. Agroforestry systems provide an analytically tractable and policy-
+relevant entry point through which broader questions of climate-AI governance, scalability,
+environmental sustainability, and equitable deployment can be investigated across African
+contexts.
+Track 1: AI-Augmented Climate Intelligence for Agroforestry Systems
+We use the ALIA (Adaptive Landscape Intelligence in Africa) methodology to generate new
+climate-relevant evidence on African agroforestry systems through AI-augmented
+mapping, community validation, and spatial analysis. Initiatives such as Sample Earth
+(Vantalon et al., 2025) and Helmets Labelling Crops (Nakalembe et al., 2025) have
+demonstrated that open, geotagged reference data can improve the accuracy and
+inclusiveness of land-cover maps for classes historically missed by publicly available
+products. This track continues that effort with explicit focus on the diversity of tropical
+African agroforestry systems, which remain absent from every continental and global land
+cover product in use today.
+Track 2: Climate Governance, Policy, and Climate Finance Pathways
+We translate validated maps into policy-ready evidence: how agroforestry mapping enters
+EUDR compliance chains, how AI-derived land use data feeds into REDD+ MRV and NDC
+reporting, and how pilot map outputs connect to national spatial planning processes.
+CIFOR-ICRAF’s research is embedded within the Hub consortium. Data and map outputs
+are designed for use across the Hub network; AfriClimate AI’s seasonal forecasting and the
+innovation cohort’s products benefit from improved land cover basemaps. Policy entry
+points will be co-developed with LDRI and AfriClimate AI, drawing on LDRI’s relationships
+with African policymakers and AfriClimate AI’s connections to farming communities.
+This track also examines which AI-enabled climate applications are most scalable,
+impactful, and responsive to the needs of vulnerable communities, directly supporting the
+Hub’s broader research agenda on climate resilience and responsible AI deployment in
+Africa.
+Track 3: Scenario-Based AI Risks and Climate Futures in African Contexts
+This track complements Tracks 1 and 2, ensuring that both technical development and
+policy application are evaluated against climate, infrastructure, and equity outcomes.
+Alongside the development of AI-augmented datasets and policy-relevant maps, CIFOR-
+ICRAF will conduct scenario-based analysis to assess how different trajectories of AI
+deployment may shape climate outcomes in African contexts. This track is directly linked to
+Tracks 1 and 2, examining how the data pipelines, modelling approaches, and policy uses
+developed in this project perform under different deployment pathways.
+Two interrelated categories of risk are prioritized: environmental and infrastructure risks;
+and representational and distributional risks.
+First, building on the AI pipelines and data infrastructure developed under Track 1, and
+their anticipated scaling through Track 2 policy applications, the project will model
+scenarios of AI deployment across climate-relevant use cases such as land-use mapping,
+MRV systems, and compliance monitoring. These scenarios assess how different choices—
+such as model complexity, data volumes, frequency of updates, and compute location (local
+vs. cloud)—affect energy demand, water use, and associated emissions. The analysis
+identifies pathways through which scaling the project’s own approaches supports, or
+undermines, climate mitigation and adaptation objectives in African contexts.
+Second, we will examine how data gaps, classification choices, and validation processes
+within Track 1 propagate through Track 2 policy applications, shaping who is recognised,
+who benefits, and who is excluded. This includes modelling how misclassification or
+absence of key land-use categories (such as agroforestry) affects outcomes in EUDR
+compliance, climate finance access, and spatial planning decisions. The analysis identifies
+conditions under which AI-enabled systems reinforce or reduce existing inequalities,
+particularly for smallholder farmers, women, and indigenous knowledge holders.
+Grounded in the project’s pilot landscapes but designed for generalisation across the Hub,
+this track produces policy-relevant insights on how to steer AI deployment toward climate-
+positive and socially equitable futures.
+
+
+
+Objectives
+  1.   New climate-relevant knowledge on African agroforestry systems is generated
+       through AI-augmented, community-validated land-use intelligence.
+
+  2.   Pilot AI-enabled land-use analyses demonstrate how agroforestry visibility can
+       improve climate governance, compliance systems, and climate finance access.
+  3.   Exemplary, relevant uses of the maps for climate-savvy spatial and/or green
+       growth planning suitable to the African context are delivered.
+  4.   Understanding, through models and scenarios, how different AI deployment
+       pathways in African climate-relevant systems relate to risk and shape
+       environmental outcomes, data representation, and distribution of benefits, to
+       inform responsible and climate-aligned AI governance.
+  5.   Synthesis research and policy engagement activities strengthen understanding of
+       AI’s climate-related risks, benefits, governance needs, and scaling pathways across
+       African contexts.
+Research Outputs and Knowledge Products
+Output 1: AI-Augmented Climate Knowledge Base for Agroforestry Systems
+GPS-located land-cover reference samples for tropical African agroforestry and related
+land cover classes, produced through AI-assisted visual interpretation and validated by
+local practitioners. The dataset functions as a research and policy infrastructure layer
+supporting downstream analysis of climate resilience, AI governance, compliance systems,
+and equitable climate finance access. This contributes to the growing global effort to build
+open, high-quality reference data that improves the accuracy and inclusiveness of land-
+cover maps for classes currently missed by publicly available products. These mapping
+gaps carry real policy and livelihood consequences: farmers whose agroforestry systems
+are invisible on maps cannot access climate finance, face EUDR compliance barriers, and
+are excluded from spatial planning processes that shape their land tenure.
+The dataset targets approximately 2,000 validated reference points across 1 pilot
+landscape chosen in collaboration with LDRI and AfriClimate AI; priority landscapes
+include cocoa-shade systems in Ghana or Côte d’Ivoire and coffee-shade systems in
+Ethiopia or Kenya. The classification scheme covers 8-10 main classes (multistrata
+agroforestry, monoculture tree crops, natural forest, active cropland, improved fallow,
+grassland, settlement, bare soil) with sub-classes for specific system types such as cocoa-
+shade, coffee-shade, and Faidherbia parkland. Each point carries a class label, system sub-
+type, validator identity and affiliation, GPS acquisition date, quality control score, and pre-
+computed AlphaEarth embedding vector at the corresponding 10-metre pixel. Temporal
+metadata links each point to its matching annual satellite composite, following the
+approach established by Sample Earth (Vantalon et al., 2025) for cocoa and coffee in Ghana
+and Vietnam. License: CC BY 4.0. Hosted on Dataverse.
+Output 2: Policy-Relevant AI-Enabled Land Use Intelligence
+Geospatial maps at 10-metre resolution for 1 pilot landscape in tropical Africa, showing
+agroforest as a discrete land cover class. Each map includes per-class accuracy metrics and
+uncertainty layers, produced through a classification pipeline trained on the AI-augmented
+community-validated reference data and reviewed by local experts before release. License:
+CC BY 4.0. Hosted on Dataverse.
+
+Output 3: Multi-Stakeholder Capacities for Spatial Planning Integration Pathway
+Output 3 delivers workshops and training on spatial planning integration pathways,
+accompanied by policy briefs on utilising agroforest land use/land cover maps for spatial
+planning, development, and green growth. These materials build the capacity of
+government planners, NGO staff, and community representatives to interpret map outputs
+and develop integration pathways into national spatial planning tools.
+Output 4: Scenario-Based AI Risk and Climate Governance Analysis
+Outputs 1 and 2 provide a basis upon which to build a set of scenarios that model how AI
+system development and scaling across comparable climate use cases in Africa may impact
+environmental sustainability, data representation, and equity outcomes. This output
+contributes directly to the Hub’s research agenda on understanding the real impacts, risks,
+benefits, and scaling implications of AI deployment in climate-relevant African systems.
+This includes:
+   -   Scenario-based modelling of AI deployment pathways (e.g., variations in model
+       complexity, data intensity, update frequency, and compute infrastructure) and their
+       implications for energy demand, water use, and associated emissions in African
+       contexts.
+   -   Analysis of how data gaps, classification choices, and validation approaches
+       influence downstream outcomes in policy-relevant systems such as EUDR
+       compliance, REDD+ MRV, and national spatial planning, with associated risks.
+   -   Identification of risk pathways through which AI systems may reinforce or mitigate
+       exclusion from climate finance, market access, and planning processes, particularly
+       for smallholder farmers, women, and Indigenous knowledge holders.
+   -   Policy briefs outlining governance and design strategies to align AI deployment with
+       climate mitigation and adaptation goals, including recommendations on data
+       practices, infrastructure choices, and validation frameworks.
+Output 5: Climate-AI Governance and Policy Synthesis Products
+This output generates comparative research, policy analysis, and synthesis products that
+connect the project’s technical outputs to broader questions of climate adaptation,
+mitigation, governance, equity, and responsible AI deployment in African contexts. Drawing
+on evidence generated through Outputs 1–4, CIFOR-ICRAF will produce policy briefs,
+comparative analyses, knowledge synthesis reports, and peer-reviewed publications as
+appropriate, examining how AI-enabled climate applications influence climate resilience,
+climate finance access, environmental sustainability, governance systems, and the
+distribution of benefits and risks. These products contribute directly to the Hub’s objective
+of generating actionable knowledge on the opportunities, challenges, governance needs,
+and scaling pathways of AI for climate action in Africa.
+These outputs are grounded in the project’s pilot landscapes but are designed to inform
+broader Hub-wide research, policy engagement, and responsible AI deployment across
+climate sectors in Africa.
+
+
+
+Methods
+Stage 1: Dataset Production
+Dataset production follows three sequential sub-steps.
+      Step 1a: Classification Scheme Development.
+Experts and community members familiar with local land use and cover distribution
+collaboratively define the classification scheme. Working sessions with agricultural
+extension officers, government foresters, university researchers, and farmer
+representatives establish the thematic classes, working definitions, and diagnostic
+characteristics for each class. Community participants contribute contextual knowledge
+that complements spectral signatures: seasonal phenology indicators, crop-tree
+associations, land parcel size and shape, harvest evidence, pruning patterns, and
+geographic associations between system types and landscape positions. This contextual
+information directly informs the spatial priors applied in Stage 2 to constrain predictions to
+agronomically plausible locations and reduce commission errors.
+        Step 1b: AI-Assisted Data Labelling and Candidate Generation.
+Experts and community champions with direct landscape familiarity (agricultural
+extension officers, government foresters, university researchers) classify land-cover types
+through AI-assisted visual interpretation of high-resolution satellite imagery (Google Earth,
+Planet) and SPAM (International Food Policy Research Institute (IFPRI), 2024), which
+provides disaggregated global crop distribution data to assess the plausibility of crop-type
+presence at candidate locations. Agroforestry shares canopy spectra with neighbouring
+forest cover, so spectral-only classifiers frequently confuse the two classes: per-class
+accuracies for agroforestry consistently fall below those for forest in multispectral studies
+(Numbisi et al., 2018; Uwizeyimana et al., 2023). Annotation therefore relies on contextual
+cues that experienced interpreters can read directly from imagery: the irregular spatial
+arrangement of mixed canopies against the geometric regularity of monocultures;
+heterogeneous canopy texture from varied shade-tree heights; organic parcel shapes
+following smallholder land boundaries; and spatial association with settlements or forest-
+agriculture transition zones (Lelong et al., 2014; Numbisi et al., 2019). Each point is
+labelled and quality-controlled; a random subset is independently reviewed by a second
+interpreter for QA, following the approach of Sample Earth (Vantalon et al., 2025) and
+Helmets Labelling Crops (Nakalembe et al., 2025). Community-verified reference points
+then anchor a spectral-temporal similarity search using AlphaEarth embeddings (Brown et
+al., 2025), 64-dimensional per-pixel vectors at 10-metre resolution integrating multi-
+sensor observations (Sentinel-2, Sentinel-1 SAR, GEDI, ERA5), to identify candidate
+agroforest pixels across the pilot landscape. Because spectral similarity alone does not
+confirm agroforest, annotators visually validate all candidates against high-resolution
+imagery; corrections feed an active learning cycle that progressively expands the reference
+pool.
+The pipeline also ingests CIFOR-ICRAF’s existing geotagged agroforest plot database, which
+spans multiple years and geographic locations across the region. Public datasets such as the
+Planted benchmark (Pazos-Outón et al., 2024) provide training data for monoculture tree
+crops, settlements, and open agriculture, while intact forest reference datasets supply
+conservative estimates for primary forest. Temporal alignment between plot observation
+year and the satellite embedding layer is a technical requirement: each reference point is
+matched to the corresponding annual AlphaEarth composite so that ground observations
+correspond to the satellite conditions recorded in that year.
+The classification scheme and data collection process are also designed to support
+downstream scenario analysis by documenting sources of uncertainty, class ambiguity, and
+data gaps, which serve as inputs into Stage 4 modelling of representation and distributional
+risks.
+
+Stage 2: Map Production
+AI-augmented community-validated labels train lightweight classifiers on geospatial
+foundation model embeddings. AlphaEarth Foundations (Brown et al., 2025) serves as the
+primary backbone: 64-dimensional embeddings at 10-metre resolution integrating
+Sentinel-2, Sentinel-1 SAR, GEDI lidar, ERA5 climate, and elevation data. AlphaEarth’s
+Space-Time Precision encoder handles irregular tropical cloud cover by processing
+variable-length time series. AlphaEarth has been validated on 25 Sub-Saharan African
+countries for poverty mapping (Demaze et al., 2025) and on urban land cover in Greater
+Accra, Ghana (Osei-Kuffuor & Soh, 2025), demonstrating that the embeddings encode
+sufficient signal for African land cover tasks.
+Contextual spatial priors (crop suitability, road networks) constrain predictions to
+agronomically plausible locations. Contextual knowledge from Stage 1 classification
+scheme sessions informs these priors, including community input on geographic
+associations, typical land parcel sizes, and seasonal characteristics of each agroforestry
+class.
+Before maps are released, community members and local experts participate in
+participatory map review sessions. Validators review draft outputs against their landscape
+knowledge; corrections feed back into the accuracy assessment and, where warranted,
+trigger additional label collection via active learning. Per-class accuracy metrics and
+uncertainty layers are produced for the pilot landscape and reported in the open dataset
+and associated publication.
+Model configurations, data inputs, and processing requirements are systematically
+documented to enable scenario-based assessment of how variations in model design and
+deployment affect computational requirements and associated environmental impacts.
+Stage 3: Capacity Building and Policy Integration Pathways
+CIFOR-ICRAF’s LUMENS platform, deployed across seven Indonesian provinces for multi-
+stakeholder spatial planning (Dewi et al., 2023), is adapted for African spatial planning
+contexts. Training materials on land use/land cover map utilisation for spatial planning
+integration pathways are developed and delivered. Policy briefs document how AI-derived
+agroforest maps can serve as evidence for spatial planning, development planning, and
+green growth commitments.
+Government planners, NGO staff, and community representatives participate in
+consultation workshops to develop integration pathways into national spatial planning
+tools. Participants build capacity to interpret map outputs, understand accuracy metrics,
+and apply evidence from the pilot map within their respective planning processes.
+Stage 4: Scenario-Based Risk Analysis
+This stage develops scenarios based on desk research and project data to assess how AI
+systems used in land-use mapping and downstream policy applications may shape and be
+shaped by environmental and equity outcomes in African contexts.
+Scenario development builds directly on the technical and policy components of the
+project. Using the data and classification systems from Stage 1 and Stage 2, and the policy
+use cases identified in Stage 3, the project models alternative AI deployment and
+development pathways. These include variations in model complexity, data volumes,
+update frequency, and compute infrastructure (e.g., local vs. cloud-based systems).
+For each scenario, the analysis assesses the environmental implications, including
+projected energy demand, water use, and associated emissions from compute
+infrastructure. It also reviews representation and distributional outcomes, including how
+classification choices and data gaps affect visibility, eligibility, and access to climate finance
+and compliance systems.
+Scenarios are co-developed with consortium partners and stakeholders to reflect realistic
+deployment trajectories within African contexts. Findings are synthesised into policy-
+relevant insights that inform both technical design choices and governance frameworks for
+responsible AI in climate applications.
+Gender, Equity, and Inclusion
+Gender and inclusion analysis is integrated throughout. Community validation prioritises
+women farmers, youth, and indigenous knowledge holders. Field teams maintain
+proportional women representation. Data governance ensures African partners retain co-
+ownership of ground truth data. Gender-disaggregated analysis documents how mapping
+benefits, including EUDR compliance support, carbon finance access, and recognition in
+national planning, reach different farmer groups.
+Stakeholder consultations also inform the development of realistic AI deployment
+scenarios, capturing how map outputs are likely to be adopted, scaled, and integrated into
+policy and planning systems, and identifying potential points of risk or exclusion.
+Across all stages, the project prioritizes synthesis-oriented research that connects technical
+outputs to broader questions of climate adaptation, mitigation, governance, equity, and
+responsible AI deployment. Technical artifacts such as datasets and maps are treated as
+enabling research infrastructure that supports comparative analysis, policy engagement,
+and Hub-wide knowledge generation.
+Policy Engagement and Theory of Change: From AI-Augmented Climate
+Intelligence to Climate-AI Governance, Policy, and Development
+Outcomes
+
+
+Project activities
+   - Community engagement and co-design
+   - AI-assisted reference data generation
+   - Geospatial analysis and map production
+   - Stakeholder consultation and policy engagement
+
+
+
+           Output 1:                                    Output 2:
+
+           AI-Augmented Climate                         Policy-Relevant AI-Enabled
+           Knowledge Base                               Land Use Intelligence
+           (community-validated                         (maps, uncertainty layers,
+           agroforestry reference data)                 analytical products)
+
+
+
+                 Output 5:
+                       -   Climate-AI Governance and Policy Synthesis
+                       -   Climate adaptation and mitigation implications
+                       -   Climate finance and market-access pathways
+                       -   AI governance and responsible deployment
+                       -   Equity and inclusion outcomes Comparative
+                           learning across African contexts
+
+
+
+
+                 Output 3:                          Output 4:
+
+                 Spatial planning and               Scenario-based AI risk
+                 integration pathways               and climate futures
+                                                    analysis
+
+
+
+
+             Impact
+             Improved climate decision-making, climate finance access,
+             climate resilience, and responsible AI deployment in Africa.
+Known policy entry points are described below, noting that the project will remain flexible
+and vigilant for further policy-related opportunities.
+       2026: EUDR Compliance
+The pilot agroforest map serves Ghana, Côte d’Ivoire, Cameroon, Ethiopia, and Kenya
+national traceability systems. A map showing agroforestry as a discrete land-use class
+transforms a compliance barrier into a compliance pathway. Over 71% of African countries
+identify agroforestry in their NDCs but lack spatial baselines (Duguma et al., 2023).
+       2025-2030: Climate Finance and MRV
+Agroforestry maps fill data gaps in REDD+ monitoring systems, enabling results-based
+payments. Ghana’s FCPF results-based programme has already disbursed $4.8 million for
+verified agroforestry-related emission reductions, demonstrating that the financing
+infrastructure exists; the data layer is what is missing.
+       NDC Revision Cycles (2024-2026)
+Most tropical African countries revise NDCs within this window. The pilot map provides
+evidence for enhanced agroforestry targets.
+       LUMENS as Policy Integration Pathway
+CIFOR-ICRAF’s LUMENS platform (Dewi et al., 2023), deployed across seven Indonesian
+provinces, provides a documented pathway for integrating AI-derived agroforestry maps
+into national spatial planning. Its adaptation to African contexts is a core deliverable of
+Stage 3.
+Activity Plan
+
+                                                                             Primary
+Quarter Key Activities
+                                                                             Outputs
+
+        Consortium mobilisation; pilot landscape selection; stakeholder
+        mapping; research agenda co-development with LDRI and
+Q1                                                                           All Outputs
+        AfriClimate AI; development of governance, ethics, and inclusion
+        framework
+
+      Classification scheme development through expert and community
+Q1–Q2 consultations; identification of policy and climate-finance research   Outputs 1, 5
+      questions; design of comparative research framework
+
+      AI-assisted reference data generation; community validation;
+Q2–Q4 integration of existing agroforestry datasets; quality assurance and   Output 1
+      active learning cycles
+
+      Development and validation of AI-enabled agroforestry mapping
+Q3–Q5 pipeline; production of pilot land-use intelligence products;          Output 2
+      uncertainty and accuracy assessment
+
+      Research on agroforestry visibility, climate governance, climate
+Q4–Q8 finance, EUDR compliance, REDD+ MRV systems, and NDC                   Output 5
+      implementation pathways
+
+      Comparative analysis of AI-enabled climate applications and their
+Q4–Q8 implications for climate adaptation, mitigation, resilience, and       Output 5
+      equitable development
+
+      Adaptation of the LUMENS framework for African contexts;
+Q5–Q7 development of spatial planning integration pathways; preparation      Output 3
+      of policy support materials
+
+      Stakeholder consultations, capacity strengthening workshops, and
+Q5–Q8 co-development of planning and governance pathways with                Output 3
+      government, NGO, and community actors
+
+      Scenario development and modelling of AI deployment pathways,
+Q5–Q8 environmental impacts, infrastructure implications, and equity         Output 4
+      outcomes
+
+        Development of governance recommendations for responsible AI
+Q6–Q8                                                                        Outputs 4, 5
+        deployment in climate-relevant systems
+                                                                               Primary
+Quarter Key Activities
+                                                                               Outputs
+
+         Production of policy briefs, comparative analyses, synthesis reports,
+Q6–Q8                                                                          Output 5
+         and Hub-wide knowledge products
+
+      Preparation and submission of peer-reviewed publications;
+Q7–Q8 dissemination of findings through Hub networks and policy                Output 5
+      engagement channels
+
+
+
+
+Team, Timeline, and Budget
+Team
+  •    Sonya Dewi (CIFOR-ICRAF, co-PI)
+  •    Isaac Rutenberg (CIFOR-ICRAF, co-PI, African partnership coordination; consortium
+       relationships with LDRI and AfriClimate AI)
+  •    Dony Indiarto (CIFOR-ICRAF, technical lead: AI pipeline deployment)
+  •    Agil Akbar Fahrezi (CIFOR-ICRAF, remote sensing and geospatial officer)
+  •    1 early-career remote sensing and geospatial officer
+  •    1 early-career cloud computing and geospatial tool developer
+  •    1 FTE mid-career researcher (African-based, climate science or policy)
+EDI considerations
+Early-career team members are selected through an open call prioritising women and
+researchers from underrepresented African institutions. CIFOR-ICRAF’s Nairobi office
+provides institutional support for African-based team members. Community validation
+design ensures that farming communities, including women farmers, are participants and
+co-owners rather than subjects of research.
+Timeline (24 months):
+The sequencing of project activities over the 24-month implementation period is provided
+in the Activity Plan above.
+Budget
+KES 28,000,000. Major lines: personnel (mid-career researcher, field data collection team),
+travel (Indonesia-Africa coordination, field site visits), field data collection (community
+validator stipends), cloud compute (Google Earth Engine, Google Cloud), communications
+and publications. IDRC budget template provided separately.
+References
+Boffa, J. M. (2000). West African agroforestry parklands: Keys to conservation and
+sustainable management. Unasylva, 51(200), 11–17.
+Bourgoin, C. et al. (2026). Global Forest Cover 2020: A 10-metre Resolution Map for EUDR
+Compliance. Remote Sensing of Environment. https://doi.org/10.1016/j.rse.2026.113589
+
+Brown, T. B. et al. (2025). AlphaEarth: Global satellite embeddings for geospatial
+foundation models. arXiv Preprint. https://doi.org/10.48550/arXiv.2501.11288
+Chirwa, P. W. et al. (2024). Trees in Multifunctional Landscapes: Definition, Classification,
+Systems, Structure, Functionality, Examples in Africa. Advances in Agroforestry.
+https://doi.org/10.1007/978-3-031-69812-5_2
+Demaze, J.-B. et al. (2025). Predicting wealth in Africa using satellite embeddings and
+Demographic Health Surveys. Nature Climate Change, 15, 234–242.
+https://doi.org/10.1038/s41558-025-02345-7
+Dewi, S., Mulia, R., Johana, F., Ekadinata, A., & Noordwijk, M. van. (2023). Integrating
+relational and instrumental values of nature in planning land use for multiple ecosystem
+services (LUMENS): Tools and process. Current Opinion in Environmental Sustainability, 64,
+101333. https://doi.org/10.1016/j.cosust.2023.101333
+Dimobe, K., Zoungrana, B., & Yoni, M. (2025). Agroforestry’s contribution to sustainable soil
+fertility, livelihoods, and carbon sequestration in Sub-Saharan Africa: A systematic review.
+International Journal of Agriculture and Biosciences.
+https://doi.org/10.47278/journal.ijab/2025.013
+Diouf, A. A., Mirzabaev, A., Mbow, C., Baumüller, H., Didarali, Z., & Braun, J. von. (2025).
+Mapping Present and Future Agroforestry in Africa (ZEF Working Paper Series 244). Center
+for Development Research (ZEF), University of Bonn.
+Duguma, L. A., Minang, P. A., Watson, C., Nath, A. J., Muthee, K. W., van Noordwijk, M., ... &
+Sileshi, G. W. (2023). Agroforestry as a key intervention to achieve nationally determined
+contribution (NDC) targets. In Agroforestry for sustainable intensification of agriculture in
+Asia and Africa (pp. 641-664). Singapore: Springer Nature Singapore.
+Ekadinata, A., Noordwijk, M. van, Dewi, S., & Djoeroemana, S. (2010). Reducing Emissions
+from Deforestation, Inside and Outside the “Forest” (Policy Brief ASB Policy Brief 16). ASB
+Partnership for The Tropical Forest Margins, World Agroforestry Centre (ICRAF).
+Heiskanen, J., Liu, J., Valbuena, R., Aynekulu, E., Packalen, P., & Pellikka, P. (2017). Remote
+sensing approach for spatial planning of land management interventions in West African
+savannas. Journal of Arid Environments, 140, 29–41.
+https://doi.org/10.1016/j.jaridenv.2016.12.006
+International Food Policy Research Institute (IFPRI). (2024). Global spatially-disaggregated
+crop production statistics data for 2020 version 2.0 (Version V4) [Dataset]. Harvard
+Dataverse. https://doi.org/10.7910/DVN/SWPENT
+Lelong, C., Alexandre, C., & Dupuy, S. (2014). Discrimination of tropical agroforestry
+systems in very high resolution satellite imagery using object-based hierarchical
+classification: A case-study in Cameroon. Proceedings of the International Society for
+Photogrammetry and Remote Sensing.
+Lesiv, M. et al. (2022). Global Mapping of Intentional human-modified terrestrial
+ecosystems. Scientific Data, 9, 429. https://doi.org/10.1038/s41597-022-01535-6
+
+Nakalembe, C., Zvonkov, I., Kerner, H., et al. (2025). Helmets Labelling Crops: Kenya Crop
+Type Dataset Created via Helmet-Mounted Cameras and Deep Learning. Scientific Data, 12,
+1496. https://doi.org/10.1038/s41597-025-05762-7
+Numbisi, F. N., Van Coillie, F. M. B., & De Wulf, R. (2019). Delineation of cocoa agroforests
+using multiseason Sentinel-1 SAR images: A low grey level range reduces uncertainties in
+GLCM texture-based mapping. ISPRS International Journal of Geo-Information, 8(4), 179.
+https://doi.org/10.3390/ijgi8040179
+
+Numbisi, F. N., Van Coillie, F. M. B., & De Wulf, R. R. (2018). Multi-date Sentinel-1 SAR image
+textures discriminate perennial agroforests in a tropical forest-savannah transition
+landscape. ISPRS – International Archives of the Photogrammetry, Remote Sensing and
+Spatial Information Sciences, XLII-1, 339–346. https://doi.org/10.5194/isprs-archives-XLII-
+1-339-2018
+Osei-Kuffuor, D., & Soh, L. C. W. (2025). Urban Land Cover Classification in the Global South
+Using Geospatial Foundation Models: A Case Study in Accra, Ghana. Remote Sensing of
+Environment, 316, 114603. https://doi.org/10.1016/j.rse.2025.114603
+
+Paluba, D., Marsocci, V., Onačillóvá, K., Puerta Quintana, Y. T., & Hastie, A. (2026). GEM-
+Forest: A Global satellite EMBedding-based map of forests and tree crops for 2020.
+EGUsphere, 1–32. https://doi.org/10.5194/egusphere-2026-1401
+
+Pazos-Outón, L. M., Vasconcelos, C. N., Raichuk, A., Arnab, A., Morris, D., & Neumann, M.
+(2024). Planted: A dataset for planted forest identification from multi-satellite time series.
+IGARSS 2024 - IEEE International Geoscience and Remote Sensing Symposium, 7066–7070.
+https://doi.org/10.1109/IGARSS53475.2024.10641868
+Piiroinen, R., Heiskanen, J., Maeda, E. E., Viinikka, A., & Pellikka, P. (2017). Classification of
+Tree Species in a Diverse African Agroforestry Landscape Using Imaging Spectroscopy and
+Laser Scanning. Remote Sensing, 9(9), 875. https://doi.org/10.3390/rs9090875
+Tamga, D. K., Latifi, H., Ullmann, T., Baumhauer, R., Bayala, J., & Thiel, C. (2022). Estimation
+of Aboveground Biomass in Agroforestry Systems over Three Climatic Regions in West
+Africa Using Sentinel-1, Sentinel-2, ALOS, and GEDI Data. Sensors, 23(1), 349.
+https://doi.org/10.3390/s23010349
+
+Teo, S. et al. (2025). Agroforestry Reduces Deforestation: Evidence from Southeast Asia.
+Nature Sustainability.
+Uwizeyimana, V., Somers, B., Muys, B., & Verbist, B. (2023). Supervised classification of tree
+cover classes in the complex mosaic landscape of eastern Rwanda. Remote Sensing, 15(10),
+2606. https://doi.org/10.3390/rs15102606
+van Noordwijk, M., Dewi, S., Minang, P. A., Harrison, R. D., Leimona, B., Ekadinata, A.,
+Burgers, P., Slingerland, M., Sassen, M., Watson, C., & Sayer, J. (2025). Beyond imperfect
+maps: Evidence for EUDR-compliant agroforestry. People and Nature, 7, 1713–1723.
+https://doi.org/10.1002/pan3.70088
+Vantalon, T., Luong, P. T., Perez Escobar, J. A., Tello Dagua, J. J., Phan, T. V., Nguyen, H.,
+Nguyen, H., Nguyen, H., & Reymondin, L. (2025). Sample Earth: Machine-Learning–Ready
+Land-Cover Reference Dataset (Version 1.1) [Dataset]. Harvard Dataverse.
+https://doi.org/10.7910/DVN/U7HWY1
+Zomer, R. J., Neufeldt, H., Xu, J., Ahrends, A., Bossio, D., Trabucco, A., Noordwijk, M. van, &
+Wang, M. (2016). Global Tree Cover and Biomass Carbon on Agricultural Land: The
+Contribution of Agroforestry to Global and National Carbon Budgets. Scientific Reports, 6,
+29987. https://doi.org/10.1038/srep29987
+
