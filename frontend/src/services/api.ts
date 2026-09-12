@@ -14,6 +14,17 @@ import {
 const API_BASE = '/api';
 
 export const api = {
+  // Provider Config (Cesium ion & Google Maps)
+  async getGeospatialConfig(): Promise<{ cesiumion_enabled: boolean; cesiumion_key: string | null; google_maps_enabled: boolean }> {
+    try {
+      const res = await fetch(`${API_BASE}/geospatial/config`);
+      if (!res.ok) throw new Error('Failed to fetch geospatial config');
+      return await res.json();
+    } catch {
+      return { cesiumion_enabled: false, cesiumion_key: null, google_maps_enabled: false };
+    }
+  },
+
   // Jurisdictions
   async getJurisdictions(): Promise<Jurisdiction[]> {
     try {

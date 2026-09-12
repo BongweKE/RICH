@@ -10,6 +10,7 @@ from shapely.geometry import mapping
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.database import get_db_session
 from app.core.security import get_current_user_optional
 from app.models import (
@@ -21,6 +22,16 @@ from app.models import (
 from app.services.geospatial import GeospatialService
 
 router = APIRouter()
+
+
+@router.get("/config")
+async def get_geospatial_config():
+    """Return client-safe geospatial provider configuration"""
+    return {
+        "cesiumion_enabled": settings.CESIUMION_ENABLED,
+        "cesiumion_key": settings.CESIUMION_KEY if settings.CESIUMION_ENABLED else None,
+        "google_maps_enabled": settings.GOOGLE_MAPS_ENABLED,
+    }
 
 
 @router.get("/layers")
@@ -47,6 +58,16 @@ async def list_layers(
             "attribution": "Powered by Esri",
         },
     ]
+
+    # Add 3D terrain layers if Cesium ion is enabled
+    if settings.CESIUMION_ENABLED and settings.CESIUMION_KEY:
+        layers.append({
+            "id": "cesium-world-terrain",
+            "name": "Cesium World 3D Terrain",
+            "type": "terrain-3d",
+            "source": "cesiumion",
+            "attribution": "© Cesium ion",
+        })
 
     # Add jurisdiction-specific layers
     if jurisdiction_code:
