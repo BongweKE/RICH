@@ -27,6 +27,13 @@ from app.models import (
 logger = logging.getLogger(__name__)
 
 
+def safe_val(v: Any) -> str:
+    """Safely extract string from Enum or primitive without raising AttributeError"""
+    if v is None:
+        return ""
+    return str(v.value if hasattr(v, "value") else v)
+
+
 # -----------------------------------------------------------------------------
 # Guardian Agent: Query Validation & Spatial Bounding Box Extraction
 # -----------------------------------------------------------------------------
@@ -226,17 +233,19 @@ class SynthesisAgent:
 
         for idx, p in enumerate(parcels, start=1):
             cite_id = f"parcel-{idx}"
+            subtype_str = safe_val(p.agroforestry_subtype) or safe_val(p.class_label)
+            class_str = safe_val(p.class_label)
             citations.append({
                 "id": cite_id,
                 "title": f"Parcel {p.id}",
                 "type": "agroforestry_parcel",
-                "subtype": p.agroforestry_subtype.value if p.agroforestry_subtype else p.class_label.value,
+                "subtype": subtype_str,
                 "area_ha": p.area_ha,
                 "confidence": p.confidence_score,
             })
             context_items.append(
                 f"[{len(citations)}] Agroforestry Parcel (ID: {p.id}): "
-                f"type={p.class_label.value}, confidence={p.confidence_score:.2f}, area={p.area_ha} ha."
+                f"type={class_str}, confidence={p.confidence_score:.2f}, area={p.area_ha} ha."
             )
 
         for idx, doc in enumerate(documents, start=len(citations) + 1):
@@ -596,7 +605,7 @@ class AIService:
                 results.append({
                     "id": str(p.id),
                     "type": "parcel",
-                    "title": f"Agroforestry Parcel ({p.class_label.value})",
+                    "title": f"Agroforestry Parcel ({safe_val(p.class_label)})",
                     "area_ha": p.area_ha,
                     "confidence": p.confidence_score,
                     "score": 0.90,

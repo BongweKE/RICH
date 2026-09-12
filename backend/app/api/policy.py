@@ -229,7 +229,8 @@ async def check_eudr_compliance(
             }
         else:
             # Established after 2020: verify if land cover converted from primary forest
-            if parcel.class_label.value == "agroforestry":
+            p_class = parcel.class_label.value if hasattr(parcel.class_label, "value") else str(parcel.class_label)
+            if p_class == "agroforestry":
                 checks["cutoff_compliance"] = {
                     "status": "PASS",
                     "score": 0.95,
