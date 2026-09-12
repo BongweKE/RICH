@@ -19,6 +19,7 @@ from app.models import (
     AgroforestryParcel,
     AIFeedback,
     DocumentCatalog,
+    DocumentEmbedding,
     Jurisdiction,
     QueryInteractionLog,
 )
@@ -178,9 +179,18 @@ class SynthesisAgent:
             res = await db.execute(stmt)
             retrieved_parcels = res.scalars().all()
 
-        # 3. Retrieve Documents
+        # 3. Retrieve Documents and Clause Chunks
+        retrieved_chunks = []
         keywords = plan.get("search_keywords", [])
         if keywords:
+            # Query DocumentEmbedding for clause/article matches
+            chunk_conditions = [
+                DocumentEmbedding.chunk_text.ilike(f"%{kw}%") for kw in keywords[:3]
+            ]
+            stmt_chunks = select(DocumentEmbedding).where(or_(*chunk_conditions)).limit(4)
+            res_chunks = await db.execute(stmt_chunks)
+            retrieved_chunks = res_chunks.scalars().all()
+
             conditions = [DocumentCatalog.title.ilike(f"%{kw}%") for kw in keywords[:3]]
             stmt_doc = select(DocumentCatalog).where(or_(*conditions)).limit(3)
             res_doc = await db.execute(stmt_doc)
@@ -190,6 +200,7 @@ class SynthesisAgent:
             "jurisdiction": retrieved_jurisdiction,
             "parcels": retrieved_parcels,
             "documents": retrieved_docs,
+            "chunks": retrieved_chunks,
         }
 
     @classmethod
@@ -237,6 +248,24 @@ class SynthesisAgent:
                 "doi": doc.doi,
             })
             context_items.append(f"[{len(citations)}] Document: '{doc.title}' ({doc.source or 'Scientific Reference'})")
+
+        chunks = context.get("chunks", [])
+        for idx, ch in enumerate(chunks, start=len(citations) + 1):
+            cite_id = f"clause-{idx}"
+            reg = ch.metadata_.get("regulation", "Regulation")
+            art = ch.metadata_.get("article", "")
+            clause_title = ch.metadata_.get("title", f"{reg} {art}".strip() or "Regulatory Clause")
+            citations.append({
+                "id": cite_id,
+                "title": f"{reg}: {art} - {clause_title}" if art else clause_title,
+                "type": "regulatory_clause",
+                "page": ch.metadata_.get("page", 1),
+                "article": art,
+                "regulation": reg,
+            })
+            context_items.append(
+                f"[{len(citations)}] {reg} {art} (Page {ch.metadata_.get('page', 1)}): {ch.chunk_text[:350]}..."
+            )
 
         # If Mistral API key is provided and valid, call Mistral Chat Completions
         if settings.MISTRAL_API_KEY and len(settings.MISTRAL_API_KEY) > 10:

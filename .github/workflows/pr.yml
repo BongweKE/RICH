@@ -4,7 +4,21 @@ on:
   pull_request:
     branches: [main, staging, production]
 
+concurrency:
+  group: pr-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  migrations:
+    name: Database Migration Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Lint database schemas & migrations
+        run: bash scripts/check-migrations.sh
+
   lint:
     name: Linting
     runs-on: ubuntu-latest
