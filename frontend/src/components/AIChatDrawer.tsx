@@ -17,6 +17,8 @@ interface AIChatDrawerProps {
   jurisdictionCode?: string;
   activeBbox?: number[];
   onSelectParcelCitation?: (parcelId: string) => void;
+  initialPrompt?: string | null;
+  onClearInitialPrompt?: () => void;
 }
 
 export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({
@@ -25,6 +27,8 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({
   jurisdictionCode,
   activeBbox,
   onSelectParcelCitation,
+  initialPrompt,
+  onClearInitialPrompt,
 }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -37,7 +41,88 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [pills, setPills] = useState<PromptPill[]>([]);
+  const [selectedCitation, setSelectedCitation] = useState<any | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const formatInline = (text: string): React.ReactNode => {
+    const parts: React.ReactNode[] = [];
+    const regex = /(\*\*.*?\*\*|`.*?`)/g;
+    let lastIndex = 0;
+    let match;
+
+    while ((match = regex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(text.substring(lastIndex, match.index));
+      }
+      const token = match[0];
+      if (token.startsWith('**') && token.endsWith('**')) {
+        parts.push(
+          <strong key={match.index} className="font-bold text-white">
+            {token.slice(2, -2)}
+          </strong>
+        );
+      } else if (token.startsWith('`') && token.endsWith('`')) {
+        parts.push(
+          <code key={match.index} className="px-1 py-0.5 rounded bg-slate-800 text-emerald-300 font-mono text-[10px]">
+            {token.slice(1, -1)}
+          </code>
+        );
+      }
+      lastIndex = regex.lastIndex;
+    }
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
+    }
+    return parts.length > 0 ? parts : text;
+  };
+
+  const renderFormattedContent = (content: string) => {
+    const lines = content.split('\n');
+    return lines.map((line, lineIdx) => {
+      if (line.startsWith('### ')) {
+        return (
+          <h3 key={lineIdx} className="font-bold text-sm text-emerald-300 mt-2 mb-1 border-b border-emerald-500/20 pb-0.5">
+            {formatInline(line.slice(4))}
+          </h3>
+        );
+      }
+      if (line.startsWith('#### ')) {
+        return (
+          <h4 key={lineIdx} className="font-bold text-xs text-teal-300 mt-2 mb-0.5">
+            {formatInline(line.slice(5))}
+          </h4>
+        );
+      }
+      if (line.trim() === '---') {
+        return <hr key={lineIdx} className="border-slate-800 my-2" />;
+      }
+      if (line.trim().startsWith('- ')) {
+        return (
+          <div key={lineIdx} className="flex items-start space-x-1.5 ml-1 my-0.5">
+            <span className="text-emerald-400 font-bold shrink-0">•</span>
+            <span className="text-slate-200">{formatInline(line.trim().slice(2))}</span>
+          </div>
+        );
+      }
+      const numMatch = line.trim().match(/^(\d+)\.\s+(.*)/);
+      if (numMatch) {
+        return (
+          <div key={lineIdx} className="flex items-start space-x-1.5 ml-1 my-0.5">
+            <span className="text-emerald-400 font-mono font-bold shrink-0">{numMatch[1]}.</span>
+            <span className="text-slate-200">{formatInline(numMatch[2])}</span>
+          </div>
+        );
+      }
+      if (!line.trim()) {
+        return <div key={lineIdx} className="h-1.5" />;
+      }
+      return (
+        <p key={lineIdx} className="my-0.5 text-slate-200 leading-relaxed">
+          {formatInline(line)}
+        </p>
+      );
+    });
+  };
 
   // Load context-aware prompt pills
   useEffect(() => {
@@ -49,6 +134,13 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, isOpen]);
+
+  useEffect(() => {
+    if (isOpen && initialPrompt) {
+      handleSend(initialPrompt);
+      onClearInitialPrompt?.();
+    }
+  }, [isOpen, initialPrompt]);
 
   const handleSend = async (textToSend?: string) => {
     const query = textToSend || input;
@@ -150,7 +242,11 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({
                   : 'bg-slate-900/90 text-slate-200 border border-slate-800'
               }`}
             >
-              <div className="whitespace-pre-wrap">{m.content}</div>
+              {m.role === 'user' ? (
+                <div className="whitespace-pre-wrap">{m.content}</div>
+              ) : (
+                <div className="text-xs space-y-0.5">{renderFormattedContent(m.content)}</div>
+              )}
 
               {/* Citations block */}
               {m.citations && m.citations.length > 0 && (
@@ -159,15 +255,25 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({
                     Grounded Sources & Citations:
                   </div>
                   <div className="flex flex-wrap gap-1">
-                    {m.citations.map((c, i) => (
-                      <span
-                        key={c.id}
-                        onClick={() => c.type === 'agroforestry_parcel' && onSelectParcelCitation?.(c.id)}
-                        className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[10px] text-emerald-300 border border-slate-700 cursor-pointer transition-colors"
-                      >
-                        <span>[{i + 1}] {c.title}</span>
-                      </span>
-                    ))}
+                    {m.citations.map((c, i) => {
+                      const isParcel = c.type === 'agroforestry_parcel';
+                      return (
+                        <span
+                          key={c.id || i}
+                          onClick={() => {
+                            if (isParcel) {
+                              onSelectParcelCitation?.(c.parcel_id || c.id);
+                            } else {
+                              setSelectedCitation(c);
+                            }
+                          }}
+                          className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[10px] text-emerald-300 border border-slate-700 cursor-pointer transition-colors"
+                          title={isParcel ? "Focus and inspect parcel in God's Eye View" : "View legal clause / citation details"}
+                        >
+                          <span>[{i + 1}] {c.title}</span>
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -256,6 +362,40 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({
           </button>
         </form>
       </div>
+      {/* Grounded Legal Citation Dossier Popover */}
+      {selectedCitation && (
+        <div className="absolute inset-x-3 bottom-20 bg-slate-900/95 border border-emerald-500/40 rounded-xl p-3.5 shadow-2xl z-40 space-y-2 text-xs backdrop-blur-md">
+          <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
+            <div className="flex items-center space-x-1.5 text-emerald-400 font-bold text-[11px]">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Grounded Citation Dossier</span>
+            </div>
+            <button
+              onClick={() => setSelectedCitation(null)}
+              className="text-slate-400 hover:text-white p-0.5 rounded"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+          <div className="space-y-1.5 text-[11px]">
+            <div className="font-semibold text-slate-100">{selectedCitation.title}</div>
+            <div className="text-slate-400 text-[10px]">
+              Type: <strong className="text-slate-200 capitalize">{selectedCitation.type?.replace('_', ' ')}</strong>
+              {selectedCitation.regulation && ` • ${selectedCitation.regulation}`}
+              {selectedCitation.article && ` • ${selectedCitation.article}`}
+              {selectedCitation.page && ` • Page ${selectedCitation.page}`}
+            </div>
+            {selectedCitation.doi && (
+              <div className="text-slate-500 font-mono text-[9px]">DOI/CELEX: {selectedCitation.doi}</div>
+            )}
+            {selectedCitation.snippet && (
+              <p className="text-slate-300 text-[10px] bg-slate-950/80 p-2 rounded border border-slate-800 italic leading-relaxed">
+                &ldquo;{selectedCitation.snippet}&rdquo;
+              </p>
+            )}
+          </div>
+        </div>
+      )}
     </aside>
   );
 };

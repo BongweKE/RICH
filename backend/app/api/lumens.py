@@ -111,6 +111,19 @@ async def get_hydrology_analysis(
     )
 
 
+@router.get("/biodiversity")
+async def get_biodiversity_analysis(
+    jurisdiction_code: str = Query("GH-AH", description="Jurisdiction code"),
+):
+    """QUES-B: Instant biodiversity, habitat quality index, and MSPA corridor analysis"""
+    return await run_ques_biodiversity(
+        base_scenario_id="interactive-session",
+        species_data_path="",
+        habitat_suitability_path=None,
+        jurisdiction_code=jurisdiction_code,
+    )
+
+
 @router.get("/profitability")
 async def get_profitability_analysis(
     jurisdiction_code: str = Query("GH-AH", description="Jurisdiction code"),
@@ -625,7 +638,7 @@ async def get_analysis_results(
             "id": str(scenario.id),
             "name": scenario.name,
             "description": scenario.description,
-            "scenario_type": scenario.scenario_type.value,
+            "scenario_type": scenario.scenario_type.value if hasattr(scenario.scenario_type, "value") else str(scenario.scenario_type),
             "parameters": scenario.parameters,
         },
         "preques_results": {
@@ -678,9 +691,9 @@ async def list_scenarios(
                 "id": str(s.id),
                 "name": s.name,
                 "description": s.description,
-                "jurisdiction_code": s.jurisdiction.code if s.jurisdiction else None,
-                "scenario_type": s.scenario_type.value,
-                "status": s.status.value,
+                "jurisdiction_code": s.jurisdiction.code if getattr(s, "jurisdiction", None) else None,
+                "scenario_type": s.scenario_type.value if hasattr(s.scenario_type, "value") else str(s.scenario_type),
+                "status": s.status.value if hasattr(s.status, "value") else str(s.status),
                 "created_at": s.created_at.isoformat(),
                 "completed_at": s.completed_at.isoformat() if s.completed_at else None,
                 "results_summary": s.results_summary,
@@ -712,7 +725,7 @@ async def get_scenario(
         "id": str(scenario.id),
         "name": scenario.name,
         "description": scenario.description,
-        "jurisdiction_code": scenario.jurisdiction.code if scenario.jurisdiction else None,
+        "jurisdiction_code": scenario.jurisdiction.code if getattr(scenario, "jurisdiction", None) else None,
         "scenario_type": scenario.scenario_type.value if hasattr(scenario.scenario_type, "value") else str(scenario.scenario_type),
         "parameters": scenario.parameters,
         "status": scenario.status.value if hasattr(scenario.status, "value") else str(scenario.status),

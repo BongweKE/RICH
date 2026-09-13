@@ -78,7 +78,7 @@ class Scenario(Base):
 
     # Relationships
     jurisdiction: Mapped["Jurisdiction | None"] = relationship(
-        "Jurisdiction", back_populates="scenarios"
+        "Jurisdiction", back_populates="scenarios", lazy="selectin"
     )
     creator: Mapped["User | None"] = relationship("User")
     results: Mapped[list["ScenarioResult"]] = relationship(

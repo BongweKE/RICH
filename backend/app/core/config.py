@@ -3,6 +3,7 @@
 
 
 from typing import Any, Union
+
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -38,6 +39,11 @@ class Settings(BaseSettings):
     GOOGLE_MAPS_ENABLED: bool = False
     CESIUMION_KEY: str = ""
     CESIUMION_ENABLED: bool = False
+
+    # Modal Cloud Compute
+    MODAL_EMBED_URL: str = Field(
+        default="https://ciforicraf-ai--rich-document-ingestion-textembedder-embed.modal.run"
+    )
 
     # Railway
     RAILWAY_PROJECT_ID: str = ""

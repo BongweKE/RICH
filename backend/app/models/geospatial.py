@@ -171,7 +171,7 @@ class LandCoverReferencePoint(Base):
 
     # Relationships
     jurisdiction: Mapped["Jurisdiction | None"] = relationship(
-        "Jurisdiction", back_populates="reference_points"
+        "Jurisdiction", back_populates="reference_points", lazy="selectin"
     )
     validator: Mapped["User | None"] = relationship("User")
 
@@ -239,7 +239,7 @@ class AgroforestryParcel(Base):
 
     # Relationships
     jurisdiction: Mapped["Jurisdiction | None"] = relationship(
-        "Jurisdiction", back_populates="parcels"
+        "Jurisdiction", back_populates="parcels", lazy="selectin"
     )
     scenario_results: Mapped[list["ScenarioResult"]] = relationship(
         "ScenarioResult", back_populates="parcel"
@@ -292,7 +292,7 @@ class SatelliteImagery(Base):
 
     # Relationships
     jurisdiction: Mapped["Jurisdiction | None"] = relationship(
-        "Jurisdiction", back_populates="imagery"
+        "Jurisdiction", back_populates="imagery", lazy="selectin"
     )
 
     __table_args__ = (

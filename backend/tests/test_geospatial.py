@@ -78,6 +78,132 @@ async def test_get_parcel_telemetry(async_client: AsyncClient):
     assert any(pt.get("is_eudr_cutoff") for pt in telemetry["ndvi_history"])
     assert "canopy_strata" in telemetry
     assert "gedi_profile" in telemetry
-    assert "eudr_audit" in telemetry
     assert telemetry["eudr_audit"]["compliance_status"] == "COMPLIANT_ZERO_DEFORESTATION"
+
+
+@pytest.mark.asyncio
+async def test_search_parcels_malformed_bbox(async_client: AsyncClient):
+    """Test searching parcels with invalid bbox returns 400 Bad Request"""
+    # Empty bbox
+    resp_empty = await async_client.post("/api/geospatial/parcels/search", json={"bbox": []})
+    assert resp_empty.status_code == 400
+
+    # Insufficient coordinates
+    resp_short = await async_client.post("/api/geospatial/parcels/search", json={"bbox": [1.0, 2.0]})
+    assert resp_short.status_code == 400
+
+
+@pytest.mark.asyncio
+async def test_search_parcels_inverted_bbox(async_client: AsyncClient):
+    """Test searching parcels with inverted min/max bbox bounds succeeds"""
+    payload = {
+        "bbox": [-5.0, 40.5, -7.5, 38.0],  # inverted min/max
+        "min_confidence": 0.5,
+        "limit": 5,
+    }
+    response = await async_client.post("/api/geospatial/parcels/search", json=payload)
+    assert response.status_code == 200
+    assert "parcels" in response.json()
+
+
+@pytest.mark.asyncio
+async def test_get_parcel_telemetry_jurisdiction_tailored(async_client: AsyncClient):
+    """Test parcel telemetry tailors biophysical metrics for Spain Dehesa vs Ghana vs Ethiopia"""
+    # Spain dehesa parcel
+    resp_es = await async_client.get("/api/geospatial/parcels/es-dehesa-p1/telemetry")
+    assert resp_es.status_code == 200
+    data_es = resp_es.json()
+    assert "dominant_tree_species" in data_es["canopy_strata"]
+
+    # Real sample parcel (mock_db returns Ghana sample parcel)
+    resp_gh = await async_client.get("/api/geospatial/parcels/44444444-4444-4000-8000-000000000001/telemetry")
+    assert resp_gh.status_code == 200
+    data_gh = resp_gh.json()
+    assert data_gh["soil_climate"]["mean_annual_precipitation_mm"] > 0
+    assert "DDS-RICH-2024-" in data_gh["eudr_audit"]["reference_id"]
+
+
+
+def test_safe_jurisdiction_code_utility():
+    """Test safe_jurisdiction_code helper across various inputs"""
+    from app.api.geospatial import safe_jurisdiction_code
+
+    assert safe_jurisdiction_code(None) is None
+
+    class MockJurisdiction:
+        code = "GH-AH"
+
+    assert safe_jurisdiction_code(MockJurisdiction()) == "GH-AH"
+
+    class FailingJurisdiction:
+        @property
+        def code(self):
+            raise RuntimeError("MissingGreenlet simulation")
+
+    assert safe_jurisdiction_code(FailingJurisdiction()) is None
+
+
+@pytest.mark.asyncio
+async def test_search_parcels_with_jurisdiction(async_client: AsyncClient):
+    """Test searching parcels with explicit jurisdiction code"""
+    payload = {
+        "bbox": [-2.4, 5.8, -1.0, 7.4],
+        "jurisdiction_code": "GH-AH",
+        "limit": 5,
+    }
+    response = await async_client.post("/api/geospatial/parcels/search", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert "parcels" in data
+    assert "count" in data
+
+
+@pytest.mark.asyncio
+async def test_list_reference_points(async_client: AsyncClient):
+    """Test listing ground reference points"""
+    response = await async_client.get("/api/geospatial/reference-points")
+    assert response.status_code == 200
+    data = response.json()
+    assert "reference_points" in data
+
+
+@pytest.mark.asyncio
+async def test_list_satellite_imagery(async_client: AsyncClient):
+    """Test listing satellite imagery metadata"""
+    response = await async_client.get("/api/geospatial/satellite-imagery")
+    assert response.status_code == 200
+    data = response.json()
+    assert "imagery" in data
+
+
+@pytest.mark.asyncio
+async def test_get_parcel_by_id(async_client: AsyncClient):
+    """Test fetching parcel by ID including malformed UUIDs and valid parcel retrieval"""
+    # Malformed non-UUID should return 404, NOT crash with 500 DataError
+    resp_invalid = await async_client.get("/api/geospatial/parcels/p-1-non-uuid")
+    assert resp_invalid.status_code == 404
+
+    # Valid UUID parcel fetch
+    resp_real = await async_client.get("/api/geospatial/parcels/44444444-4444-4000-8000-000000000001")
+    assert resp_real.status_code == 200
+    data = resp_real.json()
+    assert "id" in data
+    assert data["class_label"] == "agroforestry"
+    assert "jurisdiction_code" in data
+
+
+def test_safe_uuid_geospatial_utility():
+    """Test safe_uuid in geospatial module"""
+    import uuid
+
+    from app.api.geospatial import safe_uuid
+
+    assert safe_uuid(None) is None
+    assert safe_uuid("") is None
+    assert safe_uuid("invalid-string") is None
+    real_uuid = uuid.uuid4()
+    assert safe_uuid(str(real_uuid)) == real_uuid
+    assert safe_uuid(real_uuid) == real_uuid
+
+
 

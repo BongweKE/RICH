@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, BarChart3, RefreshCw } from 'lucide-react';
+import { X, BarChart3, RefreshCw, Download } from 'lucide-react';
 import { api } from '../services/api';
 import {
   PreQuESResponse,
@@ -7,6 +7,7 @@ import {
   LASEMTradeoffResponse,
   HydrologyResponse,
   ProfitabilityResponse,
+  BiodiversityResponse,
 } from '../types';
 import { SankeyDiagram } from './lumens/SankeyDiagram';
 import { TransitionHeatmap } from './lumens/TransitionHeatmap';
@@ -34,17 +35,16 @@ export const LUMENSModal: React.FC<LUMENSModalProps> = ({
   // Carbon State
   const [carbonData, setCarbonData] = useState<CarbonResponse | null>(null);
   const [carbonFactors, setCarbonFactors] = useState({
-    forest: 150.0,
-    agroforestry: 85.0,
-    cropland: 25.0,
-    grassland: 45.0,
+    forest: 150,
+    agroforestry: 85,
+    cropland: 25,
+    grassland: 45,
   });
 
-  // Hydrology State
+  // Additional Modules State
   const [hydrologyData, setHydrologyData] = useState<HydrologyResponse | null>(null);
-
-  // Profitability State
   const [profitabilityData, setProfitabilityData] = useState<ProfitabilityResponse | null>(null);
+  const [biodiversityData, setBiodiversityData] = useState<BiodiversityResponse | null>(null);
 
   // LASEM Trade-off State
   const [tradeoffData, setTradeoffData] = useState<LASEMTradeoffResponse | null>(null);
@@ -61,23 +61,32 @@ export const LUMENSModal: React.FC<LUMENSModalProps> = ({
     const loadData = async () => {
       setIsRunning(true);
       try {
-        const [pq, cb, hy, pr, tr] = await Promise.all([
+        const cropSubtype =
+          jurisdictionCode === 'ES-EX'
+            ? 'dehesa'
+            : jurisdictionCode === 'ET-OR'
+            ? 'shade_coffee'
+            : 'shade_cocoa';
+
+        const [pq, cb, hy, pr, tr, bd] = await Promise.all([
           api.getInteractivePreQUES(jurisdictionCode, 2018, 2024, cutoffHa),
           api.getInteractiveCarbon(jurisdictionCode, carbonFactors),
           api.getHydrology(jurisdictionCode, 1350),
-          api.getProfitability(jurisdictionCode, 'shade_cocoa'),
+          api.getProfitability(jurisdictionCode, cropSubtype),
           api.getInteractiveTradeoff(
             jurisdictionCode,
             levers.agroforestry_expansion_pct,
             levers.deforestation_enforcement_pct,
             levers.riparian_restoration_pct
           ),
+          api.getBiodiversity(jurisdictionCode),
         ]);
         setPrequesData(pq);
         setCarbonData(cb);
         setHydrologyData(hy);
         setProfitabilityData(pr);
         setTradeoffData(tr);
+        setBiodiversityData(bd);
       } catch (e) {
         console.error('Error loading LUMENS data:', e);
       } finally {
@@ -107,6 +116,30 @@ export const LUMENSModal: React.FC<LUMENSModalProps> = ({
       updated.riparian_restoration_pct
     );
     setTradeoffData(res);
+  };
+
+  const handleExportBriefing = () => {
+    const briefing = {
+      jurisdiction_code: jurisdictionCode,
+      generated_at: new Date().toISOString(),
+      methodology: 'LUMENS (Land Use Planning for Multiple Environmental Services) - CIFOR-ICRAF',
+      modules: {
+        pre_ques: prequesData,
+        ques_c_carbon: carbonData,
+        ques_b_biodiversity: biodiversityData,
+        ques_h_hydrology: hydrologyData,
+        ta_profitability: profitabilityData,
+        lasem_tradeoff: tradeoffData,
+      },
+    };
+    const jsonStr = JSON.stringify(briefing, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `LUMENS-Briefing-${jurisdictionCode}-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   if (!isOpen) return null;
@@ -139,6 +172,15 @@ export const LUMENSModal: React.FC<LUMENSModalProps> = ({
                 <span>Computing...</span>
               </span>
             )}
+            <button
+              onClick={handleExportBriefing}
+              disabled={isRunning || !prequesData}
+              className="flex items-center space-x-1.5 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 border border-slate-700 transition-colors disabled:opacity-50"
+              title="Download full scientific assessment dossier"
+            >
+              <Download className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Export Briefing</span>
+            </button>
             <button
               onClick={onClose}
               className="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition-colors"
@@ -316,18 +358,24 @@ export const LUMENSModal: React.FC<LUMENSModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800">
                   <div className="text-slate-400">Habitat Quality Index</div>
-                  <div className="text-2xl font-bold text-emerald-400 mt-1">0.82 / 1.0</div>
+                  <div className="text-2xl font-bold text-emerald-400 mt-1">
+                    {biodiversityData?.habitat_quality_score.toFixed(2) || '0.82'} / 1.0
+                  </div>
                   <div className="text-[11px] text-slate-500 mt-1">InVEST model equivalent</div>
                 </div>
                 <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800">
                   <div className="text-slate-400">Corridor Connectivity</div>
-                  <div className="text-2xl font-bold text-teal-300 mt-1">0.76 / 1.0</div>
-                  <div className="text-[11px] text-teal-500 mt-1">Connects 8 primary forest patches</div>
+                  <div className="text-2xl font-bold text-teal-300 mt-1">
+                    {biodiversityData?.landscape_connectivity_index.toFixed(2) || '0.76'} / 1.0
+                  </div>
+                  <div className="text-[11px] text-teal-500 mt-1">Structural biological corridors</div>
                 </div>
                 <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800">
                   <div className="text-slate-400">Landscape Fragmentation</div>
-                  <div className="text-2xl font-bold text-sky-400 mt-1">0.26 / 1.0</div>
-                  <div className="text-[11px] text-sky-500 mt-1">Low edge-effect disturbance</div>
+                  <div className="text-2xl font-bold text-sky-400 mt-1">
+                    {biodiversityData?.fragmentation_index.toFixed(2) || '0.26'} / 1.0
+                  </div>
+                  <div className="text-[11px] text-sky-500 mt-1">Edge-effect disturbance metric</div>
                 </div>
               </div>
 
@@ -338,23 +386,77 @@ export const LUMENSModal: React.FC<LUMENSModalProps> = ({
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-[11px]">
                   <div className="p-2.5 rounded bg-slate-900 border border-slate-800">
-                    <span className="text-emerald-400 font-semibold">Core Habitats: 54.2%</span>
+                    <span className="text-emerald-400 font-semibold">
+                      Core Habitats: {biodiversityData?.mspa_corridors?.core_pct || 54.2}%
+                    </span>
                     <p className="text-[10px] text-slate-400 mt-0.5">Continuous interior forest</p>
                   </div>
                   <div className="p-2.5 rounded bg-slate-900 border border-slate-800">
-                    <span className="text-teal-400 font-semibold">Bridges / Corridors: 22.8%</span>
+                    <span className="text-teal-400 font-semibold">
+                      Bridges / Corridors: {biodiversityData?.mspa_corridors?.bridge_pct || 22.8}%
+                    </span>
                     <p className="text-[10px] text-slate-400 mt-0.5">Shade agroforestry connecting cores</p>
                   </div>
                   <div className="p-2.5 rounded bg-slate-900 border border-slate-800">
-                    <span className="text-amber-400 font-semibold">Edge Buffer: 14.5%</span>
+                    <span className="text-amber-400 font-semibold">
+                      Edge Buffer: {biodiversityData?.mspa_corridors?.edge_buffer_pct || 14.5}%
+                    </span>
                     <p className="text-[10px] text-slate-400 mt-0.5">Perimeter forest-cropland boundary</p>
                   </div>
                   <div className="p-2.5 rounded bg-slate-900 border border-slate-800">
-                    <span className="text-rose-400 font-semibold">Islets / Stepping Stones: 8.5%</span>
+                    <span className="text-rose-400 font-semibold">
+                      Islets / Stepping Stones: {biodiversityData?.mspa_corridors?.islet_pct || 8.5}%
+                    </span>
                     <p className="text-[10px] text-slate-400 mt-0.5">Isolated native tree patches</p>
                   </div>
                 </div>
               </div>
+
+              {/* Keystone Species & Genepool Conservation */}
+              {biodiversityData?.keystone_species_impact && Object.keys(biodiversityData.keystone_species_impact).length > 0 && (
+                <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-200">
+                      Keystone Species & Biodiversity Indicator Trends
+                    </span>
+                    <span className="text-[10px] text-emerald-400 font-mono">
+                      QUES-B Biological Monitoring
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {Object.entries(biodiversityData.keystone_species_impact).map(([speciesKey, data]) => {
+                      const trendColor =
+                        data.trend === 'increasing' || data.trend === 'recovering' || data.trend === 'protected'
+                          ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+                          : 'text-amber-400 bg-amber-500/10 border-amber-500/20';
+                      return (
+                        <div key={speciesKey} className="p-3 rounded-lg bg-slate-900 border border-slate-800 space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <span className="font-semibold text-slate-200 capitalize">
+                              {speciesKey.replace(/_/g, ' ')}
+                            </span>
+                            <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono border uppercase ${trendColor}`}>
+                              {data.trend}
+                            </span>
+                          </div>
+                          <div className="flex items-baseline justify-between text-[11px] pt-1 border-t border-slate-800/80">
+                            <span className="text-slate-400">Habitat Viability:</span>
+                            <span className="font-bold font-mono text-emerald-300">{Math.round(data.score * 100)}%</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Agroforestry Ecological Benefit */}
+              {biodiversityData?.agroforestry_biodiversity_benefit && (
+                <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1.5 text-slate-300">
+                  <span className="font-bold text-emerald-400">Ecological Synthesis: </span>
+                  <span>{biodiversityData.agroforestry_biodiversity_benefit}</span>
+                </div>
+              )}
             </div>
           )}
 

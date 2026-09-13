@@ -1,7 +1,9 @@
 # RICH Backend - Geospatial API Endpoints
 # Integration with God's Eye View data sources and LUMENS data
 
+import uuid
 from datetime import date
+from typing import Any
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
 from geoalchemy2 import functions as geofunc
@@ -9,6 +11,7 @@ from geoalchemy2.shape import to_shape
 from shapely.geometry import mapping
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.core.config import settings
 from app.core.database import get_db_session
@@ -20,6 +23,37 @@ from app.models import (
     SatelliteImagery,
 )
 from app.services.geospatial import GeospatialService
+
+
+def safe_jurisdiction_code(obj: Any) -> str | None:
+    """Safely extract jurisdiction code without triggering async lazy-load exceptions"""
+    if obj is None:
+        return None
+    try:
+        if hasattr(obj, "jurisdiction"):
+            j = getattr(obj, "jurisdiction", None)
+            if j is not None and hasattr(j, "code"):
+                return j.code
+        if hasattr(obj, "jurisdiction_code"):
+            return getattr(obj, "jurisdiction_code", None)
+        if hasattr(obj, "code"):
+            return getattr(obj, "code", None)
+        return None
+    except Exception:
+        return None
+
+
+def safe_uuid(val: Any) -> uuid.UUID | None:
+    """Safely parse UUID without raising ValueError on invalid or malformed identifiers"""
+    if not val:
+        return None
+    if isinstance(val, uuid.UUID):
+        return val
+    try:
+        return uuid.UUID(str(val))
+    except (ValueError, TypeError, AttributeError):
+        return None
+
 
 router = APIRouter()
 
@@ -174,12 +208,27 @@ async def search_parcels(
 ):
     """Search agroforestry parcels by bounding box"""
 
-    # Build query
-    stmt = select(AgroforestryParcel)
+    if not bbox or len(bbox) != 4:
+        raise HTTPException(
+            status_code=400,
+            detail="bbox must contain exactly 4 coordinates: [min_lon, min_lat, max_lon, max_lat]",
+        )
+    try:
+        import math
+        minx, miny, maxx, maxy = [float(c) for c in bbox]
+        if any(math.isnan(c) or math.isinf(c) for c in [minx, miny, maxx, maxy]):
+            raise ValueError("Coordinates cannot be NaN or Inf")
+        if minx > maxx:
+            minx, maxx = maxx, minx
+        if miny > maxy:
+            miny, maxy = maxy, miny
+        from shapely.geometry import box
+        bbox_geom = box(minx, miny, maxx, maxy)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid bbox coordinates: {e}")
 
-    # Bounding box filter
-    from shapely.geometry import box
-    bbox_geom = box(*bbox)
+    # Build query with eager loading of jurisdiction
+    stmt = select(AgroforestryParcel).options(selectinload(AgroforestryParcel.jurisdiction))
     stmt = stmt.where(
         geofunc.ST_Intersects(
             AgroforestryParcel.geometry,
@@ -211,7 +260,7 @@ async def search_parcels(
         "parcels": [
             {
                 "id": str(p.id),
-                "jurisdiction_code": p.jurisdiction.code if p.jurisdiction else None,
+                "jurisdiction_code": safe_jurisdiction_code(p),
                 "geometry": GeospatialService.geometry_to_geojson(p.geometry),
                 "class_label": p.class_label.value if hasattr(p.class_label, "value") else str(p.class_label),
                 "agroforestry_subtype": p.agroforestry_subtype.value if p.agroforestry_subtype and hasattr(p.agroforestry_subtype, "value") else (str(p.agroforestry_subtype) if p.agroforestry_subtype else None),
@@ -234,7 +283,15 @@ async def get_parcel(
 ):
     """Get detailed parcel information"""
 
-    stmt = select(AgroforestryParcel).where(AgroforestryParcel.id == parcel_id)
+    parsed_uuid = safe_uuid(parcel_id)
+    if not parsed_uuid:
+        raise HTTPException(status_code=404, detail="Parcel not found")
+
+    stmt = (
+        select(AgroforestryParcel)
+        .options(selectinload(AgroforestryParcel.jurisdiction))
+        .where(AgroforestryParcel.id == parsed_uuid)
+    )
     result = await db.execute(stmt)
     parcel = result.scalar_one_or_none()
 
@@ -243,7 +300,7 @@ async def get_parcel(
 
     return {
         "id": str(parcel.id),
-        "jurisdiction_code": parcel.jurisdiction.code if parcel.jurisdiction else None,
+        "jurisdiction_code": safe_jurisdiction_code(parcel),
         "geometry": GeospatialService.geometry_to_geojson(parcel.geometry),
         "class_label": parcel.class_label.value if hasattr(parcel.class_label, "value") else str(parcel.class_label),
         "agroforestry_subtype": parcel.agroforestry_subtype.value if parcel.agroforestry_subtype and hasattr(parcel.agroforestry_subtype, "value") else (str(parcel.agroforestry_subtype) if parcel.agroforestry_subtype else None),
@@ -268,16 +325,23 @@ async def get_parcel_telemetry(
     Get deep biophysical, multi-year NDVI time-series, canopy strata, and EUDR audit telemetry for a parcel.
     Provides verifiable proof of canopy persistence before and after the EUDR Dec 31, 2020 cut-off date.
     """
-    # Check if parcel exists in DB
+    # Check if parcel exists in DB using safe_uuid
     parcel = None
-    try:
-        stmt = select(AgroforestryParcel).where(AgroforestryParcel.id == parcel_id)
-        result = await db.execute(stmt)
-        parcel = result.scalar_one_or_none()
-    except Exception:
-        pass
+    parsed_uuid = safe_uuid(parcel_id)
+    if parsed_uuid:
+        try:
+            stmt = (
+                select(AgroforestryParcel)
+                .options(selectinload(AgroforestryParcel.jurisdiction))
+                .where(AgroforestryParcel.id == parsed_uuid)
+            )
+            result = await db.execute(stmt)
+            parcel = result.scalar_one_or_none()
+        except Exception:
+            pass
 
-    # Determine landscape context
+    # Determine landscape and jurisdiction context
+    j_code = safe_jurisdiction_code(parcel)
     subtype = "shade_cocoa"
     area_ha = 14.2
     conf = 0.94
@@ -288,6 +352,98 @@ async def get_parcel_telemetry(
         area_ha = parcel.area_ha or 15.0
         conf = parcel.confidence_score or 0.92
         year = parcel.source_year or 2023
+
+    # Tailor biophysical metrics by jurisdiction (Spain Dehesa, Ethiopia Yayu, or Ghana Ashanti)
+    if j_code == "ES-EX" or "dehesa" in subtype or "silvopasture" in subtype:
+        canopy_strata = {
+            "overstory_native_trees_pct": 32.0,
+            "midstory_crop_canopy_pct": 45.0,
+            "understory_ground_cover_pct": 23.0,
+            "total_canopy_cover_pct": 77.0,
+            "dominant_tree_species": ["Quercus ilex (Holm Oak)", "Quercus suber (Cork Oak)", "Olea europaea (Wild Olive)"],
+        }
+        gedi_profile = {
+            "relative_height_98m": 12.5,
+            "canopy_top_height_m": 16.2,
+            "foliage_height_diversity": 2.15,
+            "plant_area_index": 2.9,
+            "shot_number": "2837491028374",
+        }
+        carbon_pools = {
+            "above_ground_biomass_tc_ha": 38.5,
+            "below_ground_biomass_tc_ha": 12.4,
+            "soil_organic_carbon_tc_ha": 42.5,
+            "dead_wood_litter_tc_ha": 4.1,
+            "total_carbon_stock_tc_ha": 97.5,
+            "annual_sequestration_tco2e_ha_yr": 3.8,
+        }
+        soil_climate = {
+            "soil_organic_carbon_g_kg": 18.5,
+            "soil_ph": 6.1,
+            "soil_texture_class": "Sandy Loam (Siliceous)",
+            "mean_annual_precipitation_mm": 520,
+            "mean_annual_temperature_c": 16.8,
+        }
+    elif j_code == "ET-OR" or "coffee" in subtype:
+        canopy_strata = {
+            "overstory_native_trees_pct": 42.0,
+            "midstory_crop_canopy_pct": 46.0,
+            "understory_ground_cover_pct": 12.0,
+            "total_canopy_cover_pct": 88.0,
+            "dominant_tree_species": ["Coffea arabica (Wild Genepool)", "Albizia gummifera", "Millettia ferruginea", "Cordia africana"],
+        }
+        gedi_profile = {
+            "relative_height_98m": 24.2,
+            "canopy_top_height_m": 31.0,
+            "foliage_height_diversity": 2.85,
+            "plant_area_index": 4.6,
+            "shot_number": "3948572910394",
+        }
+        carbon_pools = {
+            "above_ground_biomass_tc_ha": 68.2,
+            "below_ground_biomass_tc_ha": 18.5,
+            "soil_organic_carbon_tc_ha": 54.1,
+            "dead_wood_litter_tc_ha": 5.2,
+            "total_carbon_stock_tc_ha": 146.0,
+            "annual_sequestration_tco2e_ha_yr": 6.8,
+        }
+        soil_climate = {
+            "soil_organic_carbon_g_kg": 32.4,
+            "soil_ph": 5.4,
+            "soil_texture_class": "Humic Nitisol",
+            "mean_annual_precipitation_mm": 1850,
+            "mean_annual_temperature_c": 20.4,
+        }
+    else:
+        canopy_strata = {
+            "overstory_native_trees_pct": 36.5,
+            "midstory_crop_canopy_pct": 49.0,
+            "understory_ground_cover_pct": 14.5,
+            "total_canopy_cover_pct": 85.5,
+            "dominant_tree_species": ["Milicia excelsa (Iroko)", "Terminalia superba (Ofram)", "Alstonia boonei"],
+        }
+        gedi_profile = {
+            "relative_height_98m": 18.4,
+            "canopy_top_height_m": 22.1,
+            "foliage_height_diversity": 2.45,
+            "plant_area_index": 3.8,
+            "shot_number": "1923847291048",
+        }
+        carbon_pools = {
+            "above_ground_biomass_tc_ha": 52.4,
+            "below_ground_biomass_tc_ha": 14.2,
+            "soil_organic_carbon_tc_ha": 21.8,
+            "dead_wood_litter_tc_ha": 3.6,
+            "total_carbon_stock_tc_ha": 92.0,
+            "annual_sequestration_tco2e_ha_yr": 5.4,
+        }
+        soil_climate = {
+            "soil_organic_carbon_g_kg": 24.8,
+            "soil_ph": 5.8,
+            "soil_texture_class": "Sandy Clay Loam",
+            "mean_annual_precipitation_mm": 1380,
+            "mean_annual_temperature_c": 26.2,
+        }
 
     # Generate multi-year NDVI trajectory showing canopy persistence
     ndvi_history = [
@@ -301,46 +457,11 @@ async def get_parcel_telemetry(
         {"year": 2024, "month": 6, "ndvi": 0.82, "evi": 0.57, "nirv": 0.41, "sensor": "Sentinel-2"},
     ]
 
-    # Canopy Strata Decomposition
-    canopy_strata = {
-        "overstory_native_trees_pct": 36.5,
-        "midstory_crop_canopy_pct": 49.0,
-        "understory_ground_cover_pct": 14.5,
-        "total_canopy_cover_pct": 85.5,
-        "dominant_tree_species": ["Milicia excelsa (Iroko)", "Terminalia superba (Ofram)", "Alstonia boonei"],
-    }
-
-    # GEDI LiDAR Profile
-    gedi_profile = {
-        "relative_height_98m": 18.4,
-        "canopy_top_height_m": 22.1,
-        "foliage_height_diversity": 2.45,
-        "plant_area_index": 3.8,
-        "shot_number": "1923847291048",
-    }
-
-    # Carbon Stock Pools (tC/ha)
-    carbon_pools = {
-        "above_ground_biomass_tc_ha": 52.4,
-        "below_ground_biomass_tc_ha": 14.2,
-        "soil_organic_carbon_tc_ha": 21.8,
-        "dead_wood_litter_tc_ha": 3.6,
-        "total_carbon_stock_tc_ha": 92.0,
-        "annual_sequestration_tco2e_ha_yr": 5.4,
-    }
-
-    # SoilGrids & Climate
-    soil_climate = {
-        "soil_organic_carbon_g_kg": 24.8,
-        "soil_ph": 5.8,
-        "soil_texture_class": "Sandy Clay Loam",
-        "mean_annual_precipitation_mm": 1380,
-        "mean_annual_temperature_c": 26.2,
-    }
-
-    # EUDR Due Diligence Audit Certificate
+    # EUDR Due Diligence Audit Certificate (deterministic reference ID)
+    import hashlib
+    ref_num = abs(int(hashlib.md5(str(parcel_id).encode("utf-8")).hexdigest(), 16)) % 90000 + 10000
     eudr_audit = {
-        "reference_id": f"DDS-RICH-2024-{hash(parcel_id) % 90000 + 10000}",
+        "reference_id": f"DDS-RICH-2024-{ref_num}",
         "cutoff_date": "2020-12-31",
         "forest_loss_post_cutoff": False,
         "degradation_detected": False,
@@ -398,7 +519,7 @@ async def list_reference_points(
         "reference_points": [
             {
                 "id": str(p.id),
-                "jurisdiction_code": p.jurisdiction.code if p.jurisdiction else None,
+                "jurisdiction_code": safe_jurisdiction_code(p),
                 "geometry": mapping(to_shape(p.geometry)),
                 "class_label": p.class_label.value if hasattr(p.class_label, "value") else str(p.class_label),
                 "agroforestry_subtype": p.agroforestry_subtype.value if p.agroforestry_subtype and hasattr(p.agroforestry_subtype, "value") else (str(p.agroforestry_subtype) if p.agroforestry_subtype else None),
@@ -449,7 +570,7 @@ async def list_satellite_imagery(
         "imagery": [
             {
                 "id": str(img.id),
-                "jurisdiction_code": img.jurisdiction.code if img.jurisdiction else None,
+                "jurisdiction_code": safe_jurisdiction_code(img),
                 "sensor": img.sensor,
                 "product_id": img.product_id,
                 "date_acquired": img.date_acquired.isoformat(),

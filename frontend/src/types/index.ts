@@ -41,6 +41,7 @@ export interface ChatMessage {
   content: string;
   citations?: Array<{
     id: string;
+    parcel_id?: string;
     title: string;
     type: string;
     subtype?: string;
@@ -222,6 +223,23 @@ export interface HydrologyResponse {
   watershed_vulnerability_index: string;
   riparian_buffer_integrity: number;
   streamflow_regulation_score: number;
+}
+
+export interface BiodiversityResponse {
+  scenario_id: string;
+  jurisdiction_code: string;
+  species_richness_index: number;
+  habitat_quality_score: number;
+  landscape_connectivity_index: number;
+  fragmentation_index: number;
+  keystone_species_impact: Record<string, { score: number; trend: string }>;
+  mspa_corridors: {
+    core_pct: number;
+    bridge_pct: number;
+    edge_buffer_pct: number;
+    islet_pct: number;
+  };
+  agroforestry_biodiversity_benefit: string;
 }
 
 export interface ProfitabilitySystem {

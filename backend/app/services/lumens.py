@@ -255,29 +255,62 @@ class LUMENSService:
     @classmethod
     async def run_ques_biodiversity(
         cls,
-        base_scenario_id: str,
-        species_data_path: str,
+        base_scenario_id: str = "interactive-session",
+        species_data_path: str = "",
         habitat_suitability_path: str | None = None,
+        jurisdiction_code: str = "GH-AH",
     ) -> dict[str, Any]:
         """
         QUES-B: Biodiversity and Habitat Quality Assessment
-        Evaluates landscape connectivity, habitat suitability index, and species richness potential.
+        Evaluates landscape connectivity, habitat suitability index, MSPA corridors, and species richness potential.
         """
-        return {
-            "scenario_id": base_scenario_id,
-            "species_richness_index": 0.78,
-            "habitat_quality_score": 0.81,
-            "landscape_connectivity_index": 0.74,
-            "fragmentation_index": 0.28,
-            "keystone_species_impact": {
+        if jurisdiction_code == "ES-EX":
+            species_richness = 0.86
+            habitat_quality = 0.85
+            connectivity = 0.79
+            fragmentation = 0.22
+            keystone = {
+                "iberian_lynx": {"score": 0.88, "trend": "recovering"},
+                "spanish_imperial_eagle": {"score": 0.82, "trend": "stable"},
+                "black_vulture": {"score": 0.85, "trend": "increasing"},
+            }
+            benefit = "Oak montado/dehesa silvopastoral canopy anchors high-conservation Mediterranean biodiversity corridors."
+            mspa = {"core_pct": 58.4, "bridge_pct": 24.2, "edge_buffer_pct": 12.1, "islet_pct": 5.3}
+        elif jurisdiction_code == "ET-OR":
+            species_richness = 0.83
+            habitat_quality = 0.84
+            connectivity = 0.76
+            fragmentation = 0.25
+            keystone = {
+                "mountain_nyala": {"score": 0.80, "trend": "stable"},
+                "afromontane_endemic_birds": {"score": 0.87, "trend": "increasing"},
+                "wild_coffea_arabica_genepool": {"score": 0.91, "trend": "protected"},
+            }
+            benefit = "Shade coffee agroforests preserve genetic diversity of wild Coffea arabica and protect Afromontane corridors."
+            mspa = {"core_pct": 56.1, "bridge_pct": 23.5, "edge_buffer_pct": 13.8, "islet_pct": 6.6}
+        else:
+            species_richness = 0.78
+            habitat_quality = 0.82
+            connectivity = 0.74
+            fragmentation = 0.28
+            keystone = {
                 "pollinators_bees": {"score": 0.85, "trend": "increasing"},
                 "understory_birds": {"score": 0.79, "trend": "stable"},
                 "canopy_mammals": {"score": 0.71, "trend": "recovering"},
-            },
-            "agroforestry_biodiversity_benefit": (
-                "Shaded agroforestry canopy provides high structural complexity, "
-                "functioning as biological corridors between intact primary forest fragments."
-            ),
+            }
+            benefit = "Shaded cocoa agroforestry canopy provides high structural complexity, serving as biological corridors connecting forest reserves."
+            mspa = {"core_pct": 54.2, "bridge_pct": 22.8, "edge_buffer_pct": 14.5, "islet_pct": 8.5}
+
+        return {
+            "scenario_id": base_scenario_id,
+            "jurisdiction_code": jurisdiction_code,
+            "species_richness_index": species_richness,
+            "habitat_quality_score": habitat_quality,
+            "landscape_connectivity_index": connectivity,
+            "fragmentation_index": fragmentation,
+            "keystone_species_impact": keystone,
+            "mspa_corridors": mspa,
+            "agroforestry_biodiversity_benefit": benefit,
         }
 
     @classmethod

@@ -166,3 +166,29 @@ async def test_interactive_lumens_endpoints(async_client):
     carbon_data = carbon_resp.json()
     assert "voluntary_carbon_credits_potential_usd" in carbon_data
 
+
+@pytest.mark.asyncio
+async def test_biodiversity_and_profitability_endpoints(async_client):
+    """Test QUES-B biodiversity and TA-profit endpoints across jurisdictions"""
+    # Ghana biodiversity
+    bio_resp = await async_client.get("/api/lumens/biodiversity?jurisdiction_code=GH-AH")
+    assert bio_resp.status_code == 200
+    bio_data = bio_resp.json()
+    assert "species_richness_index" in bio_data
+    assert "mspa_corridors" in bio_data
+    assert bio_data["mspa_corridors"]["core_pct"] > 50
+
+    # Spain Dehesa biodiversity
+    bio_es = await async_client.get("/api/lumens/biodiversity?jurisdiction_code=ES-EX")
+    assert bio_es.status_code == 200
+    assert bio_es.json()["species_richness_index"] >= 0.85
+
+    # Profitability for Spain Dehesa
+    prof_resp = await async_client.get("/api/lumens/profitability?jurisdiction_code=ES-EX&crop_subtype=dehesa")
+    assert prof_resp.status_code == 200
+    prof_data = prof_resp.json()
+    assert "systems" in prof_data
+    assert len(prof_data["systems"]) >= 3
+    assert "abatement_curve" in prof_data
+
+

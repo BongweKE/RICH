@@ -29,6 +29,7 @@ image = (
         "python-docx",
         "langchain-text-splitters",
         "psycopg2-binary",
+        "fastapi[standard]",
     )
 )
 
@@ -39,6 +40,33 @@ doc_volume = modal.Volume.from_name("rich-documents-volume", create_if_missing=T
 db_secrets = [
     modal.Secret.from_name("rich-db-secrets"),
 ]
+
+
+@app.cls(
+    image=image,
+    gpu="T4",
+    timeout=60,
+    scaledown_window=300,
+)
+class TextEmbedder:
+    @modal.enter()
+    def load_model(self):
+        from sentence_transformers import SentenceTransformer
+        self.model = SentenceTransformer("BAAI/bge-small-en-v1.5")
+
+    @modal.fastapi_endpoint(method="POST")
+    def embed(self, payload: Dict[str, Any]):
+        """Generate 384-dimensional normalized BGE-small embeddings for queries or passages"""
+        text = payload.get("text", "")
+        if not text:
+            return {"embedding": []}
+        vec = self.model.encode(text, normalize_embeddings=True)
+        return {
+            "embedding": vec.tolist(),
+            "dim": len(vec),
+            "model": "BAAI/bge-small-en-v1.5",
+        }
+
 
 
 def extract_regulatory_metadata(text: str, filename: str) -> Dict[str, Any]:

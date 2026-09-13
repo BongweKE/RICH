@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db_session
 from app.core.security import get_current_user_optional, require_permission
 from app.models import (
+    DocumentCatalog,
     QueryInteractionLog,
 )
 from app.services.ai import (
@@ -19,6 +20,22 @@ from app.services.ai import (
 )
 
 router = APIRouter()
+
+
+@router.get("/chat")
+async def chat_status():
+    """AI Assistant status and active capabilities"""
+    return {
+        "status": "online",
+        "agent": "RICH Multi-Agent Climate Copilot",
+        "supported_jurisdictions": ["GH-AH", "ES-EX", "ET-OR"],
+        "capabilities": [
+            "EUDR Deforestation Compliance Verification",
+            "LUMENS Land Use Scenario Analysis",
+            "QUES-C Carbon Accounting",
+            "God's Eye View Tactical Intelligence",
+        ],
+    }
 
 
 @router.post("/chat")
@@ -207,6 +224,34 @@ async def list_models():
             },
         ]
     }
+
+
+@router.get("/documents")
+async def list_documents(
+    limit: int = Query(20, ge=1, le=100, description="Maximum documents to return"),
+    db: AsyncSession = Depends(get_db_session),
+):
+    """List authoritative compliance documents and scientific literature in the catalog"""
+    stmt = select(DocumentCatalog).order_by(DocumentCatalog.created_at.desc()).limit(limit)
+    res = await db.execute(stmt)
+    docs = res.scalars().all()
+    return {
+        "documents": [
+            {
+                "id": str(d.id),
+                "title": d.title,
+                "authors": d.authors,
+                "publication_year": d.publication_year,
+                "topic_keywords": d.topic_keywords,
+                "source": d.source,
+                "url_link": d.url_link,
+                "license": d.license,
+            }
+            for d in docs
+        ],
+        "count": len(docs),
+    }
+
 
 
 @router.get("/stats")

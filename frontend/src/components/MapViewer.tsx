@@ -145,6 +145,59 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     });
   }, [tourWaypoint]);
 
+  // Focus and fly to selected parcel in God's Eye View
+  useEffect(() => {
+    if (!mapInstance.current || !selectedParcel) return;
+    try {
+      // Extract center from coordinates regardless of Point, Polygon, or MultiPolygon structure
+      const coords: [number, number][] = [];
+      const collect = (item: any) => {
+        if (!item) return;
+        if (Array.isArray(item)) {
+          if (item.length >= 2 && typeof item[0] === 'number' && typeof item[1] === 'number') {
+            coords.push([item[0], item[1]]);
+          } else {
+            for (const sub of item) {
+              collect(sub);
+            }
+          }
+        }
+      };
+
+      collect(selectedParcel.geometry?.coordinates);
+
+      let center: [number, number] | null = null;
+      if (coords.length > 0) {
+        let minX = Infinity;
+        let minY = Infinity;
+        let maxX = -Infinity;
+        let maxY = -Infinity;
+        for (const [x, y] of coords) {
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
+        if (isFinite(minX) && isFinite(minY)) {
+          center = [(minX + maxX) / 2, (minY + maxY) / 2];
+        }
+      }
+
+      if (center) {
+        mapInstance.current.flyTo({
+          center,
+          zoom: 15.0,
+          pitch: is3DMode ? 55 : 0,
+          bearing: is3DMode ? -15 : 0,
+          essential: true,
+          duration: 1800,
+        });
+      }
+    } catch (e) {
+      console.warn('Parcel flyTo error:', e);
+    }
+  }, [selectedParcel, is3DMode]);
+
   // Update pitch for 3D perspective mode
   useEffect(() => {
     if (!mapInstance.current) return;

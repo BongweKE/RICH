@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, ShieldCheck, CheckCircle2, BookOpen, ExternalLink } from 'lucide-react';
 import { api } from '../services/api';
 
 interface PolicyModalProps {
@@ -13,18 +13,39 @@ export const PolicyModal: React.FC<PolicyModalProps> = ({
   onClose,
   jurisdictionCode,
 }) => {
-  const [tab, setTab] = useState<'eudr' | 'redd' | 'ndc'>('eudr');
-  const [commodity, setCommodity] = useState('cocoa');
+  const [tab, setTab] = useState<'eudr' | 'redd' | 'ndc' | 'corpus'>('eudr');
+  const [commodity, setCommodity] = useState(
+    jurisdictionCode === 'ES-EX' ? 'wood' : jurisdictionCode === 'ET-OR' ? 'coffee' : 'cocoa'
+  );
   const [loading, setLoading] = useState(false);
   const [eudrReport, setEudrReport] = useState<any | null>(null);
   const [reddReport, setReddReport] = useState<any | null>(null);
+  const [documents, setDocuments] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (jurisdictionCode === 'ES-EX') {
+      setCommodity('wood');
+    } else if (jurisdictionCode === 'ET-OR') {
+      setCommodity('coffee');
+    } else {
+      setCommodity('cocoa');
+    }
+    setEudrReport(null);
+    setReddReport(null);
+  }, [jurisdictionCode]);
 
   if (!isOpen) return null;
 
   const handleRunEUDR = async () => {
     setLoading(true);
     try {
-      const res = await api.checkEUDR(undefined, [-1.74, 6.66], commodity);
+      const coords: [number, number] =
+        jurisdictionCode === 'ES-EX'
+          ? [-6.1, 39.2]
+          : jurisdictionCode === 'ET-OR'
+          ? [36.6, 8.4]
+          : [-1.74, 6.66];
+      const res = await api.checkEUDR(undefined, coords, commodity);
       setEudrReport(res);
     } catch (e) {
       console.error(e);
@@ -38,6 +59,18 @@ export const PolicyModal: React.FC<PolicyModalProps> = ({
     try {
       const res = await api.getREDDReport(jurisdictionCode);
       setReddReport(res);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFetchDocuments = async () => {
+    setLoading(true);
+    try {
+      const docs = await api.getComplianceDocuments(30);
+      setDocuments(docs);
     } catch (e) {
       console.error(e);
     } finally {
@@ -103,6 +136,20 @@ export const PolicyModal: React.FC<PolicyModalProps> = ({
             }`}
           >
             NDC Climate Target Alignment
+          </button>
+          <button
+            onClick={() => {
+              setTab('corpus');
+              if (documents.length === 0) handleFetchDocuments();
+            }}
+            className={`pb-3 font-semibold transition-colors border-b-2 flex items-center space-x-1.5 ${
+              tab === 'corpus'
+                ? 'border-amber-500 text-amber-400'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>Authoritative Legal Corpus</span>
           </button>
         </div>
 
@@ -239,6 +286,85 @@ export const PolicyModal: React.FC<PolicyModalProps> = ({
               <div className="p-3 rounded bg-slate-900 border border-emerald-500/30 text-emerald-300">
                 Status: <strong>ON TRACK (64% Progress towards 2030 Canopy Goals)</strong>
               </div>
+            </div>
+          )}
+
+          {tab === 'corpus' && (
+            <div className="space-y-4">
+              <div className="p-3.5 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
+                <div>
+                  <div className="font-semibold text-slate-200 text-xs">
+                    Authoritative Regulatory & Scientific Knowledge Base
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-0.5">
+                    Modal T4 serverless neural embeddings (BAAI/bge-small-en-v1.5) index official EUDR regulations,
+                    European Commission guidance, and CIFOR-ICRAF scientific publications for due diligence verification.
+                  </div>
+                </div>
+                <button
+                  onClick={handleFetchDocuments}
+                  disabled={loading}
+                  className="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-[11px] text-amber-400 border border-slate-700 transition-colors shrink-0 ml-3"
+                >
+                  {loading ? 'Refreshing...' : 'Refresh Corpus'}
+                </button>
+              </div>
+
+              {documents.length > 0 ? (
+                <div className="space-y-2.5">
+                  {documents.map((doc: any) => (
+                    <div
+                      key={doc.id}
+                      className="p-3 rounded-lg bg-slate-950 border border-slate-800/90 hover:border-amber-500/40 transition-colors space-y-1.5"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="font-semibold text-slate-200 text-xs flex items-center space-x-1.5">
+                          <span>{doc.title}</span>
+                          {doc.url_link && (
+                            <a
+                              href={doc.url_link}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-slate-500 hover:text-amber-400"
+                            >
+                              <ExternalLink className="w-3 h-3 inline" />
+                            </a>
+                          )}
+                        </div>
+                        {doc.publication_year && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 font-mono">
+                            {doc.publication_year}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="text-[11px] text-slate-400 flex items-center space-x-2">
+                        <span>Source: <strong className="text-slate-300">{doc.source || 'Official Document'}</strong></span>
+                        {doc.authors && doc.authors.length > 0 && (
+                          <span>• Authors: <strong className="text-slate-300">{doc.authors.join(', ')}</strong></span>
+                        )}
+                      </div>
+
+                      {doc.topic_keywords && doc.topic_keywords.length > 0 && (
+                        <div className="flex flex-wrap gap-1 pt-1">
+                          {doc.topic_keywords.map((kw: string, i: number) => (
+                            <span
+                              key={i}
+                              className="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[9px] font-medium"
+                            >
+                              {kw}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-slate-500 text-xs">
+                  {loading ? 'Loading compliance documents from catalog...' : 'No documents loaded. Click Refresh.'}
+                </div>
+              )}
             </div>
           )}
         </div>

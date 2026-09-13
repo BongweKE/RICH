@@ -51,6 +51,7 @@ export function App() {
   });
 
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [initialChatPrompt, setInitialChatPrompt] = useState<string | null>(null);
   const [isLumensOpen, setIsLumensOpen] = useState(false);
   const [isPolicyOpen, setIsPolicyOpen] = useState(false);
 
@@ -199,6 +200,10 @@ export function App() {
       } else if (e.key === 't' || e.key === 'T') {
         setIs3DMode((prev) => !prev);
         playTacticalSFX('toggle');
+      } else if (e.key === ' ' || e.code === 'Space') {
+        e.preventDefault();
+        setIsTourOpen((prev) => !prev);
+        playTacticalSFX('tour');
       } else if (e.key === 'Escape') {
         setSelectedParcel(null);
         setIsTourOpen(false);
@@ -268,6 +273,8 @@ export function App() {
           sensorMode={sensorMode}
           parcelCount={parcels.length}
           is3DMode={is3DMode}
+          isChatOpen={isChatOpen}
+          selectedParcel={selectedParcel}
         />
 
         {/* Post-Processing Sensor Mode Shader Overlay */}
@@ -329,6 +336,10 @@ export function App() {
           parcel={selectedParcel}
           onClose={() => setSelectedParcel(null)}
           onRunEUDR={() => setIsPolicyOpen(true)}
+          onAskAI={(prompt) => {
+            setInitialChatPrompt(prompt);
+            setIsChatOpen(true);
+          }}
         />
 
         {/* AI Assistant Copilot Drawer */}
@@ -343,6 +354,22 @@ export function App() {
               ? [-2.4, 5.8, -1.0, 7.4]
               : [35.0, 6.5, 39.5, 9.5]
           }
+          initialPrompt={initialChatPrompt}
+          onClearInitialPrompt={() => setInitialChatPrompt(null)}
+          onSelectParcelCitation={async (parcelId) => {
+            let found = parcels.find((p) => p.id === parcelId);
+            if (!found) {
+              const fetched = await api.getParcel(parcelId);
+              if (fetched) {
+                setParcels((prev) => [...prev, fetched]);
+                found = fetched;
+              }
+            }
+            if (found) {
+              setSelectedParcel(found);
+              playTacticalSFX('beep');
+            }
+          }}
         />
 
         {/* Dynamic LUMENS Scientific Suite Modal */}

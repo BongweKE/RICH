@@ -200,7 +200,10 @@ async def check_eudr_compliance(
 
     parcel = None
     if parcel_id:
-        stmt = select(AgroforestryParcel).where(AgroforestryParcel.id == parcel_id)
+        parsed_parcel_uuid = safe_uuid(parcel_id)
+        if not parsed_parcel_uuid:
+            raise HTTPException(status_code=404, detail=f"Parcel {parcel_id} not found")
+        stmt = select(AgroforestryParcel).where(AgroforestryParcel.id == parsed_parcel_uuid)
         result = await db.execute(stmt)
         parcel = result.scalar_one_or_none()
         if not parcel:
@@ -301,13 +304,13 @@ async def check_eudr_compliance(
 
         assessment = PolicyComplianceAssessment(
             framework_id=framework.id,
-            parcel_id=uuid.UUID(parcel_id) if parcel_id else None,
+            parcel_id=safe_uuid(parcel_id),
             compliance_status=is_compliant,
             compliance_score=round(total_score, 3),
             gaps={"items": gaps},
             recommendations={"items": recommendations},
             report_json=report,
-            created_by=uuid.UUID(user.get("sub")) if user and user.get("sub") else None,
+            created_by=safe_uuid(user.get("sub")) if user else None,
         )
         db.add(assessment)
         await db.commit()

@@ -2,7 +2,7 @@ name: Pull Request Checks
 
 on:
   pull_request:
-    branches: [main, staging, production]
+    branches: [main, master, staging, production]
 
 concurrency:
   group: pr-${{ github.ref }}

@@ -128,3 +128,30 @@ async def test_get_assessment_invalid_id(async_client: AsyncClient):
     """Test querying assessment with invalid UUID string returns 404 cleanly"""
     response = await async_client.get("/api/policy/assessments/invalid-uuid-format")
     assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_eudr_check_non_uuid_parcel_id(async_client: AsyncClient):
+    """Test EUDR check with non-UUID parcel_id returns 404 instead of 500 DataError"""
+    payload = {
+        "parcel_id": "p-1-mock-fallback",
+        "commodity": "cocoa",
+        "store_assessment": False,
+    }
+    response = await async_client.post("/api/policy/eudr-check", json=payload)
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_eudr_check_store_assessment_safe_uuid(async_client: AsyncClient):
+    """Test EUDR check storing assessment succeeds without crashing on string user/parcel IDs"""
+    payload = {
+        "coordinates": [-1.74, 6.66],
+        "commodity": "cocoa",
+        "store_assessment": True,
+    }
+    response = await async_client.post("/api/policy/eudr-check", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert "assessment_id" in data
+

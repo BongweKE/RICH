@@ -6,6 +6,7 @@ import {
   Download,
   ShieldCheck,
   RefreshCw,
+  Sparkles,
 } from 'lucide-react';
 import { Parcel, ParcelTelemetry } from '../types';
 import { api } from '../services/api';
@@ -14,12 +15,14 @@ interface ParcelInspectorProps {
   parcel: Parcel | null;
   onClose: () => void;
   onRunEUDR: (parcel: Parcel) => void;
+  onAskAI?: (prompt: string) => void;
 }
 
 export const ParcelInspector: React.FC<ParcelInspectorProps> = ({
   parcel,
   onClose,
   onRunEUDR,
+  onAskAI,
 }) => {
   const [telemetry, setTelemetry] = useState<ParcelTelemetry | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -54,7 +57,7 @@ export const ParcelInspector: React.FC<ParcelInspectorProps> = ({
   };
 
   return (
-    <div className="absolute bottom-6 left-4 z-20 w-96 max-h-[82vh] bg-slate-950/95 backdrop-blur-md border border-slate-800 rounded-xl shadow-2xl flex flex-col text-xs font-sans overflow-hidden select-none">
+    <div className="absolute bottom-6 left-4 z-20 w-96 max-h-[75vh] bg-slate-950/95 backdrop-blur-md border border-slate-800 rounded-xl shadow-2xl flex flex-col text-xs font-sans overflow-hidden select-none">
       {/* Inspector Header */}
       <div className="px-4 py-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between shrink-0">
         <div className="flex items-center space-x-2.5">
@@ -74,12 +77,26 @@ export const ParcelInspector: React.FC<ParcelInspectorProps> = ({
             </p>
           </div>
         </div>
-        <button
-          onClick={onClose}
-          className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
-        >
-          <X className="w-4 h-4" />
-        </button>
+        <div className="flex items-center space-x-1.5">
+          <button
+            onClick={() =>
+              onAskAI?.(
+                `Analyze EUDR compliance, carbon sequestration rate, and canopy density for parcel ${parcel.id} (${parcel.agroforestry_subtype || parcel.class_label}, ${parcel.area_ha?.toFixed(1) || 14.2} ha).`
+              )
+            }
+            className="flex items-center space-x-1 px-2 py-1 rounded bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/40 text-[10px] font-semibold transition-colors"
+            title="Ask RICH AI Copilot to analyze this parcel"
+          >
+            <Sparkles className="w-3 h-3 text-emerald-400" />
+            <span>Ask AI</span>
+          </button>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
       {/* Sub-tabs */}
@@ -354,6 +371,19 @@ export const ParcelInspector: React.FC<ParcelInspectorProps> = ({
             >
               <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
               <span>Open Full Policy & EUDR Audit Modal</span>
+            </button>
+
+            <button
+              onClick={() =>
+                onAskAI?.(
+                  `Analyze EUDR compliance, carbon sequestration rate, and canopy density for parcel ${parcel.id} (${parcel.agroforestry_subtype || parcel.class_label}, ${parcel.area_ha?.toFixed(1) || 14.2} ha).`
+                )
+              }
+              className="w-full py-2 px-3 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 font-medium text-xs flex items-center justify-center space-x-1.5 transition-colors shadow-sm"
+              title="Ask RICH AI Copilot to analyze this parcel"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Ask RICH AI Copilot Analysis</span>
             </button>
           </div>
         )}

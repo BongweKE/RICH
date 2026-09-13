@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Compass, Radio } from 'lucide-react';
-import { SensorMode } from '../types';
+import { Compass, Radio, Target } from 'lucide-react';
+import { SensorMode, Parcel } from '../types';
 
 interface TacticalHUDProps {
   cursorCoords: [number, number] | null;
@@ -10,6 +10,8 @@ interface TacticalHUDProps {
   sensorMode: SensorMode;
   parcelCount: number;
   is3DMode: boolean;
+  isChatOpen?: boolean;
+  selectedParcel?: Parcel | null;
 }
 
 export const TacticalHUD: React.FC<TacticalHUDProps> = ({
@@ -20,6 +22,8 @@ export const TacticalHUD: React.FC<TacticalHUDProps> = ({
   sensorMode,
   parcelCount,
   is3DMode,
+  isChatOpen = false,
+  selectedParcel = null,
 }) => {
   const [utcTime, setUtcTime] = useState<string>('');
 
@@ -43,23 +47,36 @@ export const TacticalHUD: React.FC<TacticalHUDProps> = ({
 
   return (
     <div className="absolute inset-0 pointer-events-none z-10 select-none overflow-hidden font-mono text-[11px]">
-      {/* Reticle / Crosshair at map center */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center opacity-40">
-        <div className="w-12 h-12 rounded-full border border-dashed border-emerald-400/60 flex items-center justify-center">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+      {/* Reticle / Crosshair at map center with Target Lock */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center justify-center">
+        <div className={`relative flex items-center justify-center ${selectedParcel ? 'opacity-90' : 'opacity-40'}`}>
+          <div className={`w-14 h-14 rounded-full border ${selectedParcel ? 'border-emerald-400 border-2' : 'border-dashed border-emerald-400/60'} flex items-center justify-center`}>
+            <div className={`w-1.5 h-1.5 rounded-full ${selectedParcel ? 'bg-emerald-300 animate-ping' : 'bg-emerald-400'}`} />
+          </div>
+          <div className="absolute w-28 h-[1px] bg-emerald-500/40" />
+          <div className="absolute h-28 w-[1px] bg-emerald-500/40" />
         </div>
-        <div className="absolute w-24 h-[1px] bg-emerald-500/40" />
-        <div className="absolute h-24 w-[1px] bg-emerald-500/40" />
+        {selectedParcel && (
+          <div className="mt-2 px-2 py-0.5 rounded bg-slate-950/90 border border-emerald-500/60 text-emerald-300 text-[9px] tracking-wider uppercase font-bold flex items-center space-x-1 shadow-lg backdrop-blur-sm">
+            <Target className="w-3 h-3 text-emerald-400 animate-spin" />
+            <span>TARGET LOCK: {selectedParcel.id.slice(0, 8)} ({selectedParcel.agroforestry_subtype || selectedParcel.class_label})</span>
+          </div>
+        )}
       </div>
 
-      {/* Top Left Telemetry Stream */}
-      <div className="absolute top-16 left-4 bg-slate-950/70 backdrop-blur-sm border border-emerald-500/30 rounded p-2 text-emerald-400 shadow-lg space-y-1">
+      {/* Top Left Telemetry Stream - positioned cleanly to the right of LayerPanel */}
+      <div className="absolute top-16 left-[19.5rem] bg-slate-950/80 backdrop-blur-sm border border-emerald-500/30 rounded p-2 text-emerald-400 shadow-lg space-y-1">
         <div className="flex items-center space-x-2 text-[10px] tracking-wider text-emerald-300 font-bold uppercase border-b border-emerald-500/20 pb-1">
           <Radio className="w-3 h-3 animate-pulse text-emerald-400" />
           <span>RICH Tactical Telemetry</span>
           <span className="px-1 bg-emerald-500/20 rounded text-[9px] text-emerald-300">
             {sensorMode.toUpperCase()}
           </span>
+          {selectedParcel && (
+            <span className="px-1 bg-emerald-500/30 text-emerald-200 border border-emerald-500/40 rounded text-[8px] animate-pulse">
+              LOCKED
+            </span>
+          )}
         </div>
         <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[10px]">
           <span className="text-slate-400">LAT:</span>
@@ -74,7 +91,11 @@ export const TacticalHUD: React.FC<TacticalHUDProps> = ({
       </div>
 
       {/* Top Right Orientation / Compass */}
-      <div className="absolute top-16 right-4 bg-slate-950/70 backdrop-blur-sm border border-emerald-500/30 rounded p-2 text-emerald-400 shadow-lg flex items-center space-x-3">
+      <div
+        className={`absolute top-16 transition-all duration-300 ${
+          isChatOpen ? 'right-[25rem]' : 'right-4'
+        } bg-slate-950/70 backdrop-blur-sm border border-emerald-500/30 rounded p-2 text-emerald-400 shadow-lg flex items-center space-x-3`}
+      >
         <div className="relative w-8 h-8 rounded-full border border-emerald-500/40 flex items-center justify-center">
           <Compass
             className="w-5 h-5 text-emerald-400 transition-transform duration-200"

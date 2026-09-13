@@ -9,6 +9,7 @@ import {
   LASEMTradeoffResponse,
   HydrologyResponse,
   ProfitabilityResponse,
+  BiodiversityResponse,
 } from '../types';
 
 const API_BASE = '/api';
@@ -56,6 +57,17 @@ export const api = {
     } catch (e) {
       console.warn('Using fallback parcels:', e);
       return [];
+    }
+  },
+
+  // Single Parcel by ID
+  async getParcel(parcelId: string): Promise<Parcel | null> {
+    try {
+      const res = await fetch(`${API_BASE}/geospatial/parcels/${encodeURIComponent(parcelId)}`);
+      if (!res.ok) return null;
+      return await res.json();
+    } catch {
+      return null;
     }
   },
 
@@ -122,6 +134,18 @@ export const api = {
     });
     if (!res.ok) throw new Error('EUDR check failed');
     return res.json();
+  },
+
+  async getComplianceDocuments(limit = 20) {
+    try {
+      const res = await fetch(`${API_BASE}/ai/documents?limit=${limit}`);
+      if (!res.ok) throw new Error('Failed to fetch compliance documents');
+      const data = await res.json();
+      return data.documents || [];
+    } catch (e) {
+      console.error('Error loading documents:', e);
+      return [];
+    }
   },
 
   async getREDDReport(jurisdictionCode: string) {
@@ -407,6 +431,36 @@ export const api = {
         watershed_vulnerability_index: 'Low',
         riparian_buffer_integrity: 0.83,
         streamflow_regulation_score: 0.79,
+      };
+    }
+  },
+
+  // QUES-B Biodiversity & MSPA Corridors
+  async getBiodiversity(jurisdictionCode = 'GH-AH'): Promise<BiodiversityResponse> {
+    try {
+      const res = await fetch(`${API_BASE}/lumens/biodiversity?jurisdiction_code=${encodeURIComponent(jurisdictionCode)}`);
+      if (!res.ok) throw new Error('Biodiversity fetch failed');
+      return await res.json();
+    } catch (e) {
+      return {
+        scenario_id: 'fallback-biodiversity',
+        jurisdiction_code: jurisdictionCode,
+        species_richness_index: jurisdictionCode === 'ES-EX' ? 0.86 : jurisdictionCode === 'ET-OR' ? 0.83 : 0.78,
+        habitat_quality_score: jurisdictionCode === 'ES-EX' ? 0.85 : jurisdictionCode === 'ET-OR' ? 0.84 : 0.82,
+        landscape_connectivity_index: jurisdictionCode === 'ES-EX' ? 0.79 : jurisdictionCode === 'ET-OR' ? 0.76 : 0.74,
+        fragmentation_index: jurisdictionCode === 'ES-EX' ? 0.22 : jurisdictionCode === 'ET-OR' ? 0.25 : 0.28,
+        keystone_species_impact: {
+          pollinators_bees: { score: 0.85, trend: 'increasing' },
+          understory_birds: { score: 0.79, trend: 'stable' },
+          canopy_mammals: { score: 0.71, trend: 'recovering' },
+        },
+        mspa_corridors: {
+          core_pct: jurisdictionCode === 'ES-EX' ? 58.4 : 54.2,
+          bridge_pct: jurisdictionCode === 'ES-EX' ? 24.2 : 22.8,
+          edge_buffer_pct: 14.5,
+          islet_pct: 8.5,
+        },
+        agroforestry_biodiversity_benefit: 'Shaded agroforestry canopy provides high structural complexity, functioning as biological corridors between intact primary forest fragments.',
       };
     }
   },
