@@ -44,6 +44,9 @@ class Settings(BaseSettings):
     MODAL_EMBED_URL: str = Field(
         default="https://ciforicraf-ai--rich-document-ingestion-textembedder-embed.modal.run"
     )
+    MODAL_INGEST_URL: str = Field(
+        default="https://ciforicraf-ai--rich-document-ingestion-trigger-ingest.modal.run"
+    )
 
     # Railway
     RAILWAY_PROJECT_ID: str = ""

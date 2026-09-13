@@ -21,6 +21,9 @@ export const PolicyModal: React.FC<PolicyModalProps> = ({
   const [eudrReport, setEudrReport] = useState<any | null>(null);
   const [reddReport, setReddReport] = useState<any | null>(null);
   const [documents, setDocuments] = useState<any[]>([]);
+  const [modalStatus, setModalStatus] = useState<any | null>(null);
+  const [ingesting, setIngesting] = useState(false);
+  const [ingestNotice, setIngestNotice] = useState<string | null>(null);
 
   useEffect(() => {
     if (jurisdictionCode === 'ES-EX') {
@@ -33,6 +36,15 @@ export const PolicyModal: React.FC<PolicyModalProps> = ({
     setEudrReport(null);
     setReddReport(null);
   }, [jurisdictionCode]);
+
+  useEffect(() => {
+    if (isOpen && tab === 'corpus') {
+      if (documents.length === 0) {
+        handleFetchDocuments();
+      }
+      api.getModalStatus().then(setModalStatus).catch(() => {});
+    }
+  }, [isOpen, tab]);
 
   if (!isOpen) return null;
 
@@ -75,6 +87,27 @@ export const PolicyModal: React.FC<PolicyModalProps> = ({
       console.error(e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleTriggerIngest = async () => {
+    setIngesting(true);
+    setIngestNotice(null);
+    try {
+      const res = await api.triggerModalIngest(true);
+      if (res.success || res.processed !== undefined) {
+        setIngestNotice('Successfully re-indexed compliance corpus on Modal GPU.');
+      } else {
+        setIngestNotice('Modal ingestion task triggered.');
+      }
+      await handleFetchDocuments();
+      const status = await api.getModalStatus();
+      setModalStatus(status);
+    } catch (e) {
+      console.error(e);
+      setIngestNotice('Modal ingestion request failed.');
+    } finally {
+      setIngesting(false);
     }
   };
 
@@ -291,23 +324,58 @@ export const PolicyModal: React.FC<PolicyModalProps> = ({
 
           {tab === 'corpus' && (
             <div className="space-y-4">
-              <div className="p-3.5 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
-                <div>
-                  <div className="font-semibold text-slate-200 text-xs">
-                    Authoritative Regulatory & Scientific Knowledge Base
+              <div className="p-3.5 rounded-lg bg-slate-950 border border-slate-800 space-y-2.5">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="font-semibold text-slate-200 text-xs">
+                      Authoritative Regulatory & Scientific Knowledge Base
+                    </div>
+                    <div className="text-[11px] text-slate-400 mt-0.5">
+                      Modal T4 serverless neural embeddings (BAAI/bge-small-en-v1.5) index official EUDR regulations,
+                      European Commission guidance, and CIFOR-ICRAF scientific publications.
+                    </div>
                   </div>
-                  <div className="text-[11px] text-slate-400 mt-0.5">
-                    Modal T4 serverless neural embeddings (BAAI/bge-small-en-v1.5) index official EUDR regulations,
-                    European Commission guidance, and CIFOR-ICRAF scientific publications for due diligence verification.
+                  <div className="flex items-center space-x-2 shrink-0 ml-3">
+                    <button
+                      onClick={handleTriggerIngest}
+                      disabled={ingesting || loading}
+                      className="px-2.5 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-[11px] text-amber-400 border border-amber-500/40 transition-colors"
+                      title="Trigger cloud document ingestion on Modal GPU"
+                    >
+                      {ingesting ? 'Ingesting on Modal...' : '⚡ Ingest via Modal'}
+                    </button>
+                    <button
+                      onClick={handleFetchDocuments}
+                      disabled={loading || ingesting}
+                      className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 border border-slate-700 transition-colors"
+                    >
+                      {loading ? 'Refreshing...' : 'Refresh'}
+                    </button>
                   </div>
                 </div>
-                <button
-                  onClick={handleFetchDocuments}
-                  disabled={loading}
-                  className="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-[11px] text-amber-400 border border-slate-700 transition-colors shrink-0 ml-3"
-                >
-                  {loading ? 'Refreshing...' : 'Refresh Corpus'}
-                </button>
+
+                {/* Modal Status Banner */}
+                <div className="flex items-center justify-between text-[10px] px-2.5 py-1.5 rounded bg-slate-900 border border-slate-800 font-mono">
+                  <div className="flex items-center space-x-2">
+                    <span className={`w-2 h-2 rounded-full ${modalStatus?.status === 'online' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+                    <span className="text-slate-300 font-medium">
+                      {modalStatus?.status === 'online' ? 'Modal Cloud GPU Compute: Connected' : 'Modal Ingestion Engine: Connecting...'}
+                    </span>
+                    <span className="text-slate-500">·</span>
+                    <span className="text-slate-400">Model: {modalStatus?.model || 'BAAI/bge-small-en-v1.5'} ({modalStatus?.dimensions || 384}-dim)</span>
+                  </div>
+                  {modalStatus?.latency_ms ? (
+                    <span className="text-emerald-400">{modalStatus.latency_ms} ms</span>
+                  ) : (
+                    <span className="text-slate-500">T4 GPU Serverless</span>
+                  )}
+                </div>
+
+                {ingestNotice && (
+                  <div className="text-[11px] px-2.5 py-1 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
+                    {ingestNotice}
+                  </div>
+                )}
               </div>
 
               {documents.length > 0 ? (

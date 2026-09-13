@@ -253,6 +253,24 @@ async def list_documents(
     }
 
 
+@router.get("/modal/status")
+async def get_modal_status():
+    """Check real-time health and latency of Modal cloud GPU embedding compute"""
+    from app.utils.embeddings import check_modal_embedding_status
+    return check_modal_embedding_status()
+
+
+@router.post("/modal/ingest")
+async def trigger_modal_ingest(
+    force: bool = Body(False, embed=True, description="Force re-processing of already ingested documents"),
+    user: dict = Depends(get_current_user_optional),
+):
+    """Trigger cloud GPU document ingestion on Modal (or re-process corpus)"""
+    from app.utils.embeddings import trigger_cloud_ingest
+    res = await trigger_cloud_ingest(force=force)
+    return res
+
+
 
 @router.get("/stats")
 async def get_ai_stats(

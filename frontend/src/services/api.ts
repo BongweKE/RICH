@@ -148,6 +148,31 @@ export const api = {
     }
   },
 
+  async getModalStatus() {
+    try {
+      const res = await fetch(`${API_BASE}/ai/modal/status`);
+      if (!res.ok) throw new Error('Failed to fetch modal status');
+      return await res.json();
+    } catch (e) {
+      console.error('Error fetching modal status:', e);
+      return { status: 'offline', provider: 'Fallback' };
+    }
+  },
+
+  async triggerModalIngest(force: boolean = false) {
+    try {
+      const res = await fetch(`${API_BASE}/ai/modal/ingest`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ force }),
+      });
+      return await res.json();
+    } catch (e) {
+      console.error('Error triggering modal ingest:', e);
+      return { success: false, error: String(e) };
+    }
+  },
+
   async getREDDReport(jurisdictionCode: string) {
     const res = await fetch(`${API_BASE}/policy/redd-report`, {
       method: 'POST',

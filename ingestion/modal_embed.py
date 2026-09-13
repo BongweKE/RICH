@@ -31,6 +31,9 @@ image = (
         "psycopg2-binary",
         "fastapi[standard]",
     )
+    .run_commands(
+        'python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer(\'BAAI/bge-small-en-v1.5\')"'
+    )
 )
 
 app = modal.App("rich-document-ingestion")
@@ -45,7 +48,7 @@ db_secrets = [
 @app.cls(
     image=image,
     gpu="T4",
-    timeout=60,
+    timeout=120,
     scaledown_window=300,
 )
 class TextEmbedder:
@@ -57,6 +60,27 @@ class TextEmbedder:
     @modal.fastapi_endpoint(method="POST")
     def embed(self, payload: Dict[str, Any]):
         """Generate 384-dimensional normalized BGE-small embeddings for queries or passages"""
+        if payload.get("ping"):
+            return {
+                "status": "online",
+                "provider": "Modal Cloud Compute",
+                "model": "BAAI/bge-small-en-v1.5",
+                "dim": 384,
+                "gpu": "T4",
+            }
+
+        # Batch text support
+        if "texts" in payload and isinstance(payload["texts"], list):
+            raw_texts = [str(t)[:2000] for t in payload["texts"] if str(t).strip()]
+            if not raw_texts:
+                return {"embeddings": [], "dim": 384, "model": "BAAI/bge-small-en-v1.5"}
+            vecs = self.model.encode(raw_texts, normalize_embeddings=True)
+            return {
+                "embeddings": vecs.tolist(),
+                "dim": len(vecs[0]) if len(vecs) > 0 else 384,
+                "model": "BAAI/bge-small-en-v1.5",
+            }
+
         text = payload.get("text", "")
         if not text:
             return {"embedding": []}
@@ -340,6 +364,24 @@ def process_documents(force_reprocess: bool = False):
     doc_volume.commit()
 
     return {"processed": processed_count, "state": state}
+
+
+@app.function(
+    image=image,
+    gpu="T4",
+    volumes={"/data": doc_volume},
+    secrets=db_secrets,
+    timeout=3600,
+)
+@modal.fastapi_endpoint(method="POST")
+def trigger_ingest(payload: Dict[str, Any] = None):
+    """
+    Cloud endpoint to trigger document ingestion and re-indexing on Modal.
+    Can be called directly by the RICH web backend or dashboard.
+    """
+    payload = payload or {}
+    force = payload.get("force", False)
+    return process_documents.local(force_reprocess=force)
 
 
 @app.local_entrypoint()

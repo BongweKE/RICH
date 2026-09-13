@@ -361,6 +361,13 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({
             <Send className="w-3.5 h-3.5" />
           </button>
         </form>
+        <div className="mt-2 flex items-center justify-between text-[10px] text-slate-500 font-mono">
+          <span className="flex items-center space-x-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            <span>Modal T4 GPU Embeddings · pgvector (384-dim)</span>
+          </span>
+          <span>EUR-Lex &amp; CIFOR-ICRAF Grounded</span>
+        </div>
       </div>
       {/* Grounded Legal Citation Dossier Popover */}
       {selectedCitation && (

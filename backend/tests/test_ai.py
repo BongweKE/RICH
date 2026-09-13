@@ -222,5 +222,41 @@ def test_generate_embedding_utility():
     assert empty_vec[0] == 1.0
 
 
+def test_generate_embeddings_batch_utility():
+    """Test batch embedding generator and caching"""
+    from app.utils.embeddings import generate_embeddings_batch
+
+    vecs = generate_embeddings_batch(["EUDR cocoa", "Ghana shade trees"], dim=384)
+    assert len(vecs) == 2
+    assert len(vecs[0]) == 384
+    assert len(vecs[1]) == 384
+    assert isinstance(vecs[0][0], float)
+
+
+@pytest.mark.asyncio
+async def test_modal_status_endpoint(async_client: AsyncClient):
+    """Test /api/ai/modal/status returns live status or graceful fallback"""
+    resp = await async_client.get("/api/ai/modal/status")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "status" in data
+    assert "provider" in data
+
+
+@pytest.mark.asyncio
+async def test_modal_ingest_endpoint(async_client: AsyncClient, monkeypatch: pytest.MonkeyPatch):
+    """Test /api/ai/modal/ingest endpoint"""
+    async def mock_ingest(force=False):
+        return {"success": True, "processed": 4}
+
+    monkeypatch.setattr("app.utils.embeddings.trigger_cloud_ingest", mock_ingest)
+    resp = await async_client.post("/api/ai/modal/ingest", json={"force": False})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "success" in data
+    assert data["success"] is True
+
+
+
 
 
