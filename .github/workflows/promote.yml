@@ -53,10 +53,20 @@ jobs:
           fi
           echo "OK: $SHA arrived via $prs pull request(s)"
 
-      - name: Create Git Tag
+      - name: Configure Git for tag creation
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+          # Use PAT if available for write operations, otherwise use GITHUB_TOKEN
+          if [ -n "${{ secrets.RAILWAY_GITHUB_PAT }}" ]; then
+            echo "Using PAT for git write operations"
+            git remote set-url origin https://x-access-token:${{ secrets.RAILWAY_GITHUB_PAT }}@github.com/BongweKE/RICH.git
+          else
+            echo "Using GITHUB_TOKEN (may fail on push)"
+          fi
+
+      - name: Create Git Tag
+        run: |
           git tag ${{ inputs.version }}
           git push origin ${{ inputs.version }}
 
