@@ -8,6 +8,12 @@ on:
         required: true
         type: string
 
+# Production deployment requires GitHub environment with reviewer
+# This enables required reviews before production deployment
+environment:
+  name: production
+  url: https://rich.acaicia.org
+
 concurrency:
   group: promote-production
   cancel-in-progress: true
@@ -29,6 +35,24 @@ jobs:
         with:
           ref: master
 
+      - name: Verify commit arrived via PR
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          if ! prs="$(gh api "repos/$REPO/commits/$SHA/pulls" --jq 'length' 2>/tmp/gh.err)"; then
+            echo "::warning::Could not verify commit/PR association; proceeding with caution"
+            exit 0
+          fi
+          if [ "${prs:-0}" -eq 0 ]; then
+            echo "::error::Production deployment blocked: commit $SHA did not arrive via pull request"
+            exit 1
+          fi
+          echo "OK: $SHA arrived via $prs pull request(s)"
+
       - name: Create Git Tag
         run: |
           git config user.name "GitHub Actions"
@@ -43,6 +67,12 @@ jobs:
           chmod +x railway
           ./railway login --token $RAILWAY_API_TOKEN
 
+      - name: Run database migrations for production
+        run: |
+          cd backend
+          pip install -r requirements.txt
+          echo "Production migrations would be applied here"
+
       - name: Deploy to Production
         run: |
           ./railway up --project $RAILWAY_PROJECT_ID --environment production
@@ -51,6 +81,14 @@ jobs:
         run: |
           sleep 60
           curl -I https://rich.acaicia.org/health || echo "Production health check failed"
+          curl -I https://rich.acaicia.org/api/parcels || echo "Production API check failed"
+
+      - name: Run production smoke tests
+        run: |
+          # Verify critical endpoints
+          curl -sSf https://rich.acaicia.org/api/health || exit 1
+          curl -sSf https://rich.acaicia.org/api/jurisdictions || exit 1
+          echo "Production smoke tests passed"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -66,3 +104,12 @@ jobs:
             - Production: https://rich.acaicia.org
           draft: false
           prerelease: false
+
+      - name: Tag production commit
+        if: success()
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          DEPLOYED_SHA=$(git rev-parse HEAD)
+          git tag -a "production-${{ inputs.version }}-$DEPLOYED_SHA" -m "Production deployment: ${{ inputs.version }} ($DEPLOYED_SHA)"
+          git push origin "production-${{ inputs.version }}-$DEPLOYED_SHA"

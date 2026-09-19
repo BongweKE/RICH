@@ -1,0 +1,35 @@
+# Code Owners for RICH
+# Based on hodaripay patterns for segregation of duties and required reviews
+
+# Default owner
+* @BongweKE
+
+# Governance
+/.github/ @BongweKE
+
+# Backend - highest risk
+/backend/ @BongweKE
+
+# Frontend
+/frontend/ @BongweKE
+
+# Database & migrations
+/database/ @BongweKE
+/migrations/ @BongweKE
+
+# CI/CD & scripts
+/.github/workflows/ @BongweKE
+/scripts/ @BongweKE
+
+# Documentation
+/docs/ @BongweKE
+*.md @BongweKE
+
+# Data & ingestion
+/data/ @BongweKE
+ingestion/ @BongweKE
+
+# Configuration
+*.yml @BongweKE
+*.yaml @BongweKE
+*.json @BongweKE

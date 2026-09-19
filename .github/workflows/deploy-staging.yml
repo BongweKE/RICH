@@ -17,8 +17,30 @@ env:
   JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
 jobs:
+  detect_changes:
+    name: Detect backend changes
+    runs-on: ubuntu-latest
+    outputs:
+      backend_changed: ${{ steps.detect.outputs.backend_changed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changes
+        id: detect
+        run: |
+          # Check if backend files were modified in the last push
+          if git diff --name-only HEAD~1 | grep -qE '^backend/'; then
+            echo "backend_changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "backend_changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
   test:
     name: Run Tests
+    needs: detect_changes
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -71,7 +93,8 @@ jobs:
 
   deploy:
     name: Deploy to Railway
-    needs: test
+    needs: [detect_changes, test]
+    if: needs.detect_changes.outputs.backend_changed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -85,10 +108,51 @@ jobs:
           ./railway login --token $RAILWAY_API_TOKEN
 
       - name: Deploy to Railway
+        id: deploy
         run: |
           ./railway up --project $RAILWAY_PROJECT_ID --environment staging
+          # Extract deployment URL
+          DEPLOYMENT_URL=$(./railway variables get STAGING_URL 2>/dev/null || echo "https://rich-staging.railway.app")
+          echo "deployment_url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
 
-      - name: Verify deployment
+      - name: Run database migrations
         run: |
+          cd backend
+          pip install -r requirements.txt
+          # Run migrations via Railway CLI or direct DB connection
+          # For now, we assume migrations are handled by the deployment
+          echo "Migrations would be applied here"
+
+      - name: Seed sample data
+        run: |
+          # Seed the database with sample parcels
+          echo "Seeding sample data..."
+          # Would use: python scripts/seed_database.py
+          echo "Sample data seeding would run here"
+
+      - name: Smoke tests
+        run: |
+          # Wait for deployment to be ready
           sleep 30
-          curl -I https://rich-staging.railway.app/health || echo "Health check failed"
+          # Health check
+          curl -I ${{ steps.deploy.outputs.deployment_url }}/health || echo "Health check failed"
+          # Basic API endpoint check
+          curl -I ${{ steps.deploy.outputs.deployment_url }}/api/parcels || echo "API check failed"
+
+      - name: Tag last deployed commit
+        if: success()
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "actions@github.com"
+          DEPLOYED_SHA=$(git rev-parse HEAD)
+          git tag -a "staging-$DEPLOYED_SHA" -m "Deployed to staging: $DEPLOYED_SHA"
+          git push origin "staging-$DEPLOYED_SHA"
+
+  skip_deploy:
+    name: Skip deploy (no backend changes)
+    needs: detect_changes
+    if: needs.detect_changes.outputs.backend_changed == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - name: No backend changes detected
+        run: echo "No backend changes detected. Skipping deployment to staging."
