@@ -18,10 +18,10 @@ env:
 
 jobs:
   detect_changes:
-    name: Detect backend changes
+    name: Detect deployable changes
     runs-on: ubuntu-latest
     outputs:
-      backend_changed: ${{ steps.detect.outputs.backend_changed }}
+      deploy_needed: ${{ steps.detect.outputs.deploy_needed }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -31,11 +31,11 @@ jobs:
       - name: Detect changes
         id: detect
         run: |
-          # Check if backend files were modified in the last push
-          if git diff --name-only HEAD~1 | grep -qE '^backend/'; then
-            echo "backend_changed=true" >> "$GITHUB_OUTPUT"
+          # Check if backend, frontend, or workflow files were modified in the last push
+          if git diff --name-only HEAD~1 | grep -qE '^(backend/|frontend/|\.github/workflows/)'; then
+            echo "deploy_needed=true" >> "$GITHUB_OUTPUT"
           else
-            echo "backend_changed=false" >> "$GITHUB_OUTPUT"
+            echo "deploy_needed=false" >> "$GITHUB_OUTPUT"
           fi
 
   test:
@@ -94,7 +94,7 @@ jobs:
   deploy:
     name: Deploy to Railway
     needs: [detect_changes, test]
-    if: needs.detect_changes.outputs.backend_changed == 'true'
+    if: needs.detect_changes.outputs.deploy_needed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -149,10 +149,10 @@ jobs:
           git push origin "staging-$DEPLOYED_SHA"
 
   skip_deploy:
-    name: Skip deploy (no backend changes)
+    name: Skip deploy (no deployable changes)
     needs: detect_changes
-    if: needs.detect_changes.outputs.backend_changed == 'false'
+    if: needs.detect_changes.outputs.deploy_needed == 'false'
     runs-on: ubuntu-latest
     steps:
-      - name: No backend changes detected
-        run: echo "No backend changes detected. Skipping deployment to staging."
+      - name: No deployable changes detected
+        run: echo "No deployable changes detected. Skipping deployment to staging."
