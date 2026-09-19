@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Layers,
   Eye,
@@ -10,30 +10,27 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
-import { LayerState } from '../types';
+import { LayerState, LayerOpacityState } from '../types';
 
 interface LayerPanelProps {
   layers: LayerState;
   onToggleLayer: (layer: keyof LayerState) => void;
   parcelCount: number;
+  opacities: LayerOpacityState;
+  onOpacityChange: (layer: keyof LayerOpacityState, value: number) => void;
 }
 
 export const LayerPanel: React.FC<LayerPanelProps> = ({
   layers,
   onToggleLayer,
   parcelCount,
+  opacities,
+  onOpacityChange,
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const [opacities, setOpacities] = useState<Record<string, number>>({
-    agroforestryParcels: 85,
-    referencePoints: 90,
-    eudrDeforestationBaseline: 70,
-    canopyDensity: 60,
-    carbonDensityHeatmap: 50,
-  });
 
-  const handleOpacityChange = (layerKey: string, val: number) => {
-    setOpacities((prev) => ({ ...prev, [layerKey]: val }));
+  const handleOpacityChangeLocal = (layerKey: string, val: number) => {
+    onOpacityChange(layerKey as keyof LayerOpacityState, val);
   };
 
   return (
@@ -85,7 +82,7 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({
                     min="10"
                     max="100"
                     value={opacities.agroforestryParcels}
-                    onChange={(e) => handleOpacityChange('agroforestryParcels', Number(e.target.value))}
+                    onChange={(e) => handleOpacityChangeLocal('agroforestryParcels', Number(e.target.value))}
                     className="w-24 accent-emerald-500 cursor-pointer h-1"
                   />
                   <span className="font-mono text-emerald-400">{opacities.agroforestryParcels}%</span>

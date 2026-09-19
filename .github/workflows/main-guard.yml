@@ -1,0 +1,81 @@
+name: Main branch guard
+
+# Detective control: `main` must only move through merged pull requests.
+#
+# GitHub branch protection / rulesets (the *preventive* control) are not
+# available on a private repo without GitHub Pro, so this workflow runs on every
+# push to `main` and fails + files an issue when a commit did not arrive via a
+# pull request. It is deliberately loud, not silent.
+#
+# Preventive controls that complement this:
+#   - Once branch protection/rulesets are available (make the repo public or
+#     upgrade), enable them per docs/ci-cd.md.
+on:
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: main-guard-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  guard:
+    name: Verify main arrived via a pull request
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check commit ↔ PR association
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          # The commit is a PR merge (or a squash/rebase from a PR) iff the API
+          # associates at least one PR with it. A direct `git push origin main`
+          # returns an empty list.
+          if ! prs="$(gh api "repos/$REPO/commits/$SHA/pulls" --jq 'length' 2>/tmp/gh.err)"; then
+            echo "::warning::Could not query commit/PR association (${SHA}); skipping guard. $(cat /tmp/gh.err)"
+            echo "violation=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ "${prs:-0}" -eq 0 ]; then
+            echo "violation=true" >> "$GITHUB_OUTPUT"
+            echo "::error::Direct push to main detected: $SHA did not arrive via a pull request."
+          else
+            echo "violation=false" >> "$GITHUB_OUTPUT"
+            echo "OK: $SHA is associated with $prs pull request(s)."
+          fi
+
+      - name: File a process-violation issue
+        if: steps.check.outputs.violation == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          TITLE="Process violation: direct push to main (${SHA:0:7})"
+          BODY="$(printf 'A commit was pushed directly to `main` without a pull request.\n\n- Commit: `%s`\n- Pusher: `%s`\n- Run: %s/%s/actions/runs/%s\n\n**Why this matters:** `main` auto-deploys staging and is the only ref production can be promoted from, so an unreviewed commit bypasses CI review, the docs rule and the ADR gate.\n\n**What to do:** if this was accidental, revert it through a PR. If the change is wanted, re-land it through a PR so it is reviewed and linked to an issue.\n\nSee AGENTS.md and CI_CD_IMPROVEMENTS.md.' \
+            "$SHA" "${GITHUB_ACTOR:-unknown}" "${GITHUB_SERVER_URL:-https://github.com}" "$REPO" "${GITHUB_RUN_ID:-unknown}")"
+          # Deduplicate: skip if an open issue for this short SHA already exists.
+          # Search by the hex short-SHA only (no special chars to break the query).
+          existing="$(gh api -X GET search/issues \
+            -f q="repo:$REPO in:title ${SHA:0:7}" --jq '.total_count' 2>/dev/null || echo 0)"
+          if [ "${existing:-0}" -gt 0 ]; then
+            echo "An open issue for ${SHA:0:7} already exists; not filing a duplicate."
+            exit 0
+          fi
+          gh issue create --repo "$REPO" --title "$TITLE" --body "$BODY" \
+            --label "process-violation"
+
+      - name: Fail the run
+        if: steps.check.outputs.violation == 'true'
+        run: |
+          echo "::error::main must only be updated via merged pull requests. See the issue filed above."
+          exit 1

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Jurisdiction, Parcel, LayerState, SensorMode, TourWaypoint } from '../types';
+import { Jurisdiction, Parcel, LayerState, LayerOpacityState, SensorMode, TourWaypoint, AGROFORESTRY_SUBTYPE_COLORS } from '../types';
 
 interface MapViewerProps {
   jurisdiction: Jurisdiction | null;
@@ -7,6 +7,7 @@ interface MapViewerProps {
   selectedParcel: Parcel | null;
   onSelectParcel: (parcel: Parcel | null) => void;
   layers: LayerState;
+  opacities: LayerOpacityState;
   is3DMode: boolean;
   sensorMode: SensorMode;
   currentYear: number;
@@ -22,6 +23,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
   selectedParcel,
   onSelectParcel,
   layers,
+  opacities,
   is3DMode,
   sensorMode,
   currentYear,
@@ -236,18 +238,24 @@ export const MapViewer: React.FC<MapViewerProps> = ({
           type: 'FeatureCollection',
           features: parcels
             .filter((p) => p.geometry && p.geometry.coordinates)
-            .map((p) => ({
-              type: 'Feature',
-              properties: {
-                id: p.id,
-                subtype: p.agroforestry_subtype,
-                confidence: p.confidence_score,
-                area_ha: p.area_ha || 15.0,
-                height: (p.confidence_score || 0.8) * 120, // 3D height proportional to canopy confidence
-                selected: selectedParcel?.id === p.id,
-              },
-              geometry: p.geometry,
-            })),
+            .map((p) => {
+              const subtype = p.agroforestry_subtype || '';
+              const subtypeColor = AGROFORESTRY_SUBTYPE_COLORS[subtype] || AGROFORESTRY_SUBTYPE_COLORS.default;
+              return {
+                type: 'Feature',
+                properties: {
+                  id: p.id,
+                  subtype: p.agroforestry_subtype,
+                  confidence: p.confidence_score,
+                  area_ha: p.area_ha || 15.0,
+                  height: (p.confidence_score || 0.8) * 120, // 3D height proportional to canopy confidence
+                  selected: selectedParcel?.id === p.id,
+                  subtype_color: subtypeColor,
+                  opacity: opacities.agroforestryParcels,
+                },
+                geometry: p.geometry,
+              };
+            }),
         };
 
         const existingSource = map.getSource('parcels-source');
@@ -268,8 +276,13 @@ export const MapViewer: React.FC<MapViewerProps> = ({
               visibility: layers.agroforestryParcels && !is3DMode ? 'visible' : 'none',
             },
             paint: {
-              'fill-color': '#10b981',
-              'fill-opacity': 0.45,
+              'fill-color': [
+                'case',
+                ['boolean', ['get', 'selected'], false],
+                ['get', 'subtype_color'],
+                ['coalesce', ['get', 'subtype_color'], '#10b981'],
+              ],
+              'fill-opacity': ['/', ['get', 'opacity'], 100],
             },
           });
 
@@ -285,12 +298,12 @@ export const MapViewer: React.FC<MapViewerProps> = ({
               'fill-extrusion-color': [
                 'case',
                 ['boolean', ['get', 'selected'], false],
-                '#34d399',
-                '#10b981',
+                ['get', 'subtype_color'],
+                ['coalesce', ['get', 'subtype_color'], '#10b981'],
               ],
               'fill-extrusion-height': ['get', 'height'],
               'fill-extrusion-base': 0,
-              'fill-extrusion-opacity': 0.85,
+              'fill-extrusion-opacity': ['/', opacities.agroforestryParcels, 100],
             },
           });
 
@@ -303,8 +316,13 @@ export const MapViewer: React.FC<MapViewerProps> = ({
               visibility: layers.agroforestryParcels ? 'visible' : 'none',
             },
             paint: {
-              'line-color': '#34d399',
-              'line-width': 2,
+              'line-color': [
+                'case',
+                ['boolean', ['get', 'selected'], false],
+                '#ffffff',
+                ['coalesce', ['get', 'subtype_color'], '#34d399'],
+              ],
+              'line-width': ['case', ['boolean', ['get', 'selected'], false], 3, 2],
             },
           });
 
@@ -348,7 +366,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     } else {
       map.once('load', syncParcels);
     }
-  }, [parcels, selectedParcel, layers.agroforestryParcels, is3DMode]);
+  }, [parcels, selectedParcel, layers.agroforestryParcels, is3DMode, opacities.agroforestryParcels]);
 
   // Handle Sensor Filter class on map container
   const getSensorFilterStyle = () => {

@@ -10,7 +10,7 @@ import { TacticalHUD } from './components/TacticalHUD';
 import { SensorOverlay } from './components/SensorOverlay';
 import { SceneDirector } from './components/SceneDirector';
 import { TemporalScrubber } from './components/TemporalScrubber';
-import { Jurisdiction, Parcel, LayerState, SensorMode, TourWaypoint } from './types';
+import { Jurisdiction, Parcel, LayerState, LayerOpacityState, SensorMode, TourWaypoint } from './types';
 import { api } from './services/api';
 
 export function App() {
@@ -26,6 +26,15 @@ export function App() {
     canopyDensity: true,
     satelliteBasemap: false,
     carbonDensityHeatmap: false,
+  });
+
+  const [opacities, setOpacities] = useState<LayerOpacityState>({
+    agroforestryParcels: 85,
+    referencePoints: 90,
+    eudrDeforestationBaseline: 70,
+    canopyDensity: 60,
+    satelliteBasemap: 100,
+    carbonDensityHeatmap: 50,
   });
 
   const [is3DMode, setIs3DMode] = useState(true); // default to 3D perspective
@@ -219,6 +228,11 @@ export function App() {
     playTacticalSFX('toggle');
   };
 
+  const handleOpacityChange = (layer: keyof LayerOpacityState, value: number) => {
+    setOpacities((prev) => ({ ...prev, [layer]: value }));
+    playTacticalSFX('beep');
+  };
+
   return (
     <div className="flex flex-col w-screen h-screen bg-slate-950 text-slate-100 overflow-hidden font-sans select-none">
       {/* Top Tactical Navigation Bar */}
@@ -310,6 +324,8 @@ export function App() {
           layers={layers}
           onToggleLayer={toggleLayer}
           parcelCount={parcels.length}
+          opacities={opacities}
+          onOpacityChange={handleOpacityChange}
         />
 
         {/* 2D / 3D Map Component */}
@@ -322,6 +338,7 @@ export function App() {
             playTacticalSFX('beep');
           }}
           layers={layers}
+          opacities={opacities}
           is3DMode={is3DMode}
           sensorMode={sensorMode}
           currentYear={currentYear}

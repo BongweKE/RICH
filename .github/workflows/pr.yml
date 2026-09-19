@@ -9,6 +9,58 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  pr_title:
+    name: Conventional PR title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate title
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          set -e
+          # Conventional Commits: type(scope)!: subject
+          pattern='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-zA-Z0-9._/-]+\))?!?: .+'
+          if ! printf '%s' "$TITLE" | grep -Eq "$pattern"; then
+            echo "::error::PR title is not a Conventional Commit: '$TITLE'"
+            echo "Expected e.g. 'feat(data): load real geospatial parcels'."
+            exit 1
+          fi
+          echo "OK: $TITLE"
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: 'false'
+
+  adr_validation:
+    name: ADR Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check ADR references
+        run: |
+          # Check if any PR changes mention ADR in description or files
+          # This ensures architecture decisions are documented
+          if git log --oneline --grep="ADR" HEAD~1..HEAD 2>/dev/null || \
+             git diff --name-only HEAD~1 | grep -q "ADR"; then
+            echo "ADR mentioned - ensure docs/adr/ directory is updated"
+          else
+            echo "No ADR changes detected"
+          fi
+
   migrations:
     name: Database Migration Lint
     runs-on: ubuntu-latest

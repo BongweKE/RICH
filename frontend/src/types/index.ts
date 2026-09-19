@@ -299,3 +299,26 @@ export interface LayerOpacityState {
   carbonDensityHeatmap?: number;
 }
 
+// Scientific color palette based on Viridis and categorization best practices
+export const LAND_COVER_COLORS: Record<string, string> = {
+  agroforestry: '#2ca25f',
+  forest: '#267838',
+  cropland: '#fdae61',
+  grassland: '#d1e5fe',
+  settlement: '#e7298a',
+  water: '#636eva',
+};
+
+// Agroforestry subtype-specific colors for better visual distinction
+export const AGROFORESTRY_SUBTYPE_COLORS: Record<string, string> = {
+  shade_cocoa: '#1f8a70',
+  shade_coffee: '#2d9d78',
+  alley_cropping: '#4a905d',
+  dehesa: '#827b3d',
+  silvopasture: '#918242',
+  parkland: '#5e8c61',
+  homegarden: '#3a7d44',
+  boundary_planting: '#2a6f3b',
+  default: '#10b981',
+};
+
