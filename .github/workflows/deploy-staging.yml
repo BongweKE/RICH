@@ -22,6 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       deploy_needed: ${{ steps.detect.outputs.deploy_needed }}
+      backend_changed: ${{ steps.detect.outputs.backend_changed }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -37,10 +38,18 @@ jobs:
           else
             echo "deploy_needed=false" >> "$GITHUB_OUTPUT"
           fi
+          
+          # Also detect backend changes separately for test job conditioning
+          if git diff --name-only HEAD~1 | grep -qE '^backend/'; then
+            echo "backend_changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "backend_changed=false" >> "$GITHUB_OUTPUT"
+          fi
 
   test:
     name: Run Tests
     needs: detect_changes
+    if: needs.detect_changes.outputs.backend_changed == 'true'
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -93,7 +102,7 @@ jobs:
 
   deploy:
     name: Deploy to Railway
-    needs: [detect_changes, test]
+    needs: detect_changes
     if: needs.detect_changes.outputs.deploy_needed == 'true'
     runs-on: ubuntu-latest
     steps:
