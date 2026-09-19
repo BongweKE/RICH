@@ -10,9 +10,9 @@ on:
 
 # Production deployment requires GitHub environment with reviewer
 # This enables required reviews before production deployment
-environment:
-  name: production
-  url: https://rich.acaicia.org
+# environment:
+#   name: production
+#   url: https://rich.acaicia.org
 
 concurrency:
   group: promote-production
