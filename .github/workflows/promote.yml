@@ -73,7 +73,8 @@ jobs:
       - name: Install Railway CLI
         run: |
           # Get the latest release tag
-          TAG=$(curl -s https://api.github.com/repos/railwayapp/cli/releases/latest | grep -oP '"tag_name": "\K[v0-9.]+')
+          TAG=$(curl -s https://api.github.com/repos/railwayapp/cli/releases/latest | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
+          echo "Downloading Railway CLI version: $TAG"
           curl -sL https://github.com/railwayapp/cli/releases/download/$TAG/railway-${TAG}-x86_64-unknown-linux-gnu.tar.gz -o railway.tar.gz
           tar -xzf railway.tar.gz
           chmod +x railway
