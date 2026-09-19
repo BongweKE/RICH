@@ -111,10 +111,16 @@ jobs:
 
       - name: Install Railway CLI
         run: |
-          curl -sL https://github.com/railwayapp/cli/releases/latest/download/railway-linux-x64.zip -o railway.zip
-          unzip railway.zip
-          chmod +x railway
-          ./railway login --token $RAILWAY_API_TOKEN
+          # Try npm install first (more reliable)
+          if ! command -v railway &> /dev/null; then
+            npm install -g railwayapp/railway || {
+              # Fallback to direct download
+              curl -sL https://github.com/railwayapp/cli/releases/latest/download/railway-linux-x64.zip -o railway.zip
+              unzip -o railway.zip
+              chmod +x railway
+            }
+          fi
+          railway login --token $RAILWAY_API_TOKEN || true
 
       - name: Deploy to Railway
         id: deploy
