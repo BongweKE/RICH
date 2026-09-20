@@ -17,6 +17,7 @@ import os
 import sys
 import uuid
 from datetime import datetime, timezone
+from typing import Any, Dict, List, cast
 
 import numpy as np
 from geoalchemy2.shape import from_shape
@@ -244,7 +245,7 @@ POLICY_FRAMEWORKS = [
 # =============================================================================
 # Document Catalog Data
 # =============================================================================
-DOCUMENTS = [
+DOCUMENTS: List[Dict[str, Any]] = [
     {
         "id": uuid.UUID("88888888-8888-4000-8000-000000000001"),
         "title": "Mapping Agroforestry Systems in Tropical Africa using Multitemporal Sentinel-1 and Sentinel-2 Imagery",
@@ -433,7 +434,7 @@ async def seed(dry_run: bool = False):
                 db.add(doc)
                 await db.flush()
 
-                for c_idx, chunk in enumerate(doc_data["chunks"]):
+                for c_idx, chunk in enumerate(cast(List[str], doc_data["chunks"])):
                     chunk_embed = generate_mock_embedding(384, seed=hash(chunk) % 10000)
                     emb = DocumentEmbedding(
                         document_id=doc.id,

@@ -265,3 +265,14 @@ async def test_modal_ingest_endpoint_admin(admin_client: AsyncClient, monkeypatc
     data = resp.json()
     assert "success" in data
     assert data["success"] is True
+
+
+@pytest.mark.asyncio
+async def test_ai_stats_endpoint(admin_client: AsyncClient):
+    """Test /api/ai/stats endpoint returns query counts, latency, and cache metrics"""
+    resp = await admin_client.get("/api/ai/stats")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "total_queries" in data
+    assert "avg_latency_ms" in data
+    assert "cache_hit_rate_pct" in data

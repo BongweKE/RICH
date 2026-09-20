@@ -48,7 +48,7 @@ class Parcel:
 
 
 # Region configurations with realistic bounding boxes and characteristics
-REGION_CONFIGS = {
+REGION_CONFIGS: Dict[str, Dict[str, Any]] = {
     "GH-AH": {
         "name": "Ghana Ashanti",
         "bbox": [-2.5, 5.5, -0.5, 7.5],  # Ashanti region approximate bounds
@@ -101,7 +101,7 @@ REGION_CONFIGS = {
 LAND_COVER_CLASS = "agroforestry"
 
 
-def generate_random_polygon(bbox: List[float], complexity: str = "medium") -> List[List[float]]:
+def generate_random_polygon(bbox: List[float], complexity: str = "medium") -> List[List[List[float]]]:
     """
     Generate a random polygon within a bounding box.
     Complexity determines number of vertices.
@@ -130,7 +130,7 @@ def generate_random_polygon(bbox: List[float], complexity: str = "medium") -> Li
     return [points]
 
 
-def generate_irregular_polygon(center: List[float], avg_radius_m: float) -> List[List[float]]:
+def generate_irregular_polygon(center: List[float], avg_radius_m: float) -> List[List[List[float]]]:
     """
     Generate an irregular polygon around a center point with given average radius in meters.
     More realistic for farm parcels.

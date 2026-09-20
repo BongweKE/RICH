@@ -190,3 +190,33 @@ async def test_biodiversity_and_profitability_endpoints(async_client):
     assert "systems" in prof_data
     assert len(prof_data["systems"]) >= 3
     assert "abatement_curve" in prof_data
+
+
+@pytest.mark.asyncio
+async def test_interactive_tradeoff_endpoint(async_client):
+    """Test interactive LASEM tradeoff endpoint"""
+    resp = await async_client.post(
+        "/api/lumens/interactive-tradeoff",
+        json={
+            "jurisdiction_code": "GH-AH",
+            "agroforestry_expansion_pct": 25.0,
+            "deforestation_enforcement_pct": 90.0,
+            "riparian_restoration_pct": 75.0,
+        },
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "axes" in data
+    assert "scenarios" in data
+    assert len(data["axes"]) == 5
+
+
+@pytest.mark.asyncio
+async def test_hydrology_endpoint(async_client):
+    """Test hydrology endpoint"""
+    resp = await async_client.get("/api/lumens/hydrology?jurisdiction_code=GH-AH&annual_rainfall_mm=1350")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["jurisdiction_code"] == "GH-AH"
+    assert "mean_soil_loss_t_ha_yr" in data
+    assert "avoided_erosion_tons_yr" in data

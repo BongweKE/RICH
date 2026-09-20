@@ -16,6 +16,9 @@ fi
 for f in docs/decisions/*.md; do
   if [ -f "$f" ]; then
     basename=$(basename "$f")
+    if [ "$basename" = "README.md" ]; then
+      continue
+    fi
     # ADR naming: NNNN-title.md
     if ! echo "$basename" | grep -Eq '^[0-9]{4}-[a-zA-Z0-9_-]+\.md$'; then
       echo "Bad ADR filename: $f (expected NNNN-title.md)"

@@ -377,7 +377,7 @@ def process_documents(force_reprocess: bool = False):
     timeout=3600,
 )
 @modal.fastapi_endpoint(method="POST")
-def trigger_ingest(payload: Dict[str, Any] = None):
+def trigger_ingest(payload: Dict[str, Any] | None = None):
     """
     Cloud endpoint to trigger document ingestion and re-indexing on Modal.
     Can be called directly by the RICH web backend or dashboard.
