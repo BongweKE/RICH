@@ -32,7 +32,7 @@ image = (
         "fastapi[standard]",
     )
     .run_commands(
-        'python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer(\'BAAI/bge-small-en-v1.5\')"'
+        "python -c \"from sentence_transformers import SentenceTransformer; SentenceTransformer('BAAI/bge-small-en-v1.5')\""
     )
 )
 
@@ -55,6 +55,7 @@ class TextEmbedder:
     @modal.enter()
     def load_model(self):
         from sentence_transformers import SentenceTransformer
+
         self.model = SentenceTransformer("BAAI/bge-small-en-v1.5")
 
     @modal.fastapi_endpoint(method="POST")
@@ -90,7 +91,6 @@ class TextEmbedder:
             "dim": len(vec),
             "model": "BAAI/bge-small-en-v1.5",
         }
-
 
 
 def extract_regulatory_metadata(text: str, filename: str) -> Dict[str, Any]:
@@ -246,6 +246,7 @@ def process_documents(force_reprocess: bool = False):
                     pages_data.append({"page": 1, "text": f.read()})
             elif ext.lower() == ".docx":
                 import docx
+
                 doc = docx.Document(file_path)
                 full_text = "\n".join(p.text for p in doc.paragraphs if p.text.strip())
                 pages_data.append({"page": 1, "text": full_text})
@@ -296,11 +297,13 @@ def process_documents(force_reprocess: bool = False):
                         "section": clause_info["section"],
                         "filename": filename,
                     }
-                    all_chunks.append({
-                        "text": chunk_text,
-                        "metadata": chunk_meta,
-                        "chunk_index": len(all_chunks),
-                    })
+                    all_chunks.append(
+                        {
+                            "text": chunk_text,
+                            "metadata": chunk_meta,
+                            "chunk_index": len(all_chunks),
+                        }
+                    )
 
             logging.info(f"{filename}: Created {len(all_chunks)} chunks. Generating embeddings on GPU...")
             texts_to_embed = [c["text"] for c in all_chunks]

@@ -46,6 +46,7 @@ def _cached_embedding_lookup(text: str, dim: int = 384) -> tuple[float, ...]:
     # 1. Try Modal BGE-small GPU endpoint if reachable
     try:
         from app.core.config import settings
+
         endpoint = getattr(settings, "MODAL_EMBED_URL", "")
         if endpoint and text.strip():
             with httpx.Client(timeout=10.0) as client:
@@ -98,6 +99,7 @@ def generate_embeddings_batch(texts: List[str], dim: int = 384) -> List[List[flo
     # Try batch query to Modal
     try:
         from app.core.config import settings
+
         endpoint = getattr(settings, "MODAL_EMBED_URL", "")
         if endpoint:
             with httpx.Client(timeout=15.0) as client:
@@ -123,6 +125,7 @@ def check_modal_embedding_status() -> Dict[str, Any]:
     """Health check for Modal Cloud Compute embedding service"""
     try:
         from app.core.config import settings
+
         endpoint = getattr(settings, "MODAL_EMBED_URL", "")
         if not endpoint:
             return {
@@ -168,6 +171,7 @@ async def trigger_cloud_ingest(force: bool = False) -> Dict[str, Any]:
     """Trigger cloud document ingestion on Modal"""
     try:
         from app.core.config import settings
+
         endpoint = getattr(settings, "MODAL_INGEST_URL", "")
         if not endpoint:
             return {"success": False, "error": "MODAL_INGEST_URL not configured"}

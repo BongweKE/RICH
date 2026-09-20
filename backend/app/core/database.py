@@ -50,9 +50,7 @@ async def init_db():
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
     except Exception as e:
-        logging.getLogger(__name__).warning(
-            f"Database initialization deferred (database connection not ready: {e})"
-        )
+        logging.getLogger(__name__).warning(f"Database initialization deferred (database connection not ready: {e})")
 
 
 async def close_db():

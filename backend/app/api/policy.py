@@ -49,10 +49,7 @@ async def list_frameworks(
         res_j = await db.execute(stmt_j)
         jurisdiction = res_j.scalar_one_or_none()
         if jurisdiction:
-            frameworks = [
-                f for f in frameworks
-                if not f.jurisdiction_ids or jurisdiction.id in f.jurisdiction_ids
-            ]
+            frameworks = [f for f in frameworks if not f.jurisdiction_ids or jurisdiction.id in f.jurisdiction_ids]
 
     # If database is empty, return default standard frameworks
     if not frameworks:
@@ -194,9 +191,9 @@ async def check_eudr_compliance(
     - Production in accordance with relevant legislation of the country of production
     - Geolocation covered by due diligence statement
     """
-    gaps = []
-    recommendations = []
-    checks = {}
+    gaps: list[str] = []
+    recommendations: list[str] = []
+    checks: dict[str, dict[str, Any]] = {}
 
     parcel = None
     if parcel_id:
@@ -264,7 +261,8 @@ async def check_eudr_compliance(
     # Overall scoring
     score_weights = {"geolocation": 0.35, "cutoff_compliance": 0.45, "legality": 0.20}
     total_score = sum(
-        checks[k]["score"] * score_weights[k] for k in score_weights if k in checks
+        (float(checks[k]["score"]) * score_weights[k] for k in score_weights if k in checks),
+        0.0,
     )
     is_compliant = total_score >= 0.85 and len(gaps) == 0
 
@@ -469,7 +467,7 @@ async def create_compliance_assessment(
 
     is_compliant = True
     score = 0.92
-    gaps = []
+    gaps: list[str] = []
     recommendations = ["Maintain documentation for periodic independent auditing."]
 
     assessment = PolicyComplianceAssessment(
@@ -551,9 +549,7 @@ async def get_assessment(
     if not parsed_id:
         raise HTTPException(status_code=404, detail="Assessment not found")
 
-    stmt = select(PolicyComplianceAssessment).where(
-        PolicyComplianceAssessment.id == parsed_id
-    )
+    stmt = select(PolicyComplianceAssessment).where(PolicyComplianceAssessment.id == parsed_id)
     result = await db.execute(stmt)
     assessment = result.scalar_one_or_none()
 

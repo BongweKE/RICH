@@ -1,7 +1,9 @@
 """
 AI/RAG models for documents, embeddings, query logs, and ingestion.
 """
+
 from datetime import datetime
+from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
 from pgvector.sqlalchemy import Vector
@@ -19,13 +21,15 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
 
+if TYPE_CHECKING:
+    from .feedback import AIFeedback
+    from .user import User
+
 
 class DocumentCatalog(Base):
     __tablename__ = "documents_catalog"
 
-    id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     title: Mapped[str] = mapped_column(Text, nullable=False)
     authors: Mapped[list[str]] = mapped_column(ARRAY(Text), default=list, nullable=False)
     publication_year: Mapped[int | None] = mapped_column(Integer, nullable=True)
@@ -35,26 +39,20 @@ class DocumentCatalog(Base):
     source: Mapped[str | None] = mapped_column(String(255), nullable=True)
     license: Mapped[str | None] = mapped_column(String(100), nullable=True)
     jurisdiction_ids: Mapped[list[UUID]] = mapped_column(ARRAY(PG_UUID(as_uuid=True)), default=list, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow, nullable=False
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
 
     # Relationships
     embeddings: Mapped[list["DocumentEmbedding"]] = relationship(
         "DocumentEmbedding", back_populates="document", cascade="all, delete-orphan"
     )
 
-    __table_args__ = (
-        Index("idx_documents_catalog_jurisdiction_ids", "jurisdiction_ids", postgresql_using="gin"),
-    )
+    __table_args__ = (Index("idx_documents_catalog_jurisdiction_ids", "jurisdiction_ids", postgresql_using="gin"),)
 
 
 class DocumentEmbedding(Base):
     __tablename__ = "document_embeddings"
 
-    id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     document_id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("documents_catalog.id", ondelete="CASCADE"),
@@ -65,14 +63,10 @@ class DocumentEmbedding(Base):
     chunk_index: Mapped[int] = mapped_column(Integer, nullable=False)
     embedding: Mapped[list[float]] = mapped_column(Vector(384), nullable=False)  # vector(384)
     metadata_: Mapped[dict] = mapped_column("metadata", JSONB, default=dict, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow, nullable=False
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
 
     # Relationships
-    document: Mapped["DocumentCatalog"] = relationship(
-        "DocumentCatalog", back_populates="embeddings"
-    )
+    document: Mapped["DocumentCatalog"] = relationship("DocumentCatalog", back_populates="embeddings")
 
     __table_args__ = (
         Index(
@@ -88,9 +82,7 @@ class DocumentEmbedding(Base):
 class QueryInteractionLog(Base):
     __tablename__ = "query_interaction_logs"
 
-    id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     session_id: Mapped[str | None] = mapped_column(String(255), nullable=True, index=True)
     user_id: Mapped[UUID | None] = mapped_column(
         PG_UUID(as_uuid=True),
@@ -113,9 +105,7 @@ class QueryInteractionLog(Base):
     cache_hit: Mapped[bool] = mapped_column(default=False, nullable=False)
     rating: Mapped[int | None] = mapped_column(Integer, nullable=True)  # -1, 0, 1
     feedback_text: Mapped[str | None] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow, nullable=False
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
 
     # Relationships
     user: Mapped["User | None"] = relationship("User")
@@ -127,9 +117,7 @@ class QueryInteractionLog(Base):
 class IngestionLog(Base):
     __tablename__ = "ingestion_logs"
 
-    id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     data_type: Mapped[str] = mapped_column(String(50), nullable=False)
     source: Mapped[str] = mapped_column(String(255), nullable=False)
     filename: Mapped[str | None] = mapped_column(String(255), nullable=True)
@@ -140,6 +128,4 @@ class IngestionLog(Base):
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow, nullable=False
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)

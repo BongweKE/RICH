@@ -1,7 +1,9 @@
 """
 Policy framework and compliance assessment models.
 """
+
 from datetime import datetime
+from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
 from sqlalchemy import (
@@ -18,39 +20,36 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
 
+if TYPE_CHECKING:
+    from .geospatial import AgroforestryParcel, Jurisdiction
+    from .lumens import Scenario
+    from .user import User
+
 
 class PolicyFramework(Base):
     __tablename__ = "policy_frameworks"
 
-    id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     code: Mapped[str] = mapped_column(String(50), unique=True, nullable=False, index=True)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     jurisdiction_ids: Mapped[list[UUID]] = mapped_column(ARRAY(PG_UUID(as_uuid=True)), default=list, nullable=False)
     requirements: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
     metadata_: Mapped[dict] = mapped_column("metadata", JSONB, default=dict, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow, nullable=False
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
 
     # Relationships
     compliance_assessments: Mapped[list["PolicyComplianceAssessment"]] = relationship(
         "PolicyComplianceAssessment", back_populates="framework"
     )
 
-    __table_args__ = (
-        Index("idx_policy_frameworks_jurisdiction_ids", "jurisdiction_ids", postgresql_using="gin"),
-    )
+    __table_args__ = (Index("idx_policy_frameworks_jurisdiction_ids", "jurisdiction_ids", postgresql_using="gin"),)
 
 
 class PolicyComplianceAssessment(Base):
     __tablename__ = "policy_compliance_assessments"
 
-    id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     framework_id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("policy_frameworks.id", ondelete="CASCADE"),
@@ -85,14 +84,10 @@ class PolicyComplianceAssessment(Base):
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
     )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow, nullable=False
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
 
     # Relationships
-    framework: Mapped["PolicyFramework"] = relationship(
-        "PolicyFramework", back_populates="compliance_assessments"
-    )
+    framework: Mapped["PolicyFramework"] = relationship("PolicyFramework", back_populates="compliance_assessments")
     scenario: Mapped["Scenario | None"] = relationship("Scenario", back_populates="compliance_assessments")
     parcel: Mapped["AgroforestryParcel | None"] = relationship("AgroforestryParcel")
     jurisdiction: Mapped["Jurisdiction | None"] = relationship("Jurisdiction")

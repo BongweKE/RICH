@@ -61,9 +61,7 @@ PILOT_JURISDICTIONS = [
         "level": 0,
         "parent_id": None,
         "area_km2": 505990.0,
-        "polygon_coords": [
-            [-9.3, 36.0], [3.3, 36.0], [3.3, 43.8], [-9.3, 43.8], [-9.3, 36.0]
-        ],
+        "polygon_coords": [[-9.3, 36.0], [3.3, 36.0], [3.3, 43.8], [-9.3, 43.8], [-9.3, 36.0]],
         "centroid_coords": [-3.7, 40.4],
         "metadata": {"region": "Southern Europe", "climate": "Mediterranean"},
     },
@@ -74,9 +72,7 @@ PILOT_JURISDICTIONS = [
         "level": 1,
         "parent_id": uuid.UUID("11111111-1111-4000-8000-000000000001"),
         "area_km2": 41634.0,
-        "polygon_coords": [
-            [-7.5, 38.0], [-5.0, 38.0], [-5.0, 40.5], [-7.5, 40.5], [-7.5, 38.0]
-        ],
+        "polygon_coords": [[-7.5, 38.0], [-5.0, 38.0], [-5.0, 40.5], [-7.5, 40.5], [-7.5, 38.0]],
         "centroid_coords": [-6.3, 39.2],
         "metadata": {"system": "Dehesa", "dominant_tree": "Quercus ilex / suber"},
     },
@@ -88,9 +84,7 @@ PILOT_JURISDICTIONS = [
         "level": 0,
         "parent_id": None,
         "area_km2": 238535.0,
-        "polygon_coords": [
-            [-3.25, 4.73], [1.19, 4.73], [1.19, 11.17], [-3.25, 11.17], [-3.25, 4.73]
-        ],
+        "polygon_coords": [[-3.25, 4.73], [1.19, 4.73], [1.19, 11.17], [-3.25, 11.17], [-3.25, 4.73]],
         "centroid_coords": [-1.02, 7.94],
         "metadata": {"region": "West Africa", "climate": "Tropical Guinean"},
     },
@@ -101,9 +95,7 @@ PILOT_JURISDICTIONS = [
         "level": 1,
         "parent_id": uuid.UUID("22222222-2222-4000-8000-000000000001"),
         "area_km2": 24389.0,
-        "polygon_coords": [
-            [-2.4, 5.8], [-1.0, 5.8], [-1.0, 7.4], [-2.4, 7.4], [-2.4, 5.8]
-        ],
+        "polygon_coords": [[-2.4, 5.8], [-1.0, 5.8], [-1.0, 7.4], [-2.4, 7.4], [-2.4, 5.8]],
         "centroid_coords": [-1.6, 6.7],
         "metadata": {"system": "Shade Cocoa", "commodity": "Cocoa"},
     },
@@ -115,9 +107,7 @@ PILOT_JURISDICTIONS = [
         "level": 0,
         "parent_id": None,
         "area_km2": 1104300.0,
-        "polygon_coords": [
-            [33.0, 3.4], [48.0, 3.4], [48.0, 15.0], [33.0, 15.0], [33.0, 3.4]
-        ],
+        "polygon_coords": [[33.0, 3.4], [48.0, 3.4], [48.0, 15.0], [33.0, 15.0], [33.0, 3.4]],
         "centroid_coords": [38.7, 9.0],
         "metadata": {"region": "East Africa", "climate": "Highland Tropical"},
     },
@@ -128,9 +118,7 @@ PILOT_JURISDICTIONS = [
         "level": 1,
         "parent_id": uuid.UUID("33333333-3333-4000-8000-000000000001"),
         "area_km2": 284538.0,
-        "polygon_coords": [
-            [35.0, 6.5], [39.5, 6.5], [39.5, 9.5], [35.0, 9.5], [35.0, 6.5]
-        ],
+        "polygon_coords": [[35.0, 6.5], [39.5, 6.5], [39.5, 9.5], [35.0, 9.5], [35.0, 6.5]],
         "centroid_coords": [36.8, 7.7],
         "metadata": {"system": "Shade Coffee", "zone": "Jimma"},
     },
@@ -150,9 +138,7 @@ PILOT_PARCELS = [
         "confidence_score": 0.96,
         "area_ha": 48.5,
         "uncertainty": 0.04,
-        "coords": [
-            [-6.45, 39.30], [-6.42, 39.30], [-6.42, 39.33], [-6.45, 39.33], [-6.45, 39.30]
-        ],
+        "coords": [[-6.45, 39.30], [-6.42, 39.30], [-6.42, 39.33], [-6.45, 39.33], [-6.45, 39.30]],
         "source": "Sentinel-2 + Planet AlphaEarth",
         "source_year": 2023,
     },
@@ -164,9 +150,7 @@ PILOT_PARCELS = [
         "confidence_score": 0.92,
         "area_ha": 72.3,
         "uncertainty": 0.06,
-        "coords": [
-            [-6.38, 39.25], [-6.34, 39.25], [-6.34, 39.29], [-6.38, 39.29], [-6.38, 39.25]
-        ],
+        "coords": [[-6.38, 39.25], [-6.34, 39.25], [-6.34, 39.29], [-6.38, 39.29], [-6.38, 39.25]],
         "source": "Sentinel-2 + Planet AlphaEarth",
         "source_year": 2023,
     },
@@ -179,9 +163,7 @@ PILOT_PARCELS = [
         "confidence_score": 0.89,
         "area_ha": 14.2,
         "uncertainty": 0.08,
-        "coords": [
-            [-1.75, 6.65], [-1.73, 6.65], [-1.73, 6.67], [-1.75, 6.67], [-1.75, 6.65]
-        ],
+        "coords": [[-1.75, 6.65], [-1.73, 6.65], [-1.73, 6.67], [-1.75, 6.67], [-1.75, 6.65]],
         "source": "Sentinel-2 + GEDI Canopy",
         "source_year": 2022,
     },
@@ -193,9 +175,7 @@ PILOT_PARCELS = [
         "confidence_score": 0.94,
         "area_ha": 28.6,
         "uncertainty": 0.05,
-        "coords": [
-            [-1.68, 6.58], [-1.65, 6.58], [-1.65, 6.61], [-1.68, 6.61], [-1.68, 6.58]
-        ],
+        "coords": [[-1.68, 6.58], [-1.65, 6.58], [-1.65, 6.61], [-1.68, 6.61], [-1.68, 6.58]],
         "source": "Sentinel-2 + GEDI Canopy",
         "source_year": 2022,
     },
@@ -208,9 +188,7 @@ PILOT_PARCELS = [
         "confidence_score": 0.91,
         "area_ha": 18.0,
         "uncertainty": 0.07,
-        "coords": [
-            [36.80, 7.65], [36.83, 7.65], [36.83, 7.68], [36.80, 7.68], [36.80, 7.65]
-        ],
+        "coords": [[36.80, 7.65], [36.83, 7.65], [36.83, 7.68], [36.80, 7.68], [36.80, 7.65]],
         "source": "Sentinel-2 + CIFOR-ICRAF Ground",
         "source_year": 2023,
     },
@@ -299,9 +277,24 @@ DOCUMENTS = [
 async def seed(dry_run: bool = False):
     """Seed the database with proof-of-concept dataset"""
     ref_points = [
-        {"pt": [-6.43, 39.31], "class": LandCoverClass.AGROFORESTRY, "sub": AgroforestrySubtype.DEHESA, "jid": uuid.UUID("11111111-1111-4000-8000-000000000002")},
-        {"pt": [-1.74, 6.66], "class": LandCoverClass.AGROFORESTRY, "sub": AgroforestrySubtype.SHADE_COCOA, "jid": uuid.UUID("22222222-2222-4000-8000-000000000002")},
-        {"pt": [36.81, 7.66], "class": LandCoverClass.AGROFORESTRY, "sub": AgroforestrySubtype.SHADE_COFFEE, "jid": uuid.UUID("33333333-3333-4000-8000-000000000002")},
+        {
+            "pt": [-6.43, 39.31],
+            "class": LandCoverClass.AGROFORESTRY,
+            "sub": AgroforestrySubtype.DEHESA,
+            "jid": uuid.UUID("11111111-1111-4000-8000-000000000002"),
+        },
+        {
+            "pt": [-1.74, 6.66],
+            "class": LandCoverClass.AGROFORESTRY,
+            "sub": AgroforestrySubtype.SHADE_COCOA,
+            "jid": uuid.UUID("22222222-2222-4000-8000-000000000002"),
+        },
+        {
+            "pt": [36.81, 7.66],
+            "class": LandCoverClass.AGROFORESTRY,
+            "sub": AgroforestrySubtype.SHADE_COFFEE,
+            "jid": uuid.UUID("33333333-3333-4000-8000-000000000002"),
+        },
     ]
 
     if dry_run:

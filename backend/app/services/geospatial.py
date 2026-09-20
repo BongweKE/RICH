@@ -77,7 +77,11 @@ class GeospatialService:
                 "jurisdiction_id": str(p.jurisdiction_id) if p.jurisdiction_id else None,
                 "geometry": cls.geometry_to_geojson(p.geometry),
                 "class_label": p.class_label.value if hasattr(p.class_label, "value") else str(p.class_label),
-                "agroforestry_subtype": p.agroforestry_subtype.value if p.agroforestry_subtype and hasattr(p.agroforestry_subtype, "value") else None,
+                "agroforestry_subtype": (
+                    p.agroforestry_subtype.value
+                    if p.agroforestry_subtype and hasattr(p.agroforestry_subtype, "value")
+                    else None
+                ),
                 "confidence_score": p.confidence_score,
                 "area_ha": p.area_ha,
                 "source": p.source,

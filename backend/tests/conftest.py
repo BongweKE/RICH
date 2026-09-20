@@ -119,6 +119,7 @@ def mock_db():
 @pytest_asyncio.fixture
 async def async_client(mock_db):
     """Async HTTP test client with overridden database dependency"""
+
     async def override_get_db():
         yield mock_db
 

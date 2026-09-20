@@ -78,9 +78,13 @@ async def get_chat_history(
 ):
     """Get chat history for a session"""
 
-    stmt = select(QueryInteractionLog).where(
-        QueryInteractionLog.session_id == session_id
-    ).order_by(QueryInteractionLog.created_at.desc()).limit(limit).offset(offset)
+    stmt = (
+        select(QueryInteractionLog)
+        .where(QueryInteractionLog.session_id == session_id)
+        .order_by(QueryInteractionLog.created_at.desc())
+        .limit(limit)
+        .offset(offset)
+    )
 
     result = await db.execute(stmt)
     logs = result.scalars().all()
@@ -257,6 +261,7 @@ async def list_documents(
 async def get_modal_status():
     """Check real-time health and latency of Modal cloud GPU embedding compute"""
     from app.utils.embeddings import check_modal_embedding_status
+
     return check_modal_embedding_status()
 
 
@@ -267,8 +272,10 @@ async def trigger_modal_ingest(
 ):
     """Trigger cloud GPU document ingestion on Modal (or re-process corpus). Requires admin permission."""
     from app.utils.embeddings import trigger_cloud_ingest
+
     res = await trigger_cloud_ingest(force=force)
     return res
+
 
 @router.get("/stats")
 async def get_ai_stats(
@@ -278,48 +285,49 @@ async def get_ai_stats(
     """Get AI system statistics"""
 
     # Total queries
-    stmt = select(func.count(QueryInteractionLog.id))
-    result = await db.execute(stmt)
+    total_stmt = select(func.count(QueryInteractionLog.id))
+    result = await db.execute(total_stmt)
     total_queries = result.scalar()
 
     # Average latency
-    stmt = select(func.avg(QueryInteractionLog.latency_ms))
-    result = await db.execute(stmt)
+    latency_stmt = select(func.avg(QueryInteractionLog.latency_ms))
+    result = await db.execute(latency_stmt)
     avg_latency = result.scalar()
 
     # Cache hit rate
-    stmt = select(
+    cache_stmt = select(
         func.count(QueryInteractionLog.id).filter(QueryInteractionLog.cache_hit.is_(True)).label("hits"),
         func.count(QueryInteractionLog.id).label("total"),
     )
-    result = await db.execute(stmt)
+    result = await db.execute(cache_stmt)
     row = result.one()
     cache_hit_rate = (row.hits / row.total * 100) if row.total > 0 else 0
 
     # User satisfaction
-    stmt = select(
+    satisfaction_stmt = select(
         func.avg(QueryInteractionLog.rating).filter(QueryInteractionLog.rating.isnot(None)).label("avg_rating"),
         func.count(QueryInteractionLog.rating).filter(QueryInteractionLog.rating.isnot(None)).label("rated_count"),
     )
-    result = await db.execute(stmt)
+    result = await db.execute(satisfaction_stmt)
     row = result.one()
     avg_rating = row.avg_rating
     rated_count = row.rated_count
 
     # Queries by day (last 30 days)
     from datetime import timedelta
+
     thirty_days_ago = datetime.utcnow() - timedelta(days=30)
-    stmt = select(
-        func.date(QueryInteractionLog.created_at).label("date"),
-        func.count(QueryInteractionLog.id).label("count"),
-    ).where(QueryInteractionLog.created_at >= thirty_days_ago).group_by(
-        func.date(QueryInteractionLog.created_at)
-    ).order_by(func.date(QueryInteractionLog.created_at))
-    result = await db.execute(stmt)
-    daily_queries = [
-        {"date": row.date.isoformat(), "count": row.count}
-        for row in result.all()
-    ]
+    daily_stmt = (
+        select(
+            func.date(QueryInteractionLog.created_at).label("date"),
+            func.count(QueryInteractionLog.id).label("count"),
+        )
+        .where(QueryInteractionLog.created_at >= thirty_days_ago)
+        .group_by(func.date(QueryInteractionLog.created_at))
+        .order_by(func.date(QueryInteractionLog.created_at))
+    )
+    result = await db.execute(daily_stmt)
+    daily_queries = [{"date": row.date.isoformat(), "count": row.count} for row in result.all()]
 
     return {
         "total_queries": total_queries,

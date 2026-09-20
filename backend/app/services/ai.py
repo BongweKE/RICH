@@ -53,7 +53,7 @@ def safe_uuid(v: Any) -> uuid.UUID | None:
 class GuardianAgent:
     """Validates user queries, filters unsafe content, and extracts spatial contexts"""
 
-    JURISDICTION_KEYWORDS = {
+    JURISDICTION_KEYWORDS: dict[str, dict[str, Any]] = {
         "ghana": {"code": "GH", "name": "Ghana", "bbox": [-3.25, 4.73, 1.19, 11.17]},
         "ashanti": {"code": "GH-AH", "name": "Ashanti Region", "bbox": [-2.5, 5.8, -1.0, 7.5]},
         "ethiopia": {"code": "ET", "name": "Ethiopia", "bbox": [33.0, 3.4, 48.0, 15.0]},
@@ -142,12 +142,56 @@ class ArchitectAgent:
     """Decomposes the query into specialized search strategies"""
 
     STOP_WORDS = {
-        "what", "when", "where", "which", "with", "that", "this", "have", "from",
-        "they", "will", "would", "could", "should", "about", "there", "their",
-        "other", "more", "some", "into", "than", "them", "then", "these", "does",
-        "doing", "been", "were", "tell", "give", "show", "explain", "please", "help",
-        "analyze", "check", "verify", "overview", "provide", "summary", "summarize",
-        "analysis", "using", "also", "such", "each", "both", "many", "most",
+        "what",
+        "when",
+        "where",
+        "which",
+        "with",
+        "that",
+        "this",
+        "have",
+        "from",
+        "they",
+        "will",
+        "would",
+        "could",
+        "should",
+        "about",
+        "there",
+        "their",
+        "other",
+        "more",
+        "some",
+        "into",
+        "than",
+        "them",
+        "then",
+        "these",
+        "does",
+        "doing",
+        "been",
+        "were",
+        "tell",
+        "give",
+        "show",
+        "explain",
+        "please",
+        "help",
+        "analyze",
+        "check",
+        "verify",
+        "overview",
+        "provide",
+        "summary",
+        "summarize",
+        "analysis",
+        "using",
+        "also",
+        "such",
+        "each",
+        "both",
+        "many",
+        "most",
     }
 
     @classmethod
@@ -163,7 +207,9 @@ class ArchitectAgent:
             search_strategies.append("policy_eudr")
         if any(term in q_lower for term in ["carbon", "emission", "biomass", "redd", "mrv", "sequestration"]):
             search_strategies.append("carbon_assessment")
-        if any(term in q_lower for term in ["parcel", "farm", "polygon", "boundary", "spatial", "map", "trees", "canopy"]):
+        if any(
+            term in q_lower for term in ["parcel", "farm", "polygon", "boundary", "spatial", "map", "trees", "canopy"]
+        ):
             search_strategies.append("geospatial_parcels")
         if any(term in q_lower for term in ["lumens", "preques", "change", "transition", "sankey"]):
             search_strategies.append("lumens_analysis")
@@ -220,12 +266,14 @@ class SynthesisAgent:
                 if miny > maxy:
                     miny, maxy = maxy, miny
                 bbox_geom = box(minx, miny, maxx, maxy)
-                stmt = select(AgroforestryParcel).options(selectinload(AgroforestryParcel.jurisdiction)).where(
-                    geofunc.ST_Intersects(
-                        AgroforestryParcel.geometry,
-                        func.ST_GeomFromText(bbox_geom.wkt, 4326)
+                stmt = (
+                    select(AgroforestryParcel)
+                    .options(selectinload(AgroforestryParcel.jurisdiction))
+                    .where(
+                        geofunc.ST_Intersects(AgroforestryParcel.geometry, func.ST_GeomFromText(bbox_geom.wkt, 4326))
                     )
-                ).limit(5)
+                    .limit(5)
+                )
                 res = await db.execute(stmt)
                 retrieved_parcels = list(res.scalars().all())
             except Exception as e:
@@ -233,9 +281,12 @@ class SynthesisAgent:
 
         # Fallback to jurisdiction parcels if bbox didn't return any parcels
         if not retrieved_parcels and retrieved_jurisdiction:
-            stmt = select(AgroforestryParcel).options(selectinload(AgroforestryParcel.jurisdiction)).where(
-                AgroforestryParcel.jurisdiction_id == retrieved_jurisdiction.id
-            ).limit(5)
+            stmt = (
+                select(AgroforestryParcel)
+                .options(selectinload(AgroforestryParcel.jurisdiction))
+                .where(AgroforestryParcel.jurisdiction_id == retrieved_jurisdiction.id)
+                .limit(5)
+            )
             res = await db.execute(stmt)
             retrieved_parcels = list(res.scalars().all())
 
@@ -243,10 +294,11 @@ class SynthesisAgent:
         retrieved_chunks = []
         try:
             from app.utils.embeddings import generate_embedding
+
             query_vec = generate_embedding(query, dim=384)
-            stmt_vec = select(DocumentEmbedding).order_by(
-                DocumentEmbedding.embedding.cosine_distance(query_vec)
-            ).limit(4)
+            stmt_vec = (
+                select(DocumentEmbedding).order_by(DocumentEmbedding.embedding.cosine_distance(query_vec)).limit(4)
+            )
             res_vec = await db.execute(stmt_vec)
             retrieved_chunks = list(res_vec.scalars().all())
         except Exception as e:
@@ -254,9 +306,7 @@ class SynthesisAgent:
 
         keywords = plan.get("search_keywords", [])
         if len(retrieved_chunks) < 4 and keywords:
-            chunk_conditions = [
-                DocumentEmbedding.chunk_text.ilike(f"%{kw}%") for kw in keywords[:3]
-            ]
+            chunk_conditions = [DocumentEmbedding.chunk_text.ilike(f"%{kw}%") for kw in keywords[:3]]
             stmt_chunks = select(DocumentEmbedding).where(or_(*chunk_conditions)).limit(4)
             res_chunks = await db.execute(stmt_chunks)
             existing_chunk_ids = {c.id for c in retrieved_chunks}
@@ -297,21 +347,25 @@ class SynthesisAgent:
         context_items = []
         if jurisdiction:
             sources.append({"type": "jurisdiction", "name": jurisdiction.name, "code": jurisdiction.code})
-            context_items.append(f"Jurisdiction: {jurisdiction.name} ({jurisdiction.code}), Area: {jurisdiction.area_km2} km²")
+            context_items.append(
+                f"Jurisdiction: {jurisdiction.name} ({jurisdiction.code}), Area: {jurisdiction.area_km2} km²"
+            )
 
         for idx, p in enumerate(parcels, start=1):
             cite_id = f"parcel-{idx}"
             subtype_str = safe_val(p.agroforestry_subtype) or safe_val(p.class_label)
             class_str = safe_val(p.class_label)
-            citations.append({
-                "id": cite_id,
-                "parcel_id": str(p.id),
-                "title": f"Parcel {p.id}",
-                "type": "agroforestry_parcel",
-                "subtype": subtype_str,
-                "area_ha": p.area_ha,
-                "confidence": p.confidence_score,
-            })
+            citations.append(
+                {
+                    "id": cite_id,
+                    "parcel_id": str(p.id),
+                    "title": f"Parcel {p.id}",
+                    "type": "agroforestry_parcel",
+                    "subtype": subtype_str,
+                    "area_ha": p.area_ha,
+                    "confidence": p.confidence_score,
+                }
+            )
             context_items.append(
                 f"[{len(citations)}] Agroforestry Parcel (ID: {p.id}): "
                 f"type={class_str}, confidence={p.confidence_score:.2f}, area={p.area_ha} ha."
@@ -319,12 +373,14 @@ class SynthesisAgent:
 
         for idx, doc in enumerate(documents, start=len(citations) + 1):
             cite_id = f"doc-{idx}"
-            citations.append({
-                "id": cite_id,
-                "title": doc.title,
-                "type": "document",
-                "doi": doc.doi,
-            })
+            citations.append(
+                {
+                    "id": cite_id,
+                    "title": doc.title,
+                    "type": "document",
+                    "doi": doc.doi,
+                }
+            )
             context_items.append(f"[{len(citations)}] Document: '{doc.title}' ({doc.source or 'Scientific Reference'})")
 
         chunks = context.get("chunks", [])
@@ -334,14 +390,16 @@ class SynthesisAgent:
             reg = meta.get("regulation", "Regulation")
             art = meta.get("article", "")
             clause_title = meta.get("title", f"{reg} {art}".strip() or "Regulatory Clause")
-            citations.append({
-                "id": cite_id,
-                "title": f"{reg}: {art} - {clause_title}" if art else clause_title,
-                "type": "regulatory_clause",
-                "page": meta.get("page", 1),
-                "article": art,
-                "regulation": reg,
-            })
+            citations.append(
+                {
+                    "id": cite_id,
+                    "title": f"{reg}: {art} - {clause_title}" if art else clause_title,
+                    "type": "regulatory_clause",
+                    "page": meta.get("page", 1),
+                    "article": art,
+                    "regulation": reg,
+                }
+            )
             context_items.append(
                 f"[{len(citations)}] {reg} {art} (Page {meta.get('page', 1)}): {ch.chunk_text[:350]}..."
             )
@@ -364,7 +422,9 @@ class SynthesisAgent:
                 for msg in conversation_history[-4:]:
                     messages.append({"role": msg.get("role", "user"), "content": msg.get("content", "")})
 
-                augmented_query = f"User Question: {query}\n\nRetrieved Context:\n" + ("\n".join(context_items) if context_items else "No specific database records found for this query.")
+                augmented_query = f"User Question: {query}\n\nRetrieved Context:\n" + (
+                    "\n".join(context_items) if context_items else "No specific database records found for this query."
+                )
                 messages.append({"role": "user", "content": augmented_query})
 
                 async with httpx.AsyncClient(timeout=35.0) as client:
@@ -483,7 +543,7 @@ class SynthesisAgent:
                 if len(snippet) > 280:
                     snippet = snippet[:280] + "..."
                 heading = f"{reg} - {art}".strip(" -")
-                sections.append(f"- **[{heading} (p.{page})]**: \"{snippet}\"")
+                sections.append(f'- **[{heading} (p.{page})]**: "{snippet}"')
             sections.append("")
 
         # 5. Citations & References
@@ -531,7 +591,7 @@ class AIService:
         plan = ArchitectAgent.plan(query, guardian)
 
         # 3. Retrieval & Context Assembly
-        context = {"jurisdiction": None, "parcels": [], "documents": []}
+        context: dict[str, Any] = {"jurisdiction": None, "parcels": [], "documents": []}
         if db:
             context = await SynthesisAgent.retrieve_context(query, guardian, plan, db)
 
@@ -548,8 +608,8 @@ class AIService:
         log_id = None
         if db:
             try:
-                retrieved_doc_ids = [d.id for d in context.get("documents", []) if getattr(d, "id", None)]
-                retrieved_parcel_ids = [p.id for p in context.get("parcels", []) if getattr(p, "id", None)]
+                retrieved_doc_ids = [d.id for d in (context.get("documents") or []) if getattr(d, "id", None)]
+                retrieved_parcel_ids = [p.id for p in (context.get("parcels") or []) if getattr(p, "id", None)]
 
                 interaction_log = QueryInteractionLog(
                     session_id=sid,
@@ -626,12 +686,15 @@ class AIService:
         ]
 
         if jurisdiction_code:
-            pills.insert(0, {
-                "id": "pill-jurisdiction",
-                "label": f"📍 Analyze {jurisdiction_code} Landscape",
-                "prompt": f"Provide an overview of agroforestry distribution and land cover change for jurisdiction {jurisdiction_code}.",
-                "category": "geospatial",
-            })
+            pills.insert(
+                0,
+                {
+                    "id": "pill-jurisdiction",
+                    "label": f"📍 Analyze {jurisdiction_code} Landscape",
+                    "prompt": f"Provide an overview of agroforestry distribution and land cover change for jurisdiction {jurisdiction_code}.",
+                    "category": "geospatial",
+                },
+            )
 
         if category:
             pills = [p for p in pills if p["category"] == category]
@@ -691,13 +754,14 @@ class AIService:
         db: AsyncSession | None = None,
     ) -> list[dict[str, Any]]:
         """Semantic vector search combined with keyword and PostGIS spatial filtering"""
-        results = []
+        results: list[dict[str, Any]] = []
         if not db:
             return results
 
         # 1. Semantic pgvector search on document embeddings
         try:
             from app.utils.embeddings import generate_embedding
+
             query_vec = generate_embedding(query, dim=384)
             stmt_vec = (
                 select(DocumentEmbedding, DocumentCatalog)
@@ -711,38 +775,46 @@ class AIService:
                 if doc.id not in seen_doc_ids:
                     seen_doc_ids.add(doc.id)
                     meta = emb.metadata_ if isinstance(emb.metadata_, dict) else {}
-                    results.append({
-                        "id": str(doc.id),
-                        "type": "document",
-                        "title": doc.title,
-                        "source": doc.source,
-                        "doi": doc.doi,
-                        "article": meta.get("article", ""),
-                        "snippet": emb.chunk_text[:200],
-                        "score": 0.94,
-                    })
+                    results.append(
+                        {
+                            "id": str(doc.id),
+                            "type": "document",
+                            "title": doc.title,
+                            "source": doc.source,
+                            "doi": doc.doi,
+                            "article": meta.get("article", ""),
+                            "snippet": emb.chunk_text[:200],
+                            "score": 0.94,
+                        }
+                    )
         except Exception as e:
             logger.warning(f"Vector search in hybrid_search failed: {e}")
 
         # 2. Augment with document keyword/catalog search if needed
         if len(results) < limit:
-            stmt_docs = select(DocumentCatalog).where(
-                or_(
-                    DocumentCatalog.title.ilike(f"%{query}%"),
-                    DocumentCatalog.source.ilike(f"%{query}%"),
+            stmt_docs = (
+                select(DocumentCatalog)
+                .where(
+                    or_(
+                        DocumentCatalog.title.ilike(f"%{query}%"),
+                        DocumentCatalog.source.ilike(f"%{query}%"),
+                    )
                 )
-            ).limit(limit - len(results))
+                .limit(limit - len(results))
+            )
             res_docs = await db.execute(stmt_docs)
             for d in res_docs.scalars().all():
                 if str(d.id) not in [r["id"] for r in results]:
-                    results.append({
-                        "id": str(d.id),
-                        "type": "document",
-                        "title": d.title,
-                        "source": d.source,
-                        "doi": d.doi,
-                        "score": 0.85,
-                    })
+                    results.append(
+                        {
+                            "id": str(d.id),
+                            "type": "document",
+                            "title": d.title,
+                            "source": d.source,
+                            "doi": d.doi,
+                            "score": 0.85,
+                        }
+                    )
 
         # 3. Spatial parcels search if bbox provided
         if bbox and len(bbox) == 4:
@@ -753,23 +825,26 @@ class AIService:
                 if miny > maxy:
                     miny, maxy = maxy, miny
                 bbox_geom = box(minx, miny, maxx, maxy)
-                stmt_parcels = select(AgroforestryParcel).where(
-                    geofunc.ST_Intersects(
-                        AgroforestryParcel.geometry,
-                        func.ST_GeomFromText(bbox_geom.wkt, 4326)
+                stmt_parcels = (
+                    select(AgroforestryParcel)
+                    .where(
+                        geofunc.ST_Intersects(AgroforestryParcel.geometry, func.ST_GeomFromText(bbox_geom.wkt, 4326))
                     )
-                ).limit(limit)
+                    .limit(limit)
+                )
                 res_parcels = await db.execute(stmt_parcels)
                 parcels = res_parcels.scalars().all()
                 for p in parcels:
-                    results.append({
-                        "id": str(p.id),
-                        "type": "parcel",
-                        "title": f"Agroforestry Parcel ({safe_val(p.class_label)})",
-                        "area_ha": p.area_ha,
-                        "confidence": p.confidence_score,
-                        "score": 0.90,
-                    })
+                    results.append(
+                        {
+                            "id": str(p.id),
+                            "type": "parcel",
+                            "title": f"Agroforestry Parcel ({safe_val(p.class_label)})",
+                            "area_ha": p.area_ha,
+                            "confidence": p.confidence_score,
+                            "score": 0.90,
+                        }
+                    )
             except Exception as e:
                 logger.warning(f"Spatial search in hybrid_search failed: {e}")
 

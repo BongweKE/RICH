@@ -154,4 +154,3 @@ async def test_eudr_check_store_assessment_safe_uuid(async_client: AsyncClient):
     assert response.status_code == 200
     data = response.json()
     assert "assessment_id" in data
-

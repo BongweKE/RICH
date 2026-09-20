@@ -1,8 +1,10 @@
 """
 LUMENS analysis models for scenarios and results.
 """
+
 import enum
 from datetime import datetime
+from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
 from sqlalchemy import (
@@ -18,6 +20,11 @@ from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
+
+if TYPE_CHECKING:
+    from .geospatial import AgroforestryParcel, Jurisdiction
+    from .policy import PolicyComplianceAssessment
+    from .user import User
 
 
 class ScenarioType(str, enum.Enum):
@@ -40,9 +47,7 @@ class AnalysisStatus(str, enum.Enum):
 class Scenario(Base):
     __tablename__ = "scenarios"
 
-    id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     jurisdiction_id: Mapped[UUID | None] = mapped_column(
@@ -51,24 +56,18 @@ class Scenario(Base):
         nullable=True,
         index=True,
     )
-    scenario_type: Mapped[ScenarioType] = mapped_column(
-        String(50), default=ScenarioType.CUSTOM, nullable=False
-    )
+    scenario_type: Mapped[ScenarioType] = mapped_column(String(50), default=ScenarioType.CUSTOM, nullable=False)
     parameters: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
     created_by: Mapped[UUID | None] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
     )
-    status: Mapped[AnalysisStatus] = mapped_column(
-        String(50), default=AnalysisStatus.PENDING, nullable=False
-    )
+    status: Mapped[AnalysisStatus] = mapped_column(String(50), default=AnalysisStatus.PENDING, nullable=False)
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     results_summary: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow, nullable=False
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=datetime.utcnow,
@@ -100,9 +99,7 @@ class Scenario(Base):
 class ScenarioResult(Base):
     __tablename__ = "scenario_results"
 
-    id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     scenario_id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("scenarios.id", ondelete="CASCADE"),
@@ -126,15 +123,11 @@ class ScenarioResult(Base):
     biodiversity_metrics: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     economic_metrics: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     uncertainty: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow, nullable=False
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
 
     # Relationships
     scenario: Mapped["Scenario"] = relationship("Scenario", back_populates="results")
-    parcel: Mapped["AgroforestryParcel | None"] = relationship(
-        "AgroforestryParcel", back_populates="scenario_results"
-    )
+    parcel: Mapped["AgroforestryParcel | None"] = relationship("AgroforestryParcel", back_populates="scenario_results")
     jurisdiction: Mapped["Jurisdiction | None"] = relationship("Jurisdiction")
 
     __table_args__ = (
@@ -146,9 +139,7 @@ class ScenarioResult(Base):
 class PreQUESResult(Base):
     __tablename__ = "preques_results"
 
-    id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     scenario_id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("scenarios.id", ondelete="CASCADE"),
@@ -164,16 +155,12 @@ class PreQUESResult(Base):
     sankey_data: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     change_metrics: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     statistics: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow, nullable=False
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
 
     # Relationships
     scenario: Mapped["Scenario"] = relationship("Scenario", back_populates="preques_results")
 
-    __table_args__ = (
-        Index("idx_preques_crosstab", "crosstab_long", postgresql_using="gin"),
-    )
+    __table_args__ = (Index("idx_preques_crosstab", "crosstab_long", postgresql_using="gin"),)
 
 
 # Alias for case consistency across codebase

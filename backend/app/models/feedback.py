@@ -1,7 +1,9 @@
 """
 User feedback and model evaluation models.
 """
+
 from datetime import datetime
+from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
 
 from sqlalchemy import (
@@ -17,13 +19,15 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
 
+if TYPE_CHECKING:
+    from .ai import QueryInteractionLog
+    from .user import User
+
 
 class AIFeedback(Base):
     __tablename__ = "ai_feedback"
 
-    id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     query_log_id: Mapped[UUID] = mapped_column(
         PG_UUID(as_uuid=True),
         ForeignKey("query_interaction_logs.id", ondelete="CASCADE"),
@@ -39,23 +43,17 @@ class AIFeedback(Base):
     correction_text: Mapped[str | None] = mapped_column(Text, nullable=True)
     feedback_type: Mapped[str | None] = mapped_column(String(50), nullable=True)
     resolved: Mapped[bool] = mapped_column(default=False, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow, nullable=False
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
 
     # Relationships
-    query_log: Mapped["QueryInteractionLog"] = relationship(
-        "QueryInteractionLog", back_populates="feedback"
-    )
+    query_log: Mapped["QueryInteractionLog"] = relationship("QueryInteractionLog", back_populates="feedback")
     user: Mapped["User | None"] = relationship("User")
 
 
 class ModelEvaluationRun(Base):
     __tablename__ = "model_evaluation_runs"
 
-    id: Mapped[UUID] = mapped_column(
-        PG_UUID(as_uuid=True), primary_key=True, default=uuid4
-    )
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     model_name: Mapped[str] = mapped_column(String(255), nullable=False)
     dataset: Mapped[str] = mapped_column(String(255), nullable=False)
     metrics: Mapped[dict] = mapped_column(JSONB, nullable=False)
@@ -66,9 +64,7 @@ class ModelEvaluationRun(Base):
         ForeignKey("users.id", ondelete="SET NULL"),
         nullable=True,
     )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow, nullable=False
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
 
     # Relationships
     creator: Mapped["User | None"] = relationship("User")

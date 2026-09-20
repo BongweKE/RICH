@@ -73,7 +73,15 @@ COMPLIANCE_CORPUS: List[Dict[str, Any]] = [
         "title": "Regulation (EU) 2023/1115 on Deforestation-Free Products (EUDR)",
         "authors": ["European Parliament", "Council of the European Union"],
         "publication_year": 2023,
-        "topic_keywords": ["EUDR", "deforestation", "forest degradation", "due diligence", "cocoa", "coffee", "geolocation"],
+        "topic_keywords": [
+            "EUDR",
+            "deforestation",
+            "forest degradation",
+            "due diligence",
+            "cocoa",
+            "coffee",
+            "geolocation",
+        ],
         "source": "EUR-Lex Official Journal L 150/206",
         "doi": "32023R1115",
         "license": "Public Domain (EUR-Lex)",
@@ -91,35 +99,60 @@ COMPLIANCE_CORPUS: List[Dict[str, Any]] = [
                 "title": "Definitions: Forest, Agricultural Use and Agroforestry",
                 "page": 11,
                 "text": "For the purposes of this Regulation: (1) 'deforestation' means the conversion of forest to agricultural use, whether human-induced or not; (4) 'forest' means land spanning more than 0.5 hectares with trees higher than 5 metres and a canopy cover of more than 10%, or trees able to reach those thresholds in situ, excluding land that is predominantly under agricultural or urban land use; (5) 'agricultural use' means the use of land for agricultural purposes, including for agricultural plantations and set-aside agricultural areas, and for rearing livestock; (6) 'agricultural plantation' means tree stands in agricultural production systems, such as fruit tree plantations, oil palm plantations, olive orchards and agroforestry systems when crops are grown under tree cover.",
-                "metadata": {"regulation": "EUDR", "celex": "32023R1115", "article": "Article 2", "topic": "definitions_agroforestry"},
+                "metadata": {
+                    "regulation": "EUDR",
+                    "celex": "32023R1115",
+                    "article": "Article 2",
+                    "topic": "definitions_agroforestry",
+                },
             },
             {
                 "article": "Article 3",
                 "title": "Prohibition on Non-Compliant Products",
                 "page": 14,
                 "text": "Relevant commodities and relevant products shall not be placed or made available on the market or exported, unless all the following conditions are fulfilled: (a) they are deforestation-free; (b) they have been produced in accordance with the relevant legislation of the country of production; and (c) they are covered by a due diligence statement.",
-                "metadata": {"regulation": "EUDR", "celex": "32023R1115", "article": "Article 3", "topic": "prohibition"},
+                "metadata": {
+                    "regulation": "EUDR",
+                    "celex": "32023R1115",
+                    "article": "Article 3",
+                    "topic": "prohibition",
+                },
             },
             {
                 "article": "Article 9",
                 "title": "Due Diligence Information Requirements & Geolocation Polygons",
                 "page": 17,
                 "text": "Operators shall collect information, documents and data demonstrating that the relevant products comply with Article 3, including: (a) description and trade name of the product; (b) quantity; (c) country of production; (d) the geolocation of all plots of land where the relevant commodities were produced, as well as the date or time range of production. For plots of land greater than 4 hectares used for the production of the relevant commodities other than cattle, the geolocation shall be provided using polygons with sufficient latitude and longitude points to describe the perimeter of each plot of land.",
-                "metadata": {"regulation": "EUDR", "celex": "32023R1115", "article": "Article 9", "topic": "geolocation_polygons"},
+                "metadata": {
+                    "regulation": "EUDR",
+                    "celex": "32023R1115",
+                    "article": "Article 9",
+                    "topic": "geolocation_polygons",
+                },
             },
             {
                 "article": "Article 10",
                 "title": "Risk Assessment Criteria",
                 "page": 19,
                 "text": "Operators shall verify and analyse information collected under Article 9 to assess whether there is a risk that the relevant products intended to be placed on the market are non-compliant. Risk assessment criteria include: presence of forests in the area of production; presence of indigenous peoples and customary tenure rights; prevalence of deforestation or forest degradation; national governance indicators; and the degree of complexity of the relevant supply chain.",
-                "metadata": {"regulation": "EUDR", "celex": "32023R1115", "article": "Article 10", "topic": "risk_assessment"},
+                "metadata": {
+                    "regulation": "EUDR",
+                    "celex": "32023R1115",
+                    "article": "Article 10",
+                    "topic": "risk_assessment",
+                },
             },
             {
                 "article": "Annex I",
                 "title": "Commodities and CN Codes (Cocoa & Coffee)",
                 "page": 35,
                 "text": "Annex I covers: Cocoa beans, whole or broken, raw or roasted (CN code 1801 00 00); Cocoa shells, husks, skins and other cocoa waste (CN code 1802 00 00); Cocoa paste, whether or not defatted (CN code 1803); Cocoa butter, fat and oil (CN code 1804 00 00); Cocoa powder, not containing added sugar or other sweetening matter (CN code 1805 00 00); Chocolate and other food preparations containing cocoa (CN code 1806); Coffee, whether or not roasted or decaffeinated (CN code 0901).",
-                "metadata": {"regulation": "EUDR", "celex": "32023R1115", "article": "Annex I", "topic": "commodities_cn_codes"},
+                "metadata": {
+                    "regulation": "EUDR",
+                    "celex": "32023R1115",
+                    "article": "Annex I",
+                    "topic": "commodities_cn_codes",
+                },
             },
         ],
     },
@@ -146,14 +179,22 @@ COMPLIANCE_CORPUS: List[Dict[str, Any]] = [
                 "title": "Agroforestry Recognition & Overstory Trees in Cocoa/Coffee",
                 "page": 8,
                 "text": "Under Article 2(4), land predominantly under agricultural use is excluded from the definition of forest. Multi-strata shaded cocoa or coffee agroforestry systems—where agricultural crops are cultivated under an overstory of native or planted shade trees—constitute 'agricultural use' and 'agricultural plantations' under Article 2(5) and 2(6). The presence of shade trees does NOT classify the parcel as forest. Consequently, maintaining or enhancing tree canopy on agroforestry parcels does not trigger forest degradation or deforestation penalties.",
-                "metadata": {"regulation": "EUDR Guidance", "article": "Section 3.4", "topic": "agroforestry_exemption"},
+                "metadata": {
+                    "regulation": "EUDR Guidance",
+                    "article": "Section 3.4",
+                    "topic": "agroforestry_exemption",
+                },
             },
             {
                 "article": "Guidance Section 5.2",
                 "title": "Smallholder Traceability & Aggregated Cooperative Due Diligence",
                 "page": 15,
                 "text": "For smallholders cultivating plots under 4 hectares, providing a single latitude and longitude coordinate point located within the boundary of the production plot is legally sufficient under Article 9. Smallholders may submit their geolocation data through producer cooperatives or downstream buying stations, who can file the Due Diligence Statement on their behalf.",
-                "metadata": {"regulation": "EUDR Guidance", "article": "Section 5.2", "topic": "smallholder_cooperatives"},
+                "metadata": {
+                    "regulation": "EUDR Guidance",
+                    "article": "Section 5.2",
+                    "topic": "smallholder_cooperatives",
+                },
             },
         ],
     },
@@ -173,14 +214,24 @@ COMPLIANCE_CORPUS: List[Dict[str, Any]] = [
                 "title": "Lawfulness of Processing Farmer Geolocation Coordinates",
                 "page": 32,
                 "text": "Under Article 6(1)(c) and 6(1)(f) of GDPR, processing smallholder parcel coordinates for regulatory supply chain verification is lawful where necessary for compliance with a legal obligation (such as EUDR traceability) or legitimate interests. However, where farm plot coordinates can be directly or indirectly linked to an identified or identifiable natural person (the landholder), the geolocation data constitutes personal data and must be protected with appropriate pseudonymization and technical access controls.",
-                "metadata": {"regulation": "GDPR", "celex": "32016R0679", "article": "Article 6", "topic": "farmer_geolocation_privacy"},
+                "metadata": {
+                    "regulation": "GDPR",
+                    "celex": "32016R0679",
+                    "article": "Article 6",
+                    "topic": "farmer_geolocation_privacy",
+                },
             },
             {
                 "article": "Article 44+",
                 "title": "Transfers of Personal Data to Third Countries",
                 "page": 60,
                 "text": "When transfer of smallholder registry data occurs between producing nations (e.g. Ghana, Ethiopia) and European Union processors, operators must ensure standard contractual clauses (SCCs) or adequacy decisions are in place to guarantee that smallholder privacy rights are maintained in compliance with Chapter V of the GDPR.",
-                "metadata": {"regulation": "GDPR", "celex": "32016R0679", "article": "Article 44", "topic": "cross_border_data_transfer"},
+                "metadata": {
+                    "regulation": "GDPR",
+                    "celex": "32016R0679",
+                    "article": "Article 44",
+                    "topic": "cross_border_data_transfer",
+                },
             },
         ],
     },
@@ -189,7 +240,15 @@ COMPLIANCE_CORPUS: List[Dict[str, Any]] = [
         "title": "CIFOR-ICRAF & Climate Policy Radar: Reconciling Agroforestry with EU Compliance Frameworks",
         "authors": ["van Noordwijk, M.", "Duguma, L.", "Dewi, S.", "Minang, P."],
         "publication_year": 2024,
-        "topic_keywords": ["CIFOR-ICRAF", "Climate Policy Radar", "agroforestry", "EUDR", "carbon MRV", "Ghana", "Ethiopia"],
+        "topic_keywords": [
+            "CIFOR-ICRAF",
+            "Climate Policy Radar",
+            "agroforestry",
+            "EUDR",
+            "carbon MRV",
+            "Ghana",
+            "Ethiopia",
+        ],
         "source": "World Agroforestry Working Paper No. 340",
         "doi": "10.5716/WP24340.PDF",
         "license": "CC BY 4.0",
@@ -200,14 +259,22 @@ COMPLIANCE_CORPUS: List[Dict[str, Any]] = [
                 "title": "The False Deforestation Dilemma in African Agroforests",
                 "page": 3,
                 "text": "Standard satellite remote sensing products based purely on optical canopy cover (such as Hansen GFW) exhibit an average 63% false-positive misclassification rate when distinguishing shaded perennial crops (cocoa in Ashanti, Ghana; coffee in Oromia, Ethiopia) from natural primary forests. As a result, sustainable smallholder agroforesters face exclusion from EU supply chains unless high-resolution multitemporal radar (Sentinel-1) and red-edge optical (Sentinel-2) data are synthesized to demonstrate continuous tree crop cultivation without deforestation.",
-                "metadata": {"regulation": "Scientific Literature", "article": "Section 1", "topic": "false_deforestation_risk"},
+                "metadata": {
+                    "regulation": "Scientific Literature",
+                    "article": "Section 1",
+                    "topic": "false_deforestation_risk",
+                },
             },
             {
                 "article": "Section 4",
                 "title": "Integration with National NDCs and REDD+ MRV Systems",
                 "page": 18,
                 "text": "Traceable agroforestry polygons collected for EUDR compliance can simultaneously serve as high-tier activity data for national REDD+ Measurement, Reporting, and Verification (MRV) and AFOLU sector Nationally Determined Contributions (NDCs). Recognizing shaded agroforests as distinct carbon-sequestering land covers enables rural jurisdictions to unlock blended climate finance from voluntary carbon markets (VCM) at $12-$15 per tCO2e.",
-                "metadata": {"regulation": "Scientific Literature", "article": "Section 4", "topic": "redd_mrv_synergy"},
+                "metadata": {
+                    "regulation": "Scientific Literature",
+                    "article": "Section 4",
+                    "topic": "redd_mrv_synergy",
+                },
             },
         ],
     },
@@ -282,7 +349,9 @@ async def seed_compliance_corpus():
                     inserted_chunks += 1
 
         await session.commit()
-        logger.info(f"Compliance corpus ingestion completed: {inserted_docs} docs added, {inserted_chunks} chunks embedded.")
+        logger.info(
+            f"Compliance corpus ingestion completed: {inserted_docs} docs added, {inserted_chunks} chunks embedded."
+        )
 
     await close_db()
 

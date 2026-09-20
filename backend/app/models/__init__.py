@@ -1,6 +1,7 @@
 """
 SQLAlchemy models for RICH database.
 """
+
 from .base import Base
 from .geospatial import (
     AgroforestryParcel,

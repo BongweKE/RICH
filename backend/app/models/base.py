@@ -1,6 +1,7 @@
 """
 Base SQLAlchemy model configuration.
 """
+
 from sqlalchemy import MetaData
 from sqlalchemy.orm import DeclarativeBase
 

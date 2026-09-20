@@ -136,7 +136,6 @@ async def get_profitability_analysis(
     )
 
 
-
 @router.post("/analysis/preques")
 async def create_preques_analysis(
     background_tasks: BackgroundTasks,
@@ -638,16 +637,24 @@ async def get_analysis_results(
             "id": str(scenario.id),
             "name": scenario.name,
             "description": scenario.description,
-            "scenario_type": scenario.scenario_type.value if hasattr(scenario.scenario_type, "value") else str(scenario.scenario_type),
+            "scenario_type": (
+                scenario.scenario_type.value
+                if hasattr(scenario.scenario_type, "value")
+                else str(scenario.scenario_type)
+            ),
             "parameters": scenario.parameters,
         },
-        "preques_results": {
-            "crosstab_long": preques.crosstab_long if preques else None,
-            "crosstab_matrix": preques.crosstab_matrix if preques else None,
-            "sankey_data": preques.sankey_data if preques else None,
-            "change_metrics": preques.change_metrics if preques else None,
-            "statistics": preques.statistics if preques else None,
-        } if preques else None,
+        "preques_results": (
+            {
+                "crosstab_long": preques.crosstab_long if preques else None,
+                "crosstab_matrix": preques.crosstab_matrix if preques else None,
+                "sankey_data": preques.sankey_data if preques else None,
+                "change_metrics": preques.change_metrics if preques else None,
+                "statistics": preques.statistics if preques else None,
+            }
+            if preques
+            else None
+        ),
         "scenario_results": [
             {
                 "id": str(r.id),
@@ -726,7 +733,9 @@ async def get_scenario(
         "name": scenario.name,
         "description": scenario.description,
         "jurisdiction_code": scenario.jurisdiction.code if getattr(scenario, "jurisdiction", None) else None,
-        "scenario_type": scenario.scenario_type.value if hasattr(scenario.scenario_type, "value") else str(scenario.scenario_type),
+        "scenario_type": (
+            scenario.scenario_type.value if hasattr(scenario.scenario_type, "value") else str(scenario.scenario_type)
+        ),
         "parameters": scenario.parameters,
         "status": scenario.status.value if hasattr(scenario.status, "value") else str(scenario.status),
         "created_by": str(scenario.created_by) if scenario.created_by else None,

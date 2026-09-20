@@ -74,7 +74,7 @@ async def get_current_user_optional(
     return await get_current_user(credentials)
 
 
-def check_rate_limit(request: Request, limit: int = None, period: int = None):
+def check_rate_limit(request: Request, limit: int | None = None, period: int | None = None):
     """Check rate limit for request"""
     # In production, use Redis for distributed rate limiting
     # This is a simple in-memory implementation for development
@@ -92,6 +92,7 @@ def check_rate_limit(request: Request, limit: int = None, period: int = None):
 
 def require_role(required_roles: list):
     """Dependency to require specific roles"""
+
     async def role_checker(user: dict = Depends(get_current_user)):
         user_role = user.get("role", "guest")
         if user_role not in required_roles:
@@ -100,6 +101,7 @@ def require_role(required_roles: list):
                 detail=f"Required role: {required_roles}, current: {user_role}",
             )
         return user
+
     return role_checker
 
 
@@ -119,6 +121,7 @@ def has_permission(user_role: str, permission: str) -> bool:
 
 def require_permission(permission: str):
     """Dependency to require specific permission"""
+
     async def permission_checker(user: dict = Depends(get_current_user)):
         user_role = user.get("role", "guest")
         if not has_permission(user_role, permission):
@@ -127,4 +130,5 @@ def require_permission(permission: str):
                 detail=f"Required permission: {permission}",
             )
         return user
+
     return permission_checker

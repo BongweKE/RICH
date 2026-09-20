@@ -255,6 +255,7 @@ async def test_modal_ingest_requires_admin(async_client: AsyncClient):
 @pytest.mark.asyncio
 async def test_modal_ingest_endpoint_admin(admin_client: AsyncClient, monkeypatch: pytest.MonkeyPatch):
     """Test /api/ai/modal/ingest succeeds when called with admin permissions"""
+
     async def mock_ingest(force=False):
         return {"success": True, "processed": 4}
 
@@ -264,4 +265,3 @@ async def test_modal_ingest_endpoint_admin(admin_client: AsyncClient, monkeypatc
     data = resp.json()
     assert "success" in data
     assert data["success"] is True
-

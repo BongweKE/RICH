@@ -29,6 +29,7 @@ from typing import Any, Dict, List, Optional
 @dataclass
 class Parcel:
     """Agroforestry parcel data structure"""
+
     id: str
     jurisdiction_code: str
     jurisdiction_name: str
@@ -232,10 +233,7 @@ def generate_parcel(region_code: str, index: int) -> Parcel:
     # If area is too small, scale up the polygon
     if actual_area_ha < min_area * 0.5:
         # Try again with larger radius
-        coordinates = generate_irregular_polygon(
-            [center_lon, center_lat],
-            avg_radius_m * 1.5
-        )
+        coordinates = generate_irregular_polygon([center_lon, center_lat], avg_radius_m * 1.5)
         actual_area_ha = calculate_polygon_area_ha(coordinates[0])
 
     # Select agroforestry subtype based on weights
@@ -266,12 +264,14 @@ def generate_parcel(region_code: str, index: int) -> Parcel:
         source_url = "https://gedi.umd.edu/"
 
     # Processing metadata
-    processing_method = random.choice([
-        "Sentinel-2 + Random Forest",
-        "PlanetScope + CNN",
-        "GEDI LiDAR + ML",
-        "Hybrid Remote Sensing",
-    ])
+    processing_method = random.choice(
+        [
+            "Sentinel-2 + Random Forest",
+            "PlanetScope + CNN",
+            "GEDI LiDAR + ML",
+            "Hybrid Remote Sensing",
+        ]
+    )
     model_version = f"v{random.randint(1, 3)}.{random.randint(0, 9)}"
 
     # Create parcel
@@ -393,24 +393,25 @@ def parcels_to_sql_inserts(parcels: List[Parcel]) -> List[str]:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Generate sample agroforestry parcel data for RICH platform"
-    )
+    parser = argparse.ArgumentParser(description="Generate sample agroforestry parcel data for RICH platform")
     parser.add_argument(
-        "--count", "-n",
+        "--count",
+        "-n",
         type=int,
         default=100,
         help="Number of parcels to generate (default: 100)",
     )
     parser.add_argument(
-        "--region", "-r",
+        "--region",
+        "-r",
         type=str,
         default="GH-AH",
         choices=["GH-AH", "ET-OR", "ES-EX"],
         help="Region code: GH-AH (Ghana Ashanti), ET-OR (Ethiopia Oromia), ES-EX (Spain Extremadura)",
     )
     parser.add_argument(
-        "--output", "-o",
+        "--output",
+        "-o",
         type=str,
         default="parcels.geojson",
         help="Output GeoJSON file (default: parcels.geojson)",

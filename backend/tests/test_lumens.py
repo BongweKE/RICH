@@ -190,5 +190,3 @@ async def test_biodiversity_and_profitability_endpoints(async_client):
     assert "systems" in prof_data
     assert len(prof_data["systems"]) >= 3
     assert "abatement_curve" in prof_data
-
-

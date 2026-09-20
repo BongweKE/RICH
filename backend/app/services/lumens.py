@@ -125,20 +125,24 @@ class LUMENSService:
                     if ha > 0:
                         total_changed_ha += ha
                         if ha >= 200.0:
-                            major_transitions.append({
-                                "from": c_from,
-                                "to": c_to,
-                                "area_ha": ha,
-                                "annual_rate_ha_yr": round(ha / elapsed_years, 2),
-                            })
+                            major_transitions.append(
+                                {
+                                    "from": c_from,
+                                    "to": c_to,
+                                    "area_ha": ha,
+                                    "annual_rate_ha_yr": round(ha / elapsed_years, 2),
+                                }
+                            )
 
                 matrix_data[c_from][c_to] = ha
-                crosstab_long.append({
-                    "from_class": c_from,
-                    "to_class": c_to,
-                    "area_ha": ha,
-                    "percentage": round(ha / from_area * 100, 2) if from_area > 0 else 0.0,
-                })
+                crosstab_long.append(
+                    {
+                        "from_class": c_from,
+                        "to_class": c_to,
+                        "area_ha": ha,
+                        "percentage": round(ha / from_area * 100, 2) if from_area > 0 else 0.0,
+                    }
+                )
 
         # Calculate Change Metrics
         change_metrics: dict[str, Any] = {}
@@ -163,8 +167,9 @@ class LUMENSService:
 
         # Build Sankey Diagram structure
         # Nodes: T1 classes (0 to n-1), T2 classes (n to 2n-1)
-        nodes = [{"name": f"{c.capitalize()} ({year_t1})", "category": c} for c in classes] + \
-                [{"name": f"{c.capitalize()} ({year_t2})", "category": c} for c in classes]
+        nodes = [{"name": f"{c.capitalize()} ({year_t1})", "category": c} for c in classes] + [
+            {"name": f"{c.capitalize()} ({year_t2})", "category": c} for c in classes
+        ]
 
         links = []
         for i, c_from in enumerate(classes):
@@ -173,13 +178,15 @@ class LUMENSService:
                 if change_only and c_from == c_to:
                     continue
                 if val >= (area_cutoff / 100.0 if area_cutoff else 1.0):
-                    links.append({
-                        "source": i,
-                        "target": len(classes) + j,
-                        "value": val,
-                        "from_class": c_from,
-                        "to_class": c_to,
-                    })
+                    links.append(
+                        {
+                            "source": i,
+                            "target": len(classes) + j,
+                            "value": val,
+                            "from_class": c_from,
+                            "to_class": c_to,
+                        }
+                    )
 
         sankey_data = {
             "nodes": nodes,
@@ -230,8 +237,16 @@ class LUMENSService:
         c_to_co2 = 44.0 / 12.0
 
         # Baseline model estimates
-        baseline_stock_tc = 22000 * carbon_factors["forest"] + 8500 * carbon_factors["agroforestry"] + 11000 * carbon_factors["cropland"]
-        t2_stock_tc = 21200 * carbon_factors["forest"] + 10200 * carbon_factors["agroforestry"] + 10100 * carbon_factors["cropland"]
+        baseline_stock_tc = (
+            22000 * carbon_factors["forest"]
+            + 8500 * carbon_factors["agroforestry"]
+            + 11000 * carbon_factors["cropland"]
+        )
+        t2_stock_tc = (
+            21200 * carbon_factors["forest"]
+            + 10200 * carbon_factors["agroforestry"]
+            + 10100 * carbon_factors["cropland"]
+        )
 
         delta_c = t2_stock_tc - baseline_stock_tc
         delta_co2 = delta_c * c_to_co2
@@ -248,7 +263,12 @@ class LUMENSService:
             "gross_emissions_tco2e": round(emissions_tco2e, 2),
             "gross_removals_tco2e": round(removals_tco2e, 2),
             "carbon_density_by_class": carbon_factors,
-            "carbon_pools_modeled": ["Above-ground biomass", "Below-ground biomass", "Dead organic matter", "Soil organic carbon"],
+            "carbon_pools_modeled": [
+                "Above-ground biomass",
+                "Below-ground biomass",
+                "Dead organic matter",
+                "Soil organic carbon",
+            ],
             "tier_level": "Tier 2",
         }
 
@@ -335,28 +355,30 @@ class LUMENSService:
         for i, item in enumerate(interventions):
             ha = float(item.get("area_ha", 50.0))
             total_area += ha
-            parcel_results.append({
-                "parcel_id": None,
-                "intervention_type": item.get("type", "agroforestry_transition"),
-                "land_cover_change": {
-                    "previous": "cropland",
-                    "projected": "agroforestry",
-                    "area_ha": ha,
-                },
-                "carbon_metrics": {
-                    "annual_sequestration_tco2e": round(ha * 4.8, 2),
-                    "twenty_year_potential_tco2e": round(ha * 4.8 * 20.0, 2),
-                },
-                "biodiversity_metrics": {
-                    "habitat_suitability_delta": "+0.32",
-                    "canopy_cover_target_pct": 35.0,
-                },
-                "economic_metrics": {
-                    "estimated_npv_usd_ha": 3450.0,
-                    "cash_crop_yield_stabilization_pct": 18.5,
-                },
-                "uncertainty": 0.12,
-            })
+            parcel_results.append(
+                {
+                    "parcel_id": None,
+                    "intervention_type": item.get("type", "agroforestry_transition"),
+                    "land_cover_change": {
+                        "previous": "cropland",
+                        "projected": "agroforestry",
+                        "area_ha": ha,
+                    },
+                    "carbon_metrics": {
+                        "annual_sequestration_tco2e": round(ha * 4.8, 2),
+                        "twenty_year_potential_tco2e": round(ha * 4.8 * 20.0, 2),
+                    },
+                    "biodiversity_metrics": {
+                        "habitat_suitability_delta": "+0.32",
+                        "canopy_cover_target_pct": 35.0,
+                    },
+                    "economic_metrics": {
+                        "estimated_npv_usd_ha": 3450.0,
+                        "cash_crop_yield_stabilization_pct": 18.5,
+                    },
+                    "uncertainty": 0.12,
+                }
+            )
 
         return {
             "scenario_id": str(scenario_id),
@@ -449,9 +471,11 @@ class LUMENSService:
         avoided_erosion_t_yr = agroforestry_ha * base_erodibility * (c_cropland - c_agroforestry)
 
         # Riparian sediment retention index (0.0 to 1.0)
-        sediment_retention_pct = round(
-            (1.0 - (total_soil_loss_tons / (total_landscape_ha * base_erodibility * c_cropland))) * 100, 1
-        ) if total_landscape_ha > 0 else 85.0
+        sediment_retention_pct = (
+            round((1.0 - (total_soil_loss_tons / (total_landscape_ha * base_erodibility * c_cropland))) * 100, 1)
+            if total_landscape_ha > 0
+            else 85.0
+        )
 
         return {
             "jurisdiction_code": jurisdiction_code,
@@ -460,7 +484,9 @@ class LUMENSService:
             "total_soil_loss_tons_yr": round(total_soil_loss_tons, 1),
             "avoided_erosion_tons_yr": round(avoided_erosion_t_yr, 1),
             "sediment_retention_pct": min(99.0, max(20.0, sediment_retention_pct)),
-            "watershed_vulnerability_index": "Low" if mean_soil_loss_t_ha_yr < 8.0 else ("Moderate" if mean_soil_loss_t_ha_yr < 15.0 else "High"),
+            "watershed_vulnerability_index": (
+                "Low" if mean_soil_loss_t_ha_yr < 8.0 else ("Moderate" if mean_soil_loss_t_ha_yr < 15.0 else "High")
+            ),
             "riparian_buffer_integrity": 0.83,
             "streamflow_regulation_score": 0.79,
         }
@@ -476,7 +502,7 @@ class LUMENSService:
         Calculates Net Present Value (NPV 20-yr @ 10%), labor requirements, and Opportunity Cost Curve for REDD+.
         """
         # Land-use economics ($/ha/yr and 20-year NPV @ 10% discount rate)
-        systems = [
+        systems: list[dict[str, Any]] = [
             {
                 "system": "Shaded Agroforestry (Native Canopy)",
                 "type": "agroforestry",
@@ -515,20 +541,44 @@ class LUMENSService:
         # Opportunity cost of carbon: difference in NPV / difference in carbon (tCO2e)
         # Avoided conversion from Forest to Monoculture
         c_to_co2 = 44.0 / 12.0
-        delta_npv_mono_forest = systems[1]["npv_20yr_usd_ha"] - systems[2]["npv_20yr_usd_ha"]  # 7320 USD
-        delta_co2_forest_mono = (systems[2]["carbon_stock_tc_ha"] - systems[1]["carbon_stock_tc_ha"]) * c_to_co2  # 125 * 3.6667 = 458 tCO2e
+        delta_npv_mono_forest = float(systems[1]["npv_20yr_usd_ha"]) - float(systems[2]["npv_20yr_usd_ha"])  # 7320 USD
+        delta_co2_forest_mono = (
+            float(systems[2]["carbon_stock_tc_ha"]) - float(systems[1]["carbon_stock_tc_ha"])
+        ) * c_to_co2  # 125 * 3.6667 = 458 tCO2e
         opp_cost_forest_to_mono = round(delta_npv_mono_forest / delta_co2_forest_mono, 2)  # ~16 USD / tCO2e
 
         # Avoided conversion from Agroforestry to Monoculture
-        delta_npv_agro_mono = systems[0]["npv_20yr_usd_ha"] - systems[1]["npv_20yr_usd_ha"]  # +2385 USD (Agroforestry has HIGHER NPV!)
-        opp_cost_agro_to_mono = round(-delta_npv_agro_mono / ((systems[0]["carbon_stock_tc_ha"] - systems[1]["carbon_stock_tc_ha"]) * c_to_co2), 2)
+        delta_npv_agro_mono = float(systems[0]["npv_20yr_usd_ha"]) - float(
+            systems[1]["npv_20yr_usd_ha"]
+        )  # +2385 USD (Agroforestry has HIGHER NPV!)
+        opp_cost_agro_to_mono = round(
+            -delta_npv_agro_mono
+            / ((float(systems[0]["carbon_stock_tc_ha"]) - float(systems[1]["carbon_stock_tc_ha"])) * c_to_co2),
+            2,
+        )
 
         # Opportunity cost abatement curve steps
         abatement_curve = [
-            {"tier": "Degraded pasture -> Agroforestry", "opp_cost_usd_tco2e": -8.40, "cumulative_potential_mtco2e": 1.2},
-            {"tier": "Cropland intensification -> Shade agroforestry", "opp_cost_usd_tco2e": -2.10, "cumulative_potential_mtco2e": 2.8},
-            {"tier": "Buffer zone forest protection vs Shade cocoa", "opp_cost_usd_tco2e": 4.50, "cumulative_potential_mtco2e": 5.1},
-            {"tier": "Primary forest conservation vs Monoculture expansion", "opp_cost_usd_tco2e": 16.00, "cumulative_potential_mtco2e": 8.4},
+            {
+                "tier": "Degraded pasture -> Agroforestry",
+                "opp_cost_usd_tco2e": -8.40,
+                "cumulative_potential_mtco2e": 1.2,
+            },
+            {
+                "tier": "Cropland intensification -> Shade agroforestry",
+                "opp_cost_usd_tco2e": -2.10,
+                "cumulative_potential_mtco2e": 2.8,
+            },
+            {
+                "tier": "Buffer zone forest protection vs Shade cocoa",
+                "opp_cost_usd_tco2e": 4.50,
+                "cumulative_potential_mtco2e": 5.1,
+            },
+            {
+                "tier": "Primary forest conservation vs Monoculture expansion",
+                "opp_cost_usd_tco2e": 16.00,
+                "cumulative_potential_mtco2e": 8.4,
+            },
         ]
 
         return {
@@ -596,7 +646,9 @@ class LUMENSService:
                 "color": "#10b981",
                 "metrics": {
                     "carbon_stock": round(min(0.95, 0.72 + (agroforestry_expansion_pct * 0.006)), 2),
-                    "biodiversity": round(min(0.95, 0.68 + (riparian_restoration_pct * 0.002) + (agroforestry_expansion_pct * 0.003)), 2),
+                    "biodiversity": round(
+                        min(0.95, 0.68 + (riparian_restoration_pct * 0.002) + (agroforestry_expansion_pct * 0.003)), 2
+                    ),
                     "hydrology_soil": round(min(0.95, 0.70 + (riparian_restoration_pct * 0.0025)), 2),
                     "economic_npv": round(min(0.95, 0.74 + (agroforestry_expansion_pct * 0.004)), 2),
                     "food_security": round(min(0.95, 0.70 + (agroforestry_expansion_pct * 0.005)), 2),
@@ -634,4 +686,3 @@ run_scenario_simulation = LUMENSService.run_scenario_simulation
 run_ques_hydrology = LUMENSService.run_ques_hydrology
 run_ta_profitability = LUMENSService.run_ta_profitability
 run_lasem_tradeoff = LUMENSService.run_lasem_tradeoff
-

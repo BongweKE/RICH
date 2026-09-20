@@ -41,12 +41,8 @@ class Settings(BaseSettings):
     CESIUMION_ENABLED: bool = False
 
     # Modal Cloud Compute
-    MODAL_EMBED_URL: str = Field(
-        default="https://ciforicraf-ai--rich-document-ingestion-textembedder-embed.modal.run"
-    )
-    MODAL_INGEST_URL: str = Field(
-        default="https://ciforicraf-ai--rich-document-ingestion-trigger-ingest.modal.run"
-    )
+    MODAL_EMBED_URL: str = Field(default="https://ciforicraf-ai--rich-document-ingestion-textembedder-embed.modal.run")
+    MODAL_INGEST_URL: str = Field(default="https://ciforicraf-ai--rich-document-ingestion-trigger-ingest.modal.run")
 
     # Railway
     RAILWAY_PROJECT_ID: str = ""
@@ -70,6 +66,7 @@ class Settings(BaseSettings):
         if isinstance(v, str):
             if v.startswith("[") and v.endswith("]"):
                 import json
+
                 try:
                     return json.loads(v)
                 except Exception:

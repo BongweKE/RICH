@@ -123,7 +123,6 @@ async def test_get_parcel_telemetry_jurisdiction_tailored(async_client: AsyncCli
     assert "DDS-RICH-2024-" in data_gh["eudr_audit"]["reference_id"]
 
 
-
 def test_safe_jurisdiction_code_utility():
     """Test safe_jurisdiction_code helper across various inputs"""
     from app.api.geospatial import safe_jurisdiction_code
@@ -204,6 +203,3 @@ def test_safe_uuid_geospatial_utility():
     real_uuid = uuid.uuid4()
     assert safe_uuid(str(real_uuid)) == real_uuid
     assert safe_uuid(real_uuid) == real_uuid
-
-
-

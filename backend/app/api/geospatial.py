@@ -95,13 +95,15 @@ async def list_layers(
 
     # Add 3D terrain layers if Cesium ion is enabled
     if settings.CESIUMION_ENABLED and settings.CESIUMION_KEY:
-        layers.append({
-            "id": "cesium-world-terrain",
-            "name": "Cesium World 3D Terrain",
-            "type": "terrain-3d",
-            "source": "cesiumion",
-            "attribution": "© Cesium ion",
-        })
+        layers.append(
+            {
+                "id": "cesium-world-terrain",
+                "name": "Cesium World 3D Terrain",
+                "type": "terrain-3d",
+                "source": "cesiumion",
+                "attribution": "© Cesium ion",
+            }
+        )
 
     # Add jurisdiction-specific layers
     if jurisdiction_code:
@@ -111,24 +113,26 @@ async def list_layers(
         jurisdiction = result.scalar_one_or_none()
 
         if jurisdiction:
-            layers.extend([
-                {
-                    "id": f"parcels-{jurisdiction_code}",
-                    "name": f"Agroforestry Parcels ({jurisdiction.name})",
-                    "type": "vector",
-                    "source": "parcels",
-                    "jurisdiction": jurisdiction_code,
-                    "style": "agroforestry",
-                },
-                {
-                    "id": f"reference-{jurisdiction_code}",
-                    "name": f"Reference Points ({jurisdiction.name})",
-                    "type": "vector",
-                    "source": "reference_points",
-                    "jurisdiction": jurisdiction_code,
-                    "style": "points",
-                },
-            ])
+            layers.extend(
+                [
+                    {
+                        "id": f"parcels-{jurisdiction_code}",
+                        "name": f"Agroforestry Parcels ({jurisdiction.name})",
+                        "type": "vector",
+                        "source": "parcels",
+                        "jurisdiction": jurisdiction_code,
+                        "style": "agroforestry",
+                    },
+                    {
+                        "id": f"reference-{jurisdiction_code}",
+                        "name": f"Reference Points ({jurisdiction.name})",
+                        "type": "vector",
+                        "source": "reference_points",
+                        "jurisdiction": jurisdiction_code,
+                        "style": "points",
+                    },
+                ]
+            )
 
     return {"layers": layers}
 
@@ -215,6 +219,7 @@ async def search_parcels(
         )
     try:
         import math
+
         minx, miny, maxx, maxy = [float(c) for c in bbox]
         if any(math.isnan(c) or math.isinf(c) for c in [minx, miny, maxx, maxy]):
             raise ValueError("Coordinates cannot be NaN or Inf")
@@ -223,18 +228,14 @@ async def search_parcels(
         if miny > maxy:
             miny, maxy = maxy, miny
         from shapely.geometry import box
+
         bbox_geom = box(minx, miny, maxx, maxy)
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Invalid bbox coordinates: {e}")
 
     # Build query with eager loading of jurisdiction
     stmt = select(AgroforestryParcel).options(selectinload(AgroforestryParcel.jurisdiction))
-    stmt = stmt.where(
-        geofunc.ST_Intersects(
-            AgroforestryParcel.geometry,
-            func.ST_GeomFromText(bbox_geom.wkt, 4326)
-        )
-    )
+    stmt = stmt.where(geofunc.ST_Intersects(AgroforestryParcel.geometry, func.ST_GeomFromText(bbox_geom.wkt, 4326)))
 
     # Class filter
     if class_filter:
@@ -248,10 +249,7 @@ async def search_parcels(
         stmt = stmt.join(Jurisdiction).where(Jurisdiction.code == jurisdiction_code)
 
     # Order and limit
-    stmt = stmt.order_by(
-        AgroforestryParcel.confidence_score.desc(),
-        AgroforestryParcel.area_ha.desc()
-    ).limit(limit)
+    stmt = stmt.order_by(AgroforestryParcel.confidence_score.desc(), AgroforestryParcel.area_ha.desc()).limit(limit)
 
     result = await db.execute(stmt)
     parcels = result.scalars().all()
@@ -263,7 +261,11 @@ async def search_parcels(
                 "jurisdiction_code": safe_jurisdiction_code(p),
                 "geometry": GeospatialService.geometry_to_geojson(p.geometry),
                 "class_label": p.class_label.value if hasattr(p.class_label, "value") else str(p.class_label),
-                "agroforestry_subtype": p.agroforestry_subtype.value if p.agroforestry_subtype and hasattr(p.agroforestry_subtype, "value") else (str(p.agroforestry_subtype) if p.agroforestry_subtype else None),
+                "agroforestry_subtype": (
+                    p.agroforestry_subtype.value
+                    if p.agroforestry_subtype and hasattr(p.agroforestry_subtype, "value")
+                    else (str(p.agroforestry_subtype) if p.agroforestry_subtype else None)
+                ),
                 "confidence_score": p.confidence_score,
                 "area_ha": p.area_ha,
                 "uncertainty": p.uncertainty,
@@ -303,7 +305,11 @@ async def get_parcel(
         "jurisdiction_code": safe_jurisdiction_code(parcel),
         "geometry": GeospatialService.geometry_to_geojson(parcel.geometry),
         "class_label": parcel.class_label.value if hasattr(parcel.class_label, "value") else str(parcel.class_label),
-        "agroforestry_subtype": parcel.agroforestry_subtype.value if parcel.agroforestry_subtype and hasattr(parcel.agroforestry_subtype, "value") else (str(parcel.agroforestry_subtype) if parcel.agroforestry_subtype else None),
+        "agroforestry_subtype": (
+            parcel.agroforestry_subtype.value
+            if parcel.agroforestry_subtype and hasattr(parcel.agroforestry_subtype, "value")
+            else (str(parcel.agroforestry_subtype) if parcel.agroforestry_subtype else None)
+        ),
         "confidence_score": parcel.confidence_score,
         "area_ha": parcel.area_ha,
         "uncertainty": parcel.uncertainty,
@@ -348,7 +354,11 @@ async def get_parcel_telemetry(
     year = 2023
 
     if parcel:
-        subtype = parcel.agroforestry_subtype.value if parcel.agroforestry_subtype and hasattr(parcel.agroforestry_subtype, "value") else str(parcel.agroforestry_subtype or "agroforestry")
+        subtype = (
+            parcel.agroforestry_subtype.value
+            if parcel.agroforestry_subtype and hasattr(parcel.agroforestry_subtype, "value")
+            else str(parcel.agroforestry_subtype or "agroforestry")
+        )
         area_ha = parcel.area_ha or 15.0
         conf = parcel.confidence_score or 0.92
         year = parcel.source_year or 2023
@@ -360,7 +370,11 @@ async def get_parcel_telemetry(
             "midstory_crop_canopy_pct": 45.0,
             "understory_ground_cover_pct": 23.0,
             "total_canopy_cover_pct": 77.0,
-            "dominant_tree_species": ["Quercus ilex (Holm Oak)", "Quercus suber (Cork Oak)", "Olea europaea (Wild Olive)"],
+            "dominant_tree_species": [
+                "Quercus ilex (Holm Oak)",
+                "Quercus suber (Cork Oak)",
+                "Olea europaea (Wild Olive)",
+            ],
         }
         gedi_profile = {
             "relative_height_98m": 12.5,
@@ -390,7 +404,12 @@ async def get_parcel_telemetry(
             "midstory_crop_canopy_pct": 46.0,
             "understory_ground_cover_pct": 12.0,
             "total_canopy_cover_pct": 88.0,
-            "dominant_tree_species": ["Coffea arabica (Wild Genepool)", "Albizia gummifera", "Millettia ferruginea", "Cordia africana"],
+            "dominant_tree_species": [
+                "Coffea arabica (Wild Genepool)",
+                "Albizia gummifera",
+                "Millettia ferruginea",
+                "Cordia africana",
+            ],
         }
         gedi_profile = {
             "relative_height_98m": 24.2,
@@ -450,7 +469,15 @@ async def get_parcel_telemetry(
         {"year": 2018, "month": 6, "ndvi": 0.78, "evi": 0.54, "nirv": 0.38, "sensor": "Sentinel-2"},
         {"year": 2019, "month": 6, "ndvi": 0.81, "evi": 0.56, "nirv": 0.40, "sensor": "Sentinel-2"},
         {"year": 2020, "month": 6, "ndvi": 0.80, "evi": 0.55, "nirv": 0.39, "sensor": "Sentinel-2"},
-        {"year": 2020, "month": 12, "ndvi": 0.79, "evi": 0.54, "nirv": 0.39, "sensor": "Sentinel-2", "is_eudr_cutoff": True},
+        {
+            "year": 2020,
+            "month": 12,
+            "ndvi": 0.79,
+            "evi": 0.54,
+            "nirv": 0.39,
+            "sensor": "Sentinel-2",
+            "is_eudr_cutoff": True,
+        },
         {"year": 2021, "month": 6, "ndvi": 0.82, "evi": 0.57, "nirv": 0.41, "sensor": "Sentinel-2"},
         {"year": 2022, "month": 6, "ndvi": 0.81, "evi": 0.55, "nirv": 0.40, "sensor": "Sentinel-2"},
         {"year": 2023, "month": 6, "ndvi": 0.83, "evi": 0.58, "nirv": 0.42, "sensor": "Sentinel-2"},
@@ -459,6 +486,7 @@ async def get_parcel_telemetry(
 
     # EUDR Due Diligence Audit Certificate (deterministic reference ID)
     import hashlib
+
     ref_num = abs(int(hashlib.md5(str(parcel_id).encode("utf-8")).hexdigest(), 16)) % 90000 + 10000
     eudr_audit = {
         "reference_id": f"DDS-RICH-2024-{ref_num}",
@@ -486,7 +514,6 @@ async def get_parcel_telemetry(
         "soil_climate": soil_climate,
         "eudr_audit": eudr_audit,
     }
-
 
 
 @router.get("/reference-points")
@@ -522,8 +549,14 @@ async def list_reference_points(
                 "jurisdiction_code": safe_jurisdiction_code(p),
                 "geometry": mapping(to_shape(p.geometry)),
                 "class_label": p.class_label.value if hasattr(p.class_label, "value") else str(p.class_label),
-                "agroforestry_subtype": p.agroforestry_subtype.value if p.agroforestry_subtype and hasattr(p.agroforestry_subtype, "value") else (str(p.agroforestry_subtype) if p.agroforestry_subtype else None),
-                "validation_status": p.validation_status.value if hasattr(p.validation_status, "value") else str(p.validation_status),
+                "agroforestry_subtype": (
+                    p.agroforestry_subtype.value
+                    if p.agroforestry_subtype and hasattr(p.agroforestry_subtype, "value")
+                    else (str(p.agroforestry_subtype) if p.agroforestry_subtype else None)
+                ),
+                "validation_status": (
+                    p.validation_status.value if hasattr(p.validation_status, "value") else str(p.validation_status)
+                ),
                 "validator_id": str(p.validator_id) if p.validator_id else None,
                 "validation_date": p.validation_date.isoformat() if p.validation_date else None,
                 "quality_score": p.quality_score,
@@ -594,18 +627,18 @@ async def bbox_query(
     """Query multiple layers by bounding box"""
 
     from shapely.geometry import box
+
     bbox_geom = box(*bbox)
     bbox_wkt = bbox_geom.wkt
 
     results = {}
 
     if "parcels" in layers:
-        stmt = select(AgroforestryParcel).where(
-            geofunc.ST_Intersects(
-                AgroforestryParcel.geometry,
-                func.ST_GeomFromText(bbox_wkt, 4326)
-            )
-        ).limit(100)
+        stmt = (
+            select(AgroforestryParcel)
+            .where(geofunc.ST_Intersects(AgroforestryParcel.geometry, func.ST_GeomFromText(bbox_wkt, 4326)))
+            .limit(100)
+        )
         result = await db.execute(stmt)
         parcels = result.scalars().all()
         results["parcels"] = [
@@ -620,12 +653,11 @@ async def bbox_query(
         ]
 
     if "reference_points" in layers:
-        stmt = select(LandCoverReferencePoint).where(
-            geofunc.ST_Intersects(
-                LandCoverReferencePoint.geometry,
-                func.ST_GeomFromText(bbox_wkt, 4326)
-            )
-        ).limit(100)
+        stmt = (
+            select(LandCoverReferencePoint)
+            .where(geofunc.ST_Intersects(LandCoverReferencePoint.geometry, func.ST_GeomFromText(bbox_wkt, 4326)))
+            .limit(100)
+        )
         result = await db.execute(stmt)
         points = result.scalars().all()
         results["reference_points"] = [
@@ -633,7 +665,9 @@ async def bbox_query(
                 "id": str(p.id),
                 "geometry": GeospatialService.geometry_to_geojson(p.geometry),
                 "class_label": p.class_label.value if hasattr(p.class_label, "value") else str(p.class_label),
-                "validation_status": p.validation_status.value if hasattr(p.validation_status, "value") else str(p.validation_status),
+                "validation_status": (
+                    p.validation_status.value if hasattr(p.validation_status, "value") else str(p.validation_status)
+                ),
             }
             for p in points
         ]
@@ -657,24 +691,28 @@ async def get_jurisdiction_statistics(
         raise HTTPException(status_code=404, detail="Jurisdiction not found")
 
     # Get parcel statistics
-    stmt = select(
-        AgroforestryParcel.class_label,
-        func.count(AgroforestryParcel.id).label("count"),
-        func.sum(AgroforestryParcel.area_ha).label("total_area_ha"),
-        func.avg(AgroforestryParcel.confidence_score).label("avg_confidence"),
-    ).where(AgroforestryParcel.jurisdiction_id == jurisdiction.id).group_by(
-        AgroforestryParcel.class_label
+    stmt = (
+        select(
+            AgroforestryParcel.class_label,
+            func.count(AgroforestryParcel.id).label("count"),
+            func.sum(AgroforestryParcel.area_ha).label("total_area_ha"),
+            func.avg(AgroforestryParcel.confidence_score).label("avg_confidence"),
+        )
+        .where(AgroforestryParcel.jurisdiction_id == jurisdiction.id)
+        .group_by(AgroforestryParcel.class_label)
     )
     result = await db.execute(stmt)
     parcel_stats = result.all()
 
     # Get reference point statistics
-    stmt = select(
-        LandCoverReferencePoint.class_label,
-        func.count(LandCoverReferencePoint.id).label("count"),
-        func.avg(LandCoverReferencePoint.quality_score).label("avg_quality"),
-    ).where(LandCoverReferencePoint.jurisdiction_id == jurisdiction.id).group_by(
-        LandCoverReferencePoint.class_label
+    stmt = (
+        select(
+            LandCoverReferencePoint.class_label,
+            func.count(LandCoverReferencePoint.id).label("count"),
+            func.avg(LandCoverReferencePoint.quality_score).label("avg_quality"),
+        )
+        .where(LandCoverReferencePoint.jurisdiction_id == jurisdiction.id)
+        .group_by(LandCoverReferencePoint.class_label)
     )
     result = await db.execute(stmt)
     reference_stats = result.all()
