@@ -26,7 +26,7 @@ from sqlalchemy.dialects.postgresql import insert
 # Add project root and backend to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend"))
 
-from app.core.database import async_session_maker, init_db, close_db
+from app.core.database import async_session_maker, close_db, init_db
 from app.models import DocumentCatalog, DocumentEmbedding
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")

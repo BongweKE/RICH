@@ -244,19 +244,24 @@ async def test_modal_status_endpoint(async_client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_modal_ingest_endpoint(async_client: AsyncClient, monkeypatch: pytest.MonkeyPatch):
-    """Test /api/ai/modal/ingest endpoint"""
+async def test_modal_ingest_requires_admin(async_client: AsyncClient):
+    """Test /api/ai/modal/ingest returns 401/403 without admin credentials"""
+    resp = await async_client.post("/api/ai/modal/ingest", json={"force": False})
+    # Without a JWT the HTTPBearer dependency raises 403 (auto_error=True by default for
+    # require_permission which calls get_current_user, not the optional variant)
+    assert resp.status_code in (401, 403)
+
+
+@pytest.mark.asyncio
+async def test_modal_ingest_endpoint_admin(admin_client: AsyncClient, monkeypatch: pytest.MonkeyPatch):
+    """Test /api/ai/modal/ingest succeeds when called with admin permissions"""
     async def mock_ingest(force=False):
         return {"success": True, "processed": 4}
 
     monkeypatch.setattr("app.utils.embeddings.trigger_cloud_ingest", mock_ingest)
-    resp = await async_client.post("/api/ai/modal/ingest", json={"force": False})
+    resp = await admin_client.post("/api/ai/modal/ingest", json={"force": False})
     assert resp.status_code == 200
     data = resp.json()
     assert "success" in data
     assert data["success"] is True
-
-
-
-
 

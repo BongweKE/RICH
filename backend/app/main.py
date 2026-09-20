@@ -99,11 +99,14 @@ async def serve_spa_route(full_path: str, request: Request):
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
-    """Global exception handler"""
-    return JSONResponse(
-        status_code=500,
-        content={"detail": "Internal server error", "error": str(exc)},
-    )
+    """Global exception handler — never leaks raw error details in production"""
+    import logging
+
+    logging.getLogger(__name__).error(f"Unhandled exception on {request.url}: {exc}", exc_info=exc)
+    content: dict = {"detail": "Internal server error"}
+    if settings.DEBUG:
+        content["error"] = str(exc)
+    return JSONResponse(status_code=500, content=content)
 
 
 if __name__ == "__main__":

@@ -263,14 +263,12 @@ async def get_modal_status():
 @router.post("/modal/ingest")
 async def trigger_modal_ingest(
     force: bool = Body(False, embed=True, description="Force re-processing of already ingested documents"),
-    user: dict = Depends(get_current_user_optional),
+    user: dict = Depends(require_permission("admin:all")),
 ):
-    """Trigger cloud GPU document ingestion on Modal (or re-process corpus)"""
+    """Trigger cloud GPU document ingestion on Modal (or re-process corpus). Requires admin permission."""
     from app.utils.embeddings import trigger_cloud_ingest
     res = await trigger_cloud_ingest(force=force)
     return res
-
-
 
 @router.get("/stats")
 async def get_ai_stats(

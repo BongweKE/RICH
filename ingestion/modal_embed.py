@@ -178,9 +178,9 @@ def process_documents(force_reprocess: bool = False):
     """
     import fitz  # PyMuPDF
     import psycopg2
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
     from psycopg2.extras import execute_values
     from sentence_transformers import SentenceTransformer
-    from langchain_text_splitters import RecursiveCharacterTextSplitter
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 

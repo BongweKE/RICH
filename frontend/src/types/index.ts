@@ -306,7 +306,7 @@ export const LAND_COVER_COLORS: Record<string, string> = {
   cropland: '#fdae61',
   grassland: '#d1e5fe',
   settlement: '#e7298a',
-  water: '#636eva',
+  water: '#636eca',
 };
 
 // Agroforestry subtype-specific colors for better visual distinction

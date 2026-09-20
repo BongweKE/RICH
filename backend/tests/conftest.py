@@ -129,3 +129,34 @@ async def async_client(mock_db):
         yield client
 
     app.dependency_overrides.clear()
+
+
+@pytest_asyncio.fixture
+async def admin_client(mock_db):
+    """Async HTTP test client with admin permissions and overridden database dependency.
+    Overrides get_current_user (transitively used by require_permission) so that
+    permission-gated endpoints (e.g. /api/ai/modal/ingest) can be exercised in tests
+    without a real JWT token.
+    """
+    from app.core.security import get_current_user, get_current_user_optional
+
+    _admin_user = {"sub": "test-admin", "role": "admin"}
+
+    async def override_get_db():
+        yield mock_db
+
+    async def override_get_current_user():
+        return _admin_user
+
+    async def override_get_current_user_optional():
+        return _admin_user
+
+    app.dependency_overrides[get_db_session] = override_get_db
+    app.dependency_overrides[get_current_user] = override_get_current_user
+    app.dependency_overrides[get_current_user_optional] = override_get_current_user_optional
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as client:
+        yield client
+
+    app.dependency_overrides.clear()

@@ -20,4 +20,16 @@ export default defineConfig({
     port: 4173,
     host: '0.0.0.0',
   },
+  build: {
+    chunkSizeWarningLimit: 900,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Isolate the heavy mapping library into its own chunk so the main
+          // app bundle stays lean and can be cached independently.
+          'maplibre-gl': ['maplibre-gl'],
+        },
+      },
+    },
+  },
 });
