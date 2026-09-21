@@ -51,10 +51,15 @@ async def test_root_endpoint_html_browser(async_client: AsyncClient):
 
 @pytest.mark.asyncio
 async def test_spa_fallback_route(async_client: AsyncClient):
-    """Test SPA client route fallback"""
+    """Test SPA client route fallback (200 when static files exist, 404 when headless in CI)"""
+    from app.main import STATIC_DIR
+
     headers = {"Accept": "text/html"}
     response = await async_client.get("/explore", headers=headers)
-    assert response.status_code == 200
+    if STATIC_DIR:
+        assert response.status_code == 200
+    else:
+        assert response.status_code == 404
 
 
 @pytest.mark.asyncio
