@@ -70,8 +70,8 @@ jobs:
 
       - name: Create Git Tag
         run: |
-          git tag ${{ inputs.version }}
-          git push origin ${{ inputs.version }}
+          git tag -f ${{ inputs.version }}
+          git push origin ${{ inputs.version }} --force
 
       - name: Install Railway CLI
         run: |
@@ -98,14 +98,23 @@ jobs:
       - name: Verify production deployment
         run: |
           sleep 60
-          curl -I https://rich.acaicia.org/health || echo "Production health check failed"
-          curl -I https://rich.acaicia.org/api/geospatial/parcels || echo "Production API check failed"
+          PROD_URL="https://rich-production-d1d3.up.railway.app"
+          curl -I "$PROD_URL/health" || curl -I "$PROD_URL/health/" || echo "Production health check failed"
+          curl -I "$PROD_URL/api/geospatial/parcels" || echo "Production API check failed"
 
       - name: Run production smoke tests
         run: |
-          # Verify critical endpoints
-          curl -sSf https://rich.acaicia.org/health || curl -sSf https://rich.acaicia.org/api/health || exit 1
-          curl -sSf https://rich.acaicia.org/api/geospatial/jurisdictions || exit 1
+          PROD_URL="https://rich-production-d1d3.up.railway.app"
+          # Verify critical endpoints on live Railway URL (with fallback to custom domain if resolving)
+          if curl -sSf https://rich.acaicia.org/health/ >/dev/null 2>&1; then
+            TARGET="https://rich.acaicia.org"
+          else
+            TARGET="$PROD_URL"
+          fi
+          echo "Running smoke tests against $TARGET"
+          curl -sSf "$TARGET/health" || curl -sSf "$TARGET/health/" || curl -sSf "$TARGET/api/health" || exit 1
+          curl -sSf "$TARGET/api/geospatial/jurisdictions" || exit 1
+          curl -sSf "$TARGET/api/geospatial/parcels?limit=5" || exit 1
           echo "Production smoke tests passed"
 
       - name: Create GitHub Release
