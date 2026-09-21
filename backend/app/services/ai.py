@@ -435,7 +435,7 @@ class SynthesisAgent:
                             "Content-Type": "application/json",
                         },
                         json={
-                            "model": settings.MISTRAL_MODEL or "mistral-tiny",
+                            "model": settings.MISTRAL_MODEL,
                             "messages": messages,
                             "temperature": 0.3,
                             "max_tokens": 800,

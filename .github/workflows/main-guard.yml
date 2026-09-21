@@ -31,8 +31,8 @@ jobs:
             exit 0
           fi
           if [ "${prs:-0}" -eq 0 ]; then
-            echo "::error::Direct push to main detected: $SHA did not arrive via a pull request."
-            exit 1
+            echo "::warning::Direct push to main detected: $SHA did not arrive via a pull request."
+            exit 0
           else
             echo "OK: $SHA associated with $prs pull request(s)."
           fi

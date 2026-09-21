@@ -26,6 +26,8 @@ export interface Parcel {
   uncertainty?: number | null;
   source?: string | null;
   source_year?: number | null;
+  subtype_color?: string;
+  height?: number;
 }
 
 export interface PromptPill {

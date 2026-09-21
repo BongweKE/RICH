@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   X,
   Send,
@@ -7,6 +7,9 @@ import {
   User,
   ThumbsUp,
   ThumbsDown,
+  Copy,
+  Check,
+  Share2,
 } from 'lucide-react';
 import { ChatMessage, PromptPill } from '../types';
 import { api } from '../services/api';
@@ -42,7 +45,51 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({
   const [loading, setLoading] = useState(false);
   const [pills, setPills] = useState<PromptPill[]>([]);
   const [selectedCitation, setSelectedCitation] = useState<any | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [sharedId, setSharedId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const handleCopy = useCallback(async (msgId: string, content: string) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopiedId(msgId);
+      setTimeout(() => setCopiedId(null), 1500);
+    } catch {
+      // fallback: select invisible textarea
+      const el = document.createElement('textarea');
+      el.value = content;
+      el.style.position = 'fixed';
+      el.style.opacity = '0';
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      setCopiedId(msgId);
+      setTimeout(() => setCopiedId(null), 1500);
+    }
+  }, []);
+
+  const handleShare = useCallback(
+    async (msgId: string, content: string) => {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'RICH AI Copilot Analysis',
+            text: content,
+          });
+          setSharedId(msgId);
+          setTimeout(() => setSharedId(null), 1500);
+          return;
+        } catch {
+          // user cancelled or share failed, fallback to copy
+        }
+      }
+      handleCopy(msgId, content);
+      setSharedId(msgId);
+      setTimeout(() => setSharedId(null), 1500);
+    },
+    [handleCopy]
+  );
 
   const formatInline = (text: string): React.ReactNode => {
     const parts: React.ReactNode[] = [];
@@ -281,6 +328,38 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({
               {/* Message Feedback */}
               {m.role === 'assistant' && m.id !== 'welcome' && (
                 <div className="mt-2 flex items-center justify-end space-x-1.5 pt-1 text-slate-500">
+                  <button
+                    onClick={() => handleCopy(m.id, m.content)}
+                    className={`p-1 rounded hover:bg-slate-800 transition-all flex items-center space-x-1 ${
+                      copiedId === m.id ? 'text-emerald-400' : 'hover:text-slate-300'
+                    }`}
+                    title={copiedId === m.id ? 'Copied!' : 'Copy message'}
+                  >
+                    {copiedId === m.id ? (
+                      <>
+                        <Check className="w-3 h-3" />
+                        <span className="text-[9px] font-semibold">Copied!</span>
+                      </>
+                    ) : (
+                      <Copy className="w-3 h-3" />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => handleShare(m.id, m.content)}
+                    className={`p-1 rounded hover:bg-slate-800 transition-all flex items-center space-x-1 ${
+                      sharedId === m.id ? 'text-sky-400' : 'hover:text-slate-300'
+                    }`}
+                    title={sharedId === m.id ? 'Shared!' : 'Share message'}
+                  >
+                    {sharedId === m.id ? (
+                      <>
+                        <Check className="w-3 h-3" />
+                        <span className="text-[9px] font-semibold">Shared!</span>
+                      </>
+                    ) : (
+                      <Share2 className="w-3 h-3" />
+                    )}
+                  </button>
                   <button
                     onClick={() => handleFeedback(m.id, 1)}
                     className={`p-1 rounded hover:text-emerald-400 ${

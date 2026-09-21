@@ -30,7 +30,7 @@ class Settings(BaseSettings):
 
     # Mistral AI
     MISTRAL_API_KEY: str = ""
-    MISTRAL_MODEL: str = "mistral-tiny"
+    MISTRAL_MODEL: str = "ministral-8b-latest"
     MISTRAL_EMBEDDING_MODEL: str = "bge-small-en-v1.5"
     MISTRAL_BASE_URL: str = "https://api.mistral.ai/v1"
 

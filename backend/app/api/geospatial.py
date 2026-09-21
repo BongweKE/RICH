@@ -200,6 +200,84 @@ async def get_jurisdiction(
     }
 
 
+# ---------------------------------------------------------------------------
+# Subtype colour map and 3-D height helper (used by MapViewer.tsx)
+# ---------------------------------------------------------------------------
+SUBTYPE_COLORS: dict[str, str] = {
+    "shade_cocoa": "#2ca25f",
+    "shade_coffee": "#66c2a5",
+    "dehesa": "#fdae61",
+    "montado": "#e69537",
+    "silvopasture": "#d1e5fe",
+    "alley_cropping": "#99d8c9",
+    "parkland": "#c6dbef",
+    "homegarden": "#fdbb84",
+    "forest_farming": "#52b788",
+    "woodlot": "#756bb1",
+    "shade_tree": "#40916c",
+}
+
+
+def parcel_height(area_ha: float | None) -> float:
+    """3-D extrusion height derived from parcel area (clamped 5–50 m)."""
+    return max(5.0, min(50.0, (area_ha or 0) * 0.8))
+
+
+@router.get("/parcels")
+async def list_parcels(
+    jurisdiction_code: str | None = Query(None, description="Filter by jurisdiction code"),
+    limit: int = Query(100, description="Maximum results"),
+    offset: int = Query(0, description="Pagination offset"),
+    db: AsyncSession = Depends(get_db_session),
+):
+    """List all agroforestry parcels, optionally filtered by jurisdiction"""
+
+    stmt = select(AgroforestryParcel).options(selectinload(AgroforestryParcel.jurisdiction))
+
+    if jurisdiction_code:
+        stmt = stmt.join(Jurisdiction).where(Jurisdiction.code == jurisdiction_code)
+
+    stmt = stmt.order_by(AgroforestryParcel.confidence_score.desc(), AgroforestryParcel.area_ha.desc())
+    stmt = stmt.limit(limit).offset(offset)
+
+    result = await db.execute(stmt)
+    parcels = result.scalars().all()
+
+    return {
+        "parcels": [
+            {
+                "id": str(p.id),
+                "jurisdiction_code": safe_jurisdiction_code(p),
+                "geometry": GeospatialService.geometry_to_geojson(p.geometry),
+                "class_label": p.class_label.value if hasattr(p.class_label, "value") else str(p.class_label),
+                "agroforestry_subtype": (
+                    p.agroforestry_subtype.value
+                    if p.agroforestry_subtype and hasattr(p.agroforestry_subtype, "value")
+                    else (str(p.agroforestry_subtype) if p.agroforestry_subtype else None)
+                ),
+                "confidence_score": p.confidence_score,
+                "area_ha": p.area_ha,
+                "uncertainty": p.uncertainty,
+                "source": p.source,
+                "source_year": p.source_year,
+                "subtype_color": SUBTYPE_COLORS.get(
+                    (
+                        p.agroforestry_subtype.value
+                        if p.agroforestry_subtype and hasattr(p.agroforestry_subtype, "value")
+                        else (str(p.agroforestry_subtype) if p.agroforestry_subtype else "")
+                    ),
+                    "#99d8c9",
+                ),
+                "height": parcel_height(p.area_ha),
+            }
+            for p in parcels
+        ],
+        "count": len(parcels),
+        "offset": offset,
+        "limit": limit,
+    }
+
+
 @router.post("/parcels/search")
 async def search_parcels(
     bbox: list[float] = Body(..., description="Bounding box [min_lon, min_lat, max_lon, max_lat]"),
@@ -271,6 +349,15 @@ async def search_parcels(
                 "uncertainty": p.uncertainty,
                 "source": p.source,
                 "source_year": p.source_year,
+                "subtype_color": SUBTYPE_COLORS.get(
+                    (
+                        p.agroforestry_subtype.value
+                        if p.agroforestry_subtype and hasattr(p.agroforestry_subtype, "value")
+                        else (str(p.agroforestry_subtype) if p.agroforestry_subtype else "")
+                    ),
+                    "#99d8c9",
+                ),
+                "height": parcel_height(p.area_ha),
             }
             for p in parcels
         ],

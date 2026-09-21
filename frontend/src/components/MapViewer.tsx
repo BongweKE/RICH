@@ -240,7 +240,9 @@ export const MapViewer: React.FC<MapViewerProps> = ({
             .filter((p) => p.geometry && p.geometry.coordinates)
             .map((p) => {
               const subtype = p.agroforestry_subtype || '';
-              const subtypeColor = AGROFORESTRY_SUBTYPE_COLORS[subtype] || AGROFORESTRY_SUBTYPE_COLORS.default;
+              const subtypeColor =
+                p.subtype_color || AGROFORESTRY_SUBTYPE_COLORS[subtype] || AGROFORESTRY_SUBTYPE_COLORS.default;
+              const height = p.height ?? (p.confidence_score || 0.8) * 120;
               return {
                 type: 'Feature',
                 properties: {
@@ -248,7 +250,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
                   subtype: p.agroforestry_subtype,
                   confidence: p.confidence_score,
                   area_ha: p.area_ha || 15.0,
-                  height: (p.confidence_score || 0.8) * 120, // 3D height proportional to canopy confidence
+                  height: height,
                   selected: selectedParcel?.id === p.id,
                   subtype_color: subtypeColor,
                   opacity: opacities.agroforestryParcels,
@@ -323,6 +325,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
                 ['coalesce', ['get', 'subtype_color'], '#34d399'],
               ],
               'line-width': ['case', ['boolean', ['get', 'selected'], false], 3, 2],
+              'line-opacity': ['/', opacities.agroforestryParcels, 100],
             },
           });
 
@@ -341,12 +344,17 @@ export const MapViewer: React.FC<MapViewerProps> = ({
           });
         }
 
-        // Toggle layer visibility
+        // Toggle layer visibility and update responsive opacity
         if (map.getLayer('parcels-fill')) {
           map.setLayoutProperty(
             'parcels-fill',
             'visibility',
             layers.agroforestryParcels && !is3DMode ? 'visible' : 'none'
+          );
+          map.setPaintProperty(
+            'parcels-fill',
+            'fill-opacity',
+            opacities.agroforestryParcels / 100
           );
         }
         if (map.getLayer('parcels-3d-extrusion')) {
@@ -354,6 +362,23 @@ export const MapViewer: React.FC<MapViewerProps> = ({
             'parcels-3d-extrusion',
             'visibility',
             layers.agroforestryParcels && is3DMode ? 'visible' : 'none'
+          );
+          map.setPaintProperty(
+            'parcels-3d-extrusion',
+            'fill-extrusion-opacity',
+            opacities.agroforestryParcels / 100
+          );
+        }
+        if (map.getLayer('parcels-line')) {
+          map.setLayoutProperty(
+            'parcels-line',
+            'visibility',
+            layers.agroforestryParcels ? 'visible' : 'none'
+          );
+          map.setPaintProperty(
+            'parcels-line',
+            'line-opacity',
+            opacities.agroforestryParcels / 100
           );
         }
       } catch (err) {

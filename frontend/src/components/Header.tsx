@@ -9,6 +9,7 @@ import {
   Eye,
   Volume2,
   VolumeX,
+  Upload,
 } from 'lucide-react';
 import { Jurisdiction, SensorMode } from '../types';
 
@@ -16,6 +17,9 @@ interface HeaderProps {
   jurisdictions: Jurisdiction[];
   selectedJurisdiction: Jurisdiction | null;
   onSelectJurisdiction: (j: Jurisdiction) => void;
+  parcelCount: number;
+  onOpenInbox: () => void;
+  isInboxOpen: boolean;
   is3DMode: boolean;
   onToggle3D: () => void;
   onOpenLumens: () => void;
@@ -34,6 +38,9 @@ export const Header: React.FC<HeaderProps> = ({
   jurisdictions,
   selectedJurisdiction,
   onSelectJurisdiction,
+  parcelCount,
+  onOpenInbox,
+  isInboxOpen,
   is3DMode,
   onToggle3D,
   onOpenLumens,
@@ -67,31 +74,57 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Jurisdiction Selector */}
-      <div className="flex items-center space-x-2">
-        <label htmlFor="jurisdiction-select" className="text-xs text-slate-400 hidden md:inline">
-          Pilot Landscape:
-        </label>
-        <select
-          id="jurisdiction-select"
-          value={selectedJurisdiction?.code || ''}
-          onChange={(e) => {
-            const found = jurisdictions.find((j) => j.code === e.target.value);
-            if (found) onSelectJurisdiction(found);
-          }}
-          className="bg-slate-900 text-xs text-slate-200 border border-slate-700 rounded-md px-2.5 py-1.5 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors cursor-pointer"
+      {/* Jurisdiction Selector & Active Parcels Badge */}
+      <div className="flex items-center space-x-2.5">
+        <div className="flex items-center space-x-2">
+          <label htmlFor="jurisdiction-select" className="text-xs text-slate-400 hidden md:inline">
+            Pilot Landscape:
+          </label>
+          <select
+            id="jurisdiction-select"
+            value={selectedJurisdiction?.code || ''}
+            onChange={(e) => {
+              const found = jurisdictions.find((j) => j.code === e.target.value);
+              if (found) onSelectJurisdiction(found);
+            }}
+            className="bg-slate-900 text-xs text-slate-200 border border-slate-700 rounded-md px-2.5 py-1.5 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors cursor-pointer"
+          >
+            {jurisdictions.map((j) => (
+              <option key={j.code} value={j.code}>
+                {j.code === 'ES-EX' ? '🇪🇸 ' : j.code.startsWith('GH') ? '🇬🇭 ' : '🇪🇹 '}
+                {j.name} ({j.code})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Active Parcels Reactive Badge */}
+        <div
+          className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 font-mono text-xs shadow-sm"
+          title={`${parcelCount} active agroforestry parcels loaded in landscape`}
         >
-          {jurisdictions.map((j) => (
-            <option key={j.code} value={j.code}>
-              {j.code === 'ES-EX' ? '🇪🇸 ' : j.code.startsWith('GH') ? '🇬🇭 ' : '🇪🇹 '}
-              {j.name} ({j.code})
-            </option>
-          ))}
-        </select>
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="font-bold text-white text-xs">{parcelCount}</span>
+          <span className="text-[10px] text-emerald-400/80 tracking-wide hidden sm:inline">Parcels</span>
+        </div>
       </div>
 
       {/* Action Tools & God's Eye View Interactivity Controls */}
       <div className="flex items-center space-x-2">
+        {/* Plot Inbox (User Upload) */}
+        <button
+          onClick={onOpenInbox}
+          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-medium border transition-all ${
+            isInboxOpen
+              ? 'bg-sky-600/30 text-sky-300 border-sky-500/50 shadow-sm shadow-sky-900/30'
+              : 'bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800 hover:text-sky-300'
+          }`}
+          title="Upload Farm Parcels (GeoJSON Drag & Drop)"
+        >
+          <Upload className="w-3.5 h-3.5 text-sky-400" />
+          <span className="hidden sm:inline">Plot Inbox</span>
+        </button>
+
         {/* Sensor Mode Selector */}
         <div className="relative flex items-center bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs">
           <Eye className="w-3.5 h-3.5 text-emerald-400 mr-1.5" />

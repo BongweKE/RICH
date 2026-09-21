@@ -114,21 +114,18 @@ jobs:
 
       - name: Install Railway CLI
         run: |
-          # Install Railway CLI via direct download (avoids npm SSH issues)
-          # Get the latest release tag
-          TAG=$(curl -s https://api.github.com/repos/railwayapp/cli/releases/latest | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
-          echo "Downloading Railway CLI version: $TAG"
-          curl -sL https://github.com/railwayapp/cli/releases/download/$TAG/railway-${TAG}-x86_64-unknown-linux-gnu.tar.gz -o railway.tar.gz
-          tar -xzf railway.tar.gz
-          chmod +x railway
-          ./railway login --token $RAILWAY_API_TOKEN || true
+          curl -fsSL https://railway.com/install.sh | sh -s -- -y
+          echo "$HOME/.railway/bin" >> $GITHUB_PATH
 
       - name: Deploy to Railway
         id: deploy
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
         run: |
-          ./railway up --project $RAILWAY_PROJECT_ID --environment staging
+          export PATH="$HOME/.railway/bin:$PATH"
+          railway up --project $RAILWAY_PROJECT_ID --environment staging
           # Extract deployment URL
-          DEPLOYMENT_URL=$(./railway variables get STAGING_URL 2>/dev/null || echo "https://rich-staging.railway.app")
+          DEPLOYMENT_URL=$(railway variables get STAGING_URL 2>/dev/null || echo "https://rich-staging.railway.app")
           echo "deployment_url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
 
       - name: Run database migrations

@@ -75,13 +75,8 @@ jobs:
 
       - name: Install Railway CLI
         run: |
-          # Get the latest release tag
-          TAG=$(curl -s https://api.github.com/repos/railwayapp/cli/releases/latest | grep -o '"tag_name": "[^"]*"' | cut -d'"' -f4)
-          echo "Downloading Railway CLI version: $TAG"
-          curl -sL https://github.com/railwayapp/cli/releases/download/$TAG/railway-${TAG}-x86_64-unknown-linux-gnu.tar.gz -o railway.tar.gz
-          tar -xzf railway.tar.gz
-          chmod +x railway
-          ./railway login --token $RAILWAY_API_TOKEN
+          curl -fsSL https://railway.com/install.sh | sh -s -- -y
+          echo "$HOME/.railway/bin" >> $GITHUB_PATH
 
       - name: Run database migrations for production
         run: |
@@ -90,8 +85,11 @@ jobs:
           echo "Production migrations would be applied here"
 
       - name: Deploy to Production
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
         run: |
-          ./railway up --project $RAILWAY_PROJECT_ID --environment production
+          export PATH="$HOME/.railway/bin:$PATH"
+          railway up --project $RAILWAY_PROJECT_ID --environment production
 
       - name: Verify production deployment
         run: |
