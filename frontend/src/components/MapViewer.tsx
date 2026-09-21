@@ -281,7 +281,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
               'fill-color': [
                 'case',
                 ['boolean', ['get', 'selected'], false],
-                ['get', 'subtype_color'],
+                '#34d399',
                 ['coalesce', ['get', 'subtype_color'], '#10b981'],
               ],
               'fill-opacity': ['/', ['get', 'opacity'], 100],
@@ -300,7 +300,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
               'fill-extrusion-color': [
                 'case',
                 ['boolean', ['get', 'selected'], false],
-                ['get', 'subtype_color'],
+                '#34d399',
                 ['coalesce', ['get', 'subtype_color'], '#10b981'],
               ],
               'fill-extrusion-height': ['get', 'height'],

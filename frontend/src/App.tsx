@@ -11,7 +11,7 @@ import { SensorOverlay } from './components/SensorOverlay';
 import { SceneDirector } from './components/SceneDirector';
 import { TemporalScrubber } from './components/TemporalScrubber';
 import { PlotInboxDrawer } from './components/PlotInboxDrawer';
-import { Jurisdiction, Parcel, LayerState, LayerOpacityState, SensorMode, TourWaypoint } from './types';
+import { Jurisdiction, Parcel, LayerState, LayerOpacityState, SensorMode, TourWaypoint, AGROFORESTRY_SUBTYPE_COLORS } from './types';
 import { api } from './services/api';
 
 const getFallbackParcels = (code?: string): Parcel[] => {
@@ -400,16 +400,30 @@ export function App() {
       selectedJurisdiction.code === 'ES-EX'
         ? [-7.5, 38.0, -5.0, 40.5]
         : selectedJurisdiction.code === 'GH-AH'
-        ? [-2.4, 5.8, -1.0, 7.4]
+        ? [-2.5, 5.5, -0.5, 7.5]
         : [35.0, 6.5, 39.5, 9.5];
 
-    api.searchParcels(bbox, selectedJurisdiction.code).then((data) => {
-      if (data && data.length > 0) {
-        setParcels(data);
-      } else {
+    // First attempt direct parcel listing via GET /api/geospatial/parcels
+    api
+      .getParcels(selectedJurisdiction.code, 150)
+      .then((data) => {
+        if (data && data.length > 0) {
+          setParcels(data);
+        } else {
+          return api.searchParcels(bbox, selectedJurisdiction.code);
+        }
+      })
+      .then((data) => {
+        if (data && data.length > 0) {
+          setParcels(data);
+        } else if (!parcels || parcels.length === 0) {
+          setParcels(getFallbackParcels(selectedJurisdiction.code));
+        }
+      })
+      .catch((e) => {
+        console.warn('Error loading parcels, using realistic fallback:', e);
         setParcels(getFallbackParcels(selectedJurisdiction.code));
-      }
-    });
+      });
   }, [selectedJurisdiction]);
 
   const handleLoadUploadedParcels = useCallback(
@@ -424,6 +438,7 @@ export function App() {
             : selectedJurisdiction?.code === 'ET-OR'
             ? 'shade_coffee'
             : 'shade_cocoa');
+        const areaHa = Number(props.area_ha || props.area || 14.5);
         return {
           id: props.id || props.name || `user-parcel-${Date.now()}-${idx + 1}`,
           jurisdiction_code: selectedJurisdiction?.code || 'USER',
@@ -431,10 +446,15 @@ export function App() {
           class_label: props.class_label || 'agroforestry',
           agroforestry_subtype: subtype,
           confidence_score: Number(props.confidence_score || props.confidence || 0.94),
-          area_ha: Number(props.area_ha || props.area || 14.5),
+          area_ha: areaHa,
           uncertainty: Number(props.uncertainty || 0.05),
           source: props.source || 'User Upload (Plot Inbox)',
           source_year: Number(props.source_year || new Date().getFullYear()),
+          subtype_color:
+            props.subtype_color ||
+            AGROFORESTRY_SUBTYPE_COLORS[subtype] ||
+            AGROFORESTRY_SUBTYPE_COLORS.default,
+          height: Math.max(5.0, Math.min(50.0, areaHa * 0.8)),
         };
       });
 

@@ -138,6 +138,14 @@ export const ParcelInspector: React.FC<ParcelInspectorProps> = ({
         </div>
         <div className="flex items-center space-x-1.5">
           <button
+            onClick={handleDownloadEvidencePack}
+            className="flex items-center space-x-1 px-2 py-1 rounded bg-green-700/40 hover:bg-green-600/60 text-emerald-300 border border-emerald-500/40 text-[10px] font-semibold transition-colors"
+            title="Download EUDR Evidence Pack JSON archive"
+          >
+            <Download className="w-3 h-3 text-emerald-400" />
+            <span className="hidden sm:inline">Evidence Pack</span>
+          </button>
+          <button
             onClick={() =>
               onAskAI?.(
                 `Analyze EUDR compliance, carbon sequestration rate, and canopy density for parcel ${parcel.id} (${parcel.agroforestry_subtype || parcel.class_label}, ${parcel.area_ha?.toFixed(1) || 14.2} ha).`

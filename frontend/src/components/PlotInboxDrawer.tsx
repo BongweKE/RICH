@@ -35,8 +35,19 @@ export const PlotInboxDrawer: React.FC<PlotInboxDrawerProps> = ({
         );
       } else if (json.type === 'Feature' && json.geometry) {
         features = [json];
+      } else if (json.type === 'Polygon' || json.type === 'MultiPolygon') {
+        features = [{ type: 'Feature', properties: {}, geometry: json }];
+      } else if (Array.isArray(json)) {
+        features = json
+          .map((item: any) => {
+            if (item && item.type === 'Feature' && item.geometry) return item;
+            if (item && (item.type === 'Polygon' || item.type === 'MultiPolygon'))
+              return { type: 'Feature', properties: {}, geometry: item };
+            return null;
+          })
+          .filter(Boolean);
       } else {
-        setParsedFile({ name: fileName, featureCount: 0, features: [], error: 'Invalid GeoJSON: No FeatureCollection or Feature geometry found.' });
+        setParsedFile({ name: fileName, featureCount: 0, features: [], error: 'Invalid GeoJSON: No FeatureCollection, Feature, or Polygon geometry found.' });
         return;
       }
 

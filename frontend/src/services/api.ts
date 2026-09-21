@@ -43,6 +43,22 @@ export const api = {
     }
   },
 
+  // List Parcels (Direct DB query by jurisdiction, up to limit)
+  async getParcels(jurisdictionCode?: string, limit = 150): Promise<Parcel[]> {
+    try {
+      const url = jurisdictionCode
+        ? `${API_BASE}/geospatial/parcels?jurisdiction_code=${encodeURIComponent(jurisdictionCode)}&limit=${limit}`
+        : `${API_BASE}/geospatial/parcels?limit=${limit}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Failed to fetch parcels');
+      const data = await res.json();
+      return data.parcels || [];
+    } catch (e) {
+      console.warn('Failed to fetch parcels via list, falling back:', e);
+      return [];
+    }
+  },
+
   // Parcels Search
   async searchParcels(bbox: number[], jurisdictionCode?: string): Promise<Parcel[]> {
     try {

@@ -55,3 +55,28 @@ async def test_spa_fallback_route(async_client: AsyncClient):
     headers = {"Accept": "text/html"}
     response = await async_client.get("/explore", headers=headers)
     assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_api_health_check(async_client: AsyncClient):
+    """Test /api/health compatibility endpoint"""
+    response = await async_client.get("/api/health/")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "healthy"
+
+
+@pytest.mark.asyncio
+async def test_api_parcels_alias(async_client: AsyncClient):
+    """Test /api/parcels compatibility redirect alias"""
+    response = await async_client.get("/api/parcels", follow_redirects=False)
+    assert response.status_code == 307
+    assert "/api/geospatial/parcels" in response.headers["location"]
+
+
+@pytest.mark.asyncio
+async def test_api_jurisdictions_alias(async_client: AsyncClient):
+    """Test /api/jurisdictions compatibility redirect alias"""
+    response = await async_client.get("/api/jurisdictions", follow_redirects=False)
+    assert response.status_code == 307
+    assert "/api/geospatial/jurisdictions" in response.headers["location"]

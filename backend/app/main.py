@@ -44,10 +44,32 @@ app.add_middleware(
 
 # Include routers
 app.include_router(health.router, prefix="/health", tags=["health"])
+app.include_router(health.router, prefix="/api/health", tags=["health"])
 app.include_router(geospatial.router, prefix="/api/geospatial", tags=["geospatial"])
 app.include_router(lumens.router, prefix="/api/lumens", tags=["lumens"])
 app.include_router(ai.router, prefix="/api/ai", tags=["ai"])
 app.include_router(policy.router, prefix="/api/policy", tags=["policy"])
+
+
+# Compatibility endpoints for common root-level API requests
+@app.get("/api/parcels", tags=["geospatial"], include_in_schema=False)
+async def api_parcels_alias(request: Request):
+    """Compatibility alias redirecting /api/parcels to /api/geospatial/parcels"""
+    from fastapi.responses import RedirectResponse
+
+    query = str(request.url.query)
+    target = f"/api/geospatial/parcels{('?' + query) if query else ''}"
+    return RedirectResponse(url=target, status_code=307)
+
+
+@app.get("/api/jurisdictions", tags=["geospatial"], include_in_schema=False)
+async def api_jurisdictions_alias(request: Request):
+    """Compatibility alias redirecting /api/jurisdictions to /api/geospatial/jurisdictions"""
+    from fastapi.responses import RedirectResponse
+
+    query = str(request.url.query)
+    target = f"/api/geospatial/jurisdictions{('?' + query) if query else ''}"
+    return RedirectResponse(url=target, status_code=307)
 
 
 # Static files mounting for production / Docker / Railway deployment

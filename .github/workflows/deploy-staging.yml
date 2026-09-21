@@ -154,7 +154,7 @@ jobs:
           # Health check
           curl -I ${{ steps.deploy.outputs.deployment_url }}/health || echo "Health check failed"
           # Basic API endpoint check
-          curl -I ${{ steps.deploy.outputs.deployment_url }}/api/parcels || echo "API check failed"
+          curl -I ${{ steps.deploy.outputs.deployment_url }}/api/geospatial/parcels || echo "API check failed"
 
       - name: Tag last deployed commit
         if: success()

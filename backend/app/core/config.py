@@ -101,7 +101,7 @@ class Settings(BaseSettings):
     PROMETHEUS_PORT: int = 9090
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=(".env", "../.env"),
         env_file_encoding="utf-8",
         case_sensitive=True,
         extra="ignore",
