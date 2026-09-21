@@ -45,6 +45,7 @@ export function App() {
   const [layers, setLayers] = useState<LayerState>({
     agroforestryParcels: true,
     referencePoints: true,
+    deforestationAlerts: true,
     eudrDeforestationBaseline: true,
     canopyDensity: true,
     satelliteBasemap: false,
@@ -54,11 +55,15 @@ export function App() {
   const [opacities, setOpacities] = useState<LayerOpacityState>({
     agroforestryParcels: 85,
     referencePoints: 90,
+    deforestationAlerts: 85,
     eudrDeforestationBaseline: 70,
     canopyDensity: 60,
     satelliteBasemap: 100,
     carbonDensityHeatmap: 50,
   });
+
+  const [referencePoints, setReferencePoints] = useState<any[]>([]);
+  const [deforestationAlerts, setDeforestationAlerts] = useState<any[]>([]);
 
   const [is3DMode, setIs3DMode] = useState(true); // default to 3D perspective
   const [sensorMode, setSensorMode] = useState<SensorMode>('normal');
@@ -171,34 +176,30 @@ export function App() {
         ? 'ET-OR'
         : 'GH-AH';
 
-    const bbox =
-      canonicalCode === 'ES-EX'
-        ? [-7.5, 38.0, -5.0, 40.5]
-        : canonicalCode === 'GH-AH'
-        ? [-2.5, 5.5, -0.5, 7.5]
-        : [35.0, 6.5, 39.5, 9.5];
 
-    const loadLandscapeParcels = async () => {
+    const loadLandscapeData = async () => {
       try {
-        let data = await api.getParcels(canonicalCode, 250);
-        if (!data || data.length === 0) {
-          data = await api.searchParcels(bbox, canonicalCode);
-        }
-        if (!data || data.length === 0) {
-          data = getFallbackParcels(canonicalCode);
-        }
-        if (isCurrent && data && data.length > 0) {
-          setParcels(data);
+        const [parcelData, refData, alertData] = await Promise.all([
+          api.getParcels(canonicalCode, 500).catch(() => getFallbackParcels(canonicalCode)),
+          api.getReferencePoints(canonicalCode).catch(() => []),
+          api.getDeforestationAlerts(canonicalCode).catch(() => []),
+        ]);
+
+        if (isCurrent) {
+          const finalParcels = parcelData && parcelData.length > 0 ? parcelData : getFallbackParcels(canonicalCode);
+          setParcels(finalParcels);
+          setReferencePoints(refData || []);
+          setDeforestationAlerts(alertData || []);
         }
       } catch (e) {
-        console.warn('Error loading parcels, using exhaustive local dataset:', e);
+        console.warn('Error loading landscape data, using exhaustive local datasets:', e);
         if (isCurrent) {
           setParcels(getFallbackParcels(canonicalCode));
         }
       }
     };
 
-    loadLandscapeParcels();
+    loadLandscapeData();
 
     return () => {
       isCurrent = false;
@@ -294,6 +295,8 @@ export function App() {
     playTacticalSFX('beep');
   };
 
+  const totalDatapoints = parcels.length + referencePoints.length + deforestationAlerts.length;
+
   return (
     <div className="flex flex-col w-screen h-screen bg-slate-950 text-slate-100 overflow-hidden font-sans select-none">
       {/* Top Tactical Navigation Bar */}
@@ -306,6 +309,9 @@ export function App() {
           playTacticalSFX('beep');
         }}
         parcelCount={parcels.length}
+        totalDatapoints={totalDatapoints}
+        referenceCount={referencePoints.length}
+        alertsCount={deforestationAlerts.length}
         onOpenInbox={() => {
           setIsInboxOpen(true);
           playTacticalSFX('beep');
@@ -353,6 +359,7 @@ export function App() {
           cameraZoom={cameraTelemetry.zoom}
           sensorMode={sensorMode}
           parcelCount={parcels.length}
+          totalDatapoints={totalDatapoints}
           is3DMode={is3DMode}
           isChatOpen={isChatOpen}
           selectedParcel={selectedParcel}
@@ -369,6 +376,26 @@ export function App() {
           onFlyToWaypoint={(wp) => {
             setTourWaypoint(wp);
             playTacticalSFX('beep');
+          }}
+          onSelectNearestParcel={(coords) => {
+            if (parcels.length > 0) {
+              let closest = parcels[0];
+              let minD = Infinity;
+              for (const p of parcels) {
+                if (p.geometry?.coordinates) {
+                  const ring = p.geometry.coordinates[0];
+                  const c = Array.isArray(ring) ? ring[0] : null;
+                  if (c && typeof c[0] === 'number') {
+                    const d = (c[0] - coords[0]) ** 2 + (c[1] - coords[1]) ** 2;
+                    if (d < minD) {
+                      minD = d;
+                      closest = p;
+                    }
+                  }
+                }
+              }
+              setSelectedParcel(closest);
+            }
           }}
         />
 
@@ -411,6 +438,8 @@ export function App() {
           currentYear={currentYear}
           isSplitCompare={isSplitCompare}
           tourWaypoint={tourWaypoint}
+          referencePoints={referencePoints}
+          deforestationAlerts={deforestationAlerts}
           onCameraChange={setCameraTelemetry}
           onCursorMove={setCursorCoords}
         />

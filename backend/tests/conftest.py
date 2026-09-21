@@ -20,10 +20,11 @@ from app.main import app
 from app.models import (
     AgroforestryParcel,
     Jurisdiction,
+    LandCoverReferencePoint,
     PolicyComplianceAssessment,
     PolicyFramework,
 )
-from app.models.geospatial import AgroforestrySubtype, LandCoverClass
+from app.models.geospatial import AgroforestrySubtype, LandCoverClass, ValidationStatus
 
 
 @pytest.fixture
@@ -77,11 +78,26 @@ def mock_db():
         report_json={"status": "COMPLIANT"},
     )
 
+    sample_ref_point = LandCoverReferencePoint(
+        id=uuid.UUID("55555555-5555-4000-8000-000000000001"),
+        jurisdiction_id=sample_jurisdiction.id,
+        geometry=None,
+        class_label=LandCoverClass.AGROFORESTRY,
+        agroforestry_subtype=AgroforestrySubtype.DEHESA,
+        validation_status=ValidationStatus.EXPERT_REVIEWED,
+        quality_score=0.96,
+        metadata_={"name": "CSIC Station Cáceres"},
+    )
+
     async def mock_execute(stmt, *args, **kwargs):
         res = MagicMock()
         stmt_str = str(stmt).lower()
 
-        if "policy_frameworks" in stmt_str:
+        if "land_cover_reference_points" in stmt_str:
+            res.scalar_one_or_none.return_value = sample_ref_point
+            res.scalar_one.return_value = sample_ref_point
+            res.scalars.return_value.all.return_value = [sample_ref_point]
+        elif "policy_frameworks" in stmt_str:
             res.scalar_one_or_none.return_value = sample_framework
             res.scalar_one.return_value = sample_framework
             res.scalars.return_value.all.return_value = [sample_framework]

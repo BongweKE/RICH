@@ -290,6 +290,7 @@ export interface LayerState {
   canopyDensity: boolean;
   satelliteBasemap: boolean;
   carbonDensityHeatmap?: boolean;
+  deforestationAlerts?: boolean;
 }
 
 export interface LayerOpacityState {
@@ -299,6 +300,7 @@ export interface LayerOpacityState {
   canopyDensity: number;
   satelliteBasemap: number;
   carbonDensityHeatmap?: number;
+  deforestationAlerts?: number;
 }
 
 // Scientific color palette based on Viridis and categorization best practices

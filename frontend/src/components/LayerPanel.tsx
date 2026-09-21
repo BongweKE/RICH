@@ -123,7 +123,39 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({
               )}
             </div>
 
-            {/* 3. EUDR 2020 Forest Baseline */}
+            {/* 3. GFW Deforestation & Disturbance Alerts */}
+            <div className="p-2 rounded-lg bg-slate-900/70 border border-slate-800/80 space-y-1.5">
+              <div
+                onClick={() => onToggleLayer('deforestationAlerts')}
+                className="flex items-center justify-between cursor-pointer"
+              >
+                <div className="flex items-center space-x-2">
+                  <Flame className="w-3.5 h-3.5 text-rose-500 animate-pulse" />
+                  <span className="text-slate-200 font-medium">GFW Deforestation Alerts</span>
+                </div>
+                {layers.deforestationAlerts !== false ? (
+                  <Eye className="w-3.5 h-3.5 text-rose-400" />
+                ) : (
+                  <EyeOff className="w-3.5 h-3.5 text-slate-600" />
+                )}
+              </div>
+              {layers.deforestationAlerts !== false && (
+                <div className="flex items-center space-x-2 text-[10px] text-slate-400 pl-5">
+                  <span>Opacity:</span>
+                  <input
+                    type="range"
+                    min="10"
+                    max="100"
+                    value={opacities.deforestationAlerts || 85}
+                    onChange={(e) => handleOpacityChangeLocal('deforestationAlerts', Number(e.target.value))}
+                    className="w-24 accent-rose-500 cursor-pointer h-1"
+                  />
+                  <span className="font-mono text-rose-400">{opacities.deforestationAlerts || 85}%</span>
+                </div>
+              )}
+            </div>
+
+            {/* 4. EUDR 2020 Forest Baseline */}
             <div className="p-2 rounded-lg bg-slate-900/70 border border-slate-800/80 space-y-1.5">
               <div
                 onClick={() => onToggleLayer('eudrDeforestationBaseline')}

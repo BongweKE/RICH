@@ -35,6 +35,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy backend code
 COPY backend /app
 
+# Copy dataset files for geospatial fallbacks & alerts
+COPY data /app/data
+
 # Copy built frontend static files
 COPY --from=frontend-builder /frontend/dist /app/static
 

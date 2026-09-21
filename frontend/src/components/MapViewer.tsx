@@ -22,6 +22,8 @@ interface MapViewerProps {
   currentYear: number;
   isSplitCompare: boolean;
   tourWaypoint: TourWaypoint | null;
+  deforestationAlerts?: any[];
+  referencePoints?: any[];
   onCameraChange?: (info: { pitch: number; bearing: number; zoom: number; center: [number, number] }) => void;
   onCursorMove?: (coords: [number, number] | null) => void;
 }
@@ -156,6 +158,8 @@ export const MapViewer: React.FC<MapViewerProps> = ({
   currentYear,
   isSplitCompare,
   tourWaypoint,
+  deforestationAlerts,
+  referencePoints,
   onCameraChange,
   onCursorMove,
 }) => {
@@ -170,7 +174,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
         return [
           'case',
           ['boolean', ['get', 'selected'], false],
-          '#f43f5e',
+          '#ffffff', // Blistering white-hot thermal signature for selected parcel
           ['>=', ['get', 'height'], 35],
           '#38bdf8', // Cool upper emergent canopy
           ['>=', ['get', 'height'], 25],
@@ -183,7 +187,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
         return [
           'case',
           ['boolean', ['get', 'selected'], false],
-          '#86efac',
+          '#bbf7d0', // Ultra-bright luminescent phosphor highlight
           ['>=', ['get', 'height'], 30],
           '#4ade80',
           ['>=', ['get', 'height'], 18],
@@ -194,7 +198,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
         return [
           'case',
           ['boolean', ['get', 'selected'], false],
-          '#fef08a',
+          '#fde047', // Canary glowing phosphor
           ['>=', ['get', 'height'], 30],
           '#f59e0b',
           ['>=', ['get', 'height'], 18],
@@ -205,7 +209,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
         return [
           'case',
           ['boolean', ['get', 'selected'], false],
-          '#ffffff',
+          '#ffffff', // Pure white contrast highlight
           ['>=', ['get', 'height'], 30],
           '#cbd5e1',
           ['>=', ['get', 'height'], 18],
@@ -216,7 +220,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
         return [
           'case',
           ['boolean', ['get', 'selected'], false],
-          '#34d399',
+          '#38bdf8', // Radiant cyan beacon for selected parcel in normal mode
           ['coalesce', ['get', 'subtype_color'], '#10b981'],
         ];
     }
@@ -306,6 +310,16 @@ export const MapViewer: React.FC<MapViewerProps> = ({
 
         map.on('load', () => {
           mapInstance.current = map;
+          try {
+            map.setLight({
+              anchor: 'viewport',
+              color: '#ffffff',
+              intensity: 0.72,
+              position: [1.2, 210, 35],
+            });
+          } catch (e) {
+            // ignore if not supported in test environment
+          }
           updateCameraTelemetry();
         });
       } catch (err) {
@@ -451,10 +465,12 @@ export const MapViewer: React.FC<MapViewerProps> = ({
           features: parcels
             .filter((p) => p.geometry && p.geometry.coordinates)
             .map((p) => {
+              const isSelected = selectedParcel?.id === p.id;
               const subtype = p.agroforestry_subtype || '';
               const subtypeColor =
                 p.subtype_color || AGROFORESTRY_SUBTYPE_COLORS[subtype] || AGROFORESTRY_SUBTYPE_COLORS.default;
-              const height = p.height ?? (p.confidence_score || 0.8) * 120;
+              const baseHeight = p.height ?? Math.max(8.0, (p.confidence_score || 0.8) * 45);
+              const height = isSelected ? baseHeight + 12.0 : baseHeight;
               return {
                 type: 'Feature',
                 properties: {
@@ -463,7 +479,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
                   confidence: p.confidence_score,
                   area_ha: p.area_ha || 15.0,
                   height: height,
-                  selected: selectedParcel?.id === p.id,
+                  selected: isSelected,
                   subtype_color: subtypeColor,
                   opacity: opacities.agroforestryParcels,
                 },
@@ -581,8 +597,9 @@ export const MapViewer: React.FC<MapViewerProps> = ({
         const jCode = jurisdiction?.code || 'GH-AH';
         const canonical = jCode.startsWith('GH') ? 'GH-AH' : jCode.startsWith('ES') ? 'ES-EX' : 'ET-OR';
 
-        const filtered = (referencePointsData as any[]).filter(
-          (rp) => rp.jurisdiction_code === canonical || rp.jurisdiction_code?.startsWith(canonical)
+        const pts = (referencePoints && referencePoints.length > 0) ? referencePoints : (referencePointsData as any[]);
+        const filtered = pts.filter(
+          (rp: any) => rp.jurisdiction_code === canonical || rp.jurisdiction_code?.startsWith(canonical)
         );
 
         const geojson = {
@@ -686,7 +703,125 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     } else {
       map.once('load', syncReferencePoints);
     }
-  }, [jurisdiction, layers.referencePoints, opacities.referencePoints]);
+  }, [jurisdiction, layers.referencePoints, opacities.referencePoints, referencePoints]);
+
+  // Sync GFW Deforestation & Canopy Disturbance Alerts Layer
+  useEffect(() => {
+    const map = mapInstance.current;
+    if (!map) return;
+
+    const syncDeforestationAlerts = async () => {
+      try {
+        const maplibregl = (window as any).maplibregl || (await import('maplibre-gl')).default;
+        const jCode = jurisdiction?.code || 'GH-AH';
+        const canonical = jCode.startsWith('GH') ? 'GH-AH' : jCode.startsWith('ES') ? 'ES-EX' : 'ET-OR';
+
+        const alertsData = deforestationAlerts && deforestationAlerts.length > 0
+          ? deforestationAlerts
+          : (await import('../data/deforestationAlerts.json')).default;
+
+        const filtered = alertsData.filter(
+          (a: any) => a.jurisdiction_code === canonical || a.jurisdiction_code?.startsWith(canonical)
+        );
+
+        const geojson = {
+          type: 'FeatureCollection',
+          features: filtered.map((a: any) => ({
+            type: 'Feature',
+            properties: {
+              id: a.id,
+              date: a.date,
+              confidence: a.confidence,
+              sensor: a.sensor,
+              loss_ha: a.loss_ha,
+              status: a.status,
+              details: a.details,
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: a.coordinates,
+            },
+          })),
+        };
+
+        const existingSource = map.getSource('alerts-source');
+        if (existingSource && existingSource.setData) {
+          existingSource.setData(geojson);
+        } else if (map.isStyleLoaded()) {
+          map.addSource('alerts-source', {
+            type: 'geojson',
+            data: geojson,
+          });
+
+          // Outer halo / alert pulse
+          map.addLayer({
+            id: 'deforestation-alerts-pulse',
+            type: 'circle',
+            source: 'alerts-source',
+            layout: {
+              visibility: layers.deforestationAlerts !== false ? 'visible' : 'none',
+            },
+            paint: {
+              'circle-radius': ['interpolate', ['linear'], ['zoom'], 6, 8, 12, 14, 16, 20],
+              'circle-color': '#ef4444',
+              'circle-opacity': 0.25,
+            },
+          });
+
+          // Core alert circle
+          map.addLayer({
+            id: 'deforestation-alerts-circle',
+            type: 'circle',
+            source: 'alerts-source',
+            layout: {
+              visibility: layers.deforestationAlerts !== false ? 'visible' : 'none',
+            },
+            paint: {
+              'circle-radius': ['interpolate', ['linear'], ['zoom'], 6, 4, 12, 7, 16, 10],
+              'circle-color': '#f43f5e',
+              'circle-stroke-width': 1.5,
+              'circle-stroke-color': '#ffffff',
+              'circle-opacity': (opacities.deforestationAlerts || 85) / 100,
+            },
+          });
+
+          map.on('click', 'deforestation-alerts-circle', (e: any) => {
+            if (e.features && e.features[0]) {
+              const props = e.features[0].properties;
+              new maplibregl.Popup({ offset: 12, className: 'rich-map-popup' })
+                .setLngLat(e.lngLat)
+                .setHTML(
+                  `<div style="font-family: ui-sans-serif, system-ui, sans-serif; padding: 6px; color: #0f172a; max-width: 280px;">
+                    <div style="font-size: 10px; font-weight: 800; color: #ef4444; text-transform: uppercase; letter-spacing: 0.05em;">GFW Deforestation Alert</div>
+                    <div style="font-size: 12px; font-weight: 700; margin: 3px 0; color: #020617;">${props.status}</div>
+                    <div style="font-size: 11px; color: #334155; margin-top: 2px;">Sensor: <span style="font-weight: 600;">${props.sensor}</span></div>
+                    <div style="font-size: 11px; color: #334155;">Alert Date: <b>${props.date}</b> | Area: <b>${props.loss_ha} ha</b></div>
+                    <div style="font-size: 10px; color: #475569; margin-top: 4px; border-top: 1px solid #e2e8f0; padding-top: 4px;">${props.details}</div>
+                  </div>`
+                )
+                .addTo(map);
+            }
+          });
+        }
+
+        if (map.getLayer('deforestation-alerts-circle')) {
+          map.setLayoutProperty('deforestation-alerts-circle', 'visibility', layers.deforestationAlerts !== false ? 'visible' : 'none');
+          map.setPaintProperty('deforestation-alerts-circle', 'circle-opacity', (opacities.deforestationAlerts || 85) / 100);
+        }
+        if (map.getLayer('deforestation-alerts-pulse')) {
+          map.setLayoutProperty('deforestation-alerts-pulse', 'visibility', layers.deforestationAlerts !== false ? 'visible' : 'none');
+        }
+      } catch (err) {
+        console.warn('Deforestation alerts sync notice:', err);
+      }
+    };
+
+    if (map.isStyleLoaded()) {
+      syncDeforestationAlerts();
+    } else {
+      map.once('load', syncDeforestationAlerts);
+    }
+  }, [jurisdiction, layers.deforestationAlerts, opacities.deforestationAlerts, deforestationAlerts]);
 
   // Sync EUDR 2020 Forest Baseline Layer
   useEffect(() => {

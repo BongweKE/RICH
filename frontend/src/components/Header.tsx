@@ -18,6 +18,9 @@ interface HeaderProps {
   selectedJurisdiction: Jurisdiction | null;
   onSelectJurisdiction: (j: Jurisdiction) => void;
   parcelCount: number;
+  totalDatapoints?: number;
+  referenceCount?: number;
+  alertsCount?: number;
   onOpenInbox: () => void;
   isInboxOpen: boolean;
   is3DMode: boolean;
@@ -39,6 +42,9 @@ export const Header: React.FC<HeaderProps> = ({
   selectedJurisdiction,
   onSelectJurisdiction,
   parcelCount,
+  totalDatapoints,
+  referenceCount,
+  alertsCount,
   onOpenInbox,
   isInboxOpen,
   is3DMode,
@@ -98,14 +104,22 @@ export const Header: React.FC<HeaderProps> = ({
           </select>
         </div>
 
-        {/* Active Parcels Reactive Badge */}
+        {/* Active Parcels & Exhaustive Datapoints Reactive Badge */}
         <div
-          className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 font-mono text-xs shadow-sm"
-          title={`${parcelCount} active agroforestry parcels loaded in landscape`}
+          className="flex items-center space-x-2 px-2.5 py-1 rounded-md bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 font-mono text-xs shadow-sm cursor-help"
+          title={`${parcelCount} Agroforestry Parcels · ${referenceCount || 0} Field Observatories · ${alertsCount || 0} GFW Disturbance Alerts (${totalDatapoints || parcelCount} Total Open-Access Datapoints)`}
         >
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="font-bold text-white text-xs">{parcelCount}</span>
-          <span className="text-[10px] text-emerald-400/80 tracking-wide hidden sm:inline">Parcels</span>
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+          <div className="flex items-baseline space-x-1">
+            <span className="font-bold text-white text-xs">{parcelCount}</span>
+            <span className="text-[10px] text-emerald-400/80 tracking-wide hidden sm:inline">Parcels</span>
+          </div>
+          {totalDatapoints && totalDatapoints > parcelCount && (
+            <div className="hidden md:flex items-baseline space-x-1 pl-1.5 border-l border-emerald-500/30 text-[10px] text-slate-400">
+              <span className="text-emerald-400 font-semibold">{totalDatapoints}</span>
+              <span>pts</span>
+            </div>
+          )}
         </div>
       </div>
 

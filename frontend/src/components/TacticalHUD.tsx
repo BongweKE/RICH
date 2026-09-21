@@ -9,6 +9,7 @@ interface TacticalHUDProps {
   cameraZoom: number;
   sensorMode: SensorMode;
   parcelCount: number;
+  totalDatapoints?: number;
   is3DMode: boolean;
   isChatOpen?: boolean;
   selectedParcel?: Parcel | null;
@@ -21,6 +22,7 @@ export const TacticalHUD: React.FC<TacticalHUDProps> = ({
   cameraZoom,
   sensorMode,
   parcelCount,
+  totalDatapoints,
   is3DMode,
   isChatOpen = false,
   selectedParcel = null,
@@ -117,7 +119,7 @@ export const TacticalHUD: React.FC<TacticalHUDProps> = ({
             <span className="font-semibold">ONLINE</span>
           </span>
           <span>SYS TIME: <strong className="text-slate-200">{utcTime}</strong></span>
-          <span>PARCELS IN VIEW: <strong className="text-emerald-400">{parcelCount}</strong></span>
+          <span>PARCELS IN VIEW: <strong className="text-emerald-400">{parcelCount}</strong> | DATAPOINTS: <strong className="text-emerald-400">{totalDatapoints || parcelCount}</strong></span>
           <span>MODE: <strong className="text-slate-200">{is3DMode ? '3D PERSPECTIVE' : '2D ORTHO'}</strong></span>
         </div>
         <div className="hidden md:flex items-center space-x-3 text-slate-400">

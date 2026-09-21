@@ -94,7 +94,13 @@ def load_fallback_parcels(jurisdiction_code: str | None = None) -> list[dict[str
 def load_fallback_reference_points(jurisdiction_code: str | None = None) -> list[dict[str, Any]]:
     """Resilient fallback loading ground truth reference points"""
     try:
-        path = Path(__file__).resolve().parents[3] / "frontend" / "src" / "data" / "referencePoints.json"
+        path = Path(__file__).resolve().parents[3] / "data" / "reference_points.json"
+        if not path.exists():
+            path = Path(__file__).resolve().parents[2] / "data" / "reference_points.json"
+        if not path.exists():
+            path = Path(__file__).resolve().parents[3] / "frontend" / "src" / "data" / "referencePoints.json"
+        if not path.exists():
+            path = Path(__file__).resolve().parents[2] / "frontend" / "src" / "data" / "referencePoints.json"
         if not path.exists():
             return []
         with open(path) as f:
@@ -107,6 +113,30 @@ def load_fallback_reference_points(jurisdiction_code: str | None = None) -> list
                 if p.get("jurisdiction_code") == clean
                 or p.get("jurisdiction_code", "").startswith(f"{clean}-")
                 or p.get("jurisdiction_code", "").startswith(clean)
+            ]
+        return data
+    except Exception:
+        return []
+
+
+def load_fallback_deforestation_alerts(jurisdiction_code: str | None = None) -> list[dict[str, Any]]:
+    """Resilient fallback loading GFW satellite deforestation and disturbance alerts"""
+    try:
+        path = Path(__file__).resolve().parents[3] / "data" / "deforestation_alerts.json"
+        if not path.exists():
+            path = Path(__file__).resolve().parents[2] / "data" / "deforestation_alerts.json"
+        if not path.exists():
+            return []
+        with open(path) as f:
+            data = json.load(f)
+        if jurisdiction_code:
+            clean = jurisdiction_code.strip()
+            data = [
+                a
+                for a in data
+                if a.get("jurisdiction_code") == clean
+                or a.get("jurisdiction_code", "").startswith(f"{clean}-")
+                or a.get("jurisdiction_code", "").startswith(clean)
             ]
         return data
     except Exception:
@@ -324,11 +354,35 @@ async def get_jurisdiction(
 @router.get("/parcels")
 async def list_parcels(
     jurisdiction_code: str | None = Query(None, description="Filter by jurisdiction code"),
-    limit: int = Query(250, description="Maximum results"),
+    limit: int = Query(500, description="Maximum results"),
     offset: int = Query(0, description="Pagination offset"),
     db: AsyncSession = Depends(get_db_session),
 ):
     """List all agroforestry parcels, optionally filtered by jurisdiction"""
+
+    # First check total database parcel count for accurate pagination
+    count_stmt = select(func.count(AgroforestryParcel.id))
+    if jurisdiction_code:
+        clean = jurisdiction_code.strip()
+        count_stmt = count_stmt.join(Jurisdiction).where(
+            or_(
+                Jurisdiction.code == clean,
+                Jurisdiction.code.startswith(f"{clean}-"),
+                Jurisdiction.code.startswith(clean),
+            )
+        )
+    total_db_count = (await db.execute(count_stmt)).scalar() or 0
+
+    if total_db_count == 0:
+        fallback_list = load_fallback_parcels(jurisdiction_code)
+        if fallback_list:
+            slice_list = fallback_list[offset : offset + limit]
+            return {
+                "parcels": slice_list,
+                "count": len(fallback_list),
+                "offset": offset,
+                "limit": limit,
+            }
 
     stmt = select(AgroforestryParcel).options(selectinload(AgroforestryParcel.jurisdiction))
 
@@ -347,17 +401,6 @@ async def list_parcels(
 
     result = await db.execute(stmt)
     parcels = result.scalars().all()
-
-    if not parcels:
-        fallback_list = load_fallback_parcels(jurisdiction_code)
-        if fallback_list:
-            slice_list = fallback_list[offset : offset + limit]
-            return {
-                "parcels": slice_list,
-                "count": len(fallback_list),
-                "offset": offset,
-                "limit": limit,
-            }
 
     return {
         "parcels": [
@@ -388,7 +431,7 @@ async def list_parcels(
             }
             for p in parcels
         ],
-        "count": len(parcels),
+        "count": total_db_count,
         "offset": offset,
         "limit": limit,
     }
@@ -770,6 +813,32 @@ async def list_reference_points(
 ):
     """List land cover reference points"""
 
+    # First check total database reference point count
+    count_stmt = select(func.count(LandCoverReferencePoint.id))
+    if jurisdiction_code:
+        clean = jurisdiction_code.strip()
+        count_stmt = count_stmt.join(Jurisdiction).where(
+            or_(
+                Jurisdiction.code == clean,
+                Jurisdiction.code.startswith(f"{clean}-"),
+                Jurisdiction.code.startswith(clean),
+            )
+        )
+    if class_filter:
+        count_stmt = count_stmt.where(LandCoverReferencePoint.class_label.in_(class_filter))
+    if validation_status:
+        count_stmt = count_stmt.where(LandCoverReferencePoint.validation_status == validation_status)
+
+    total_db_count = (await db.execute(count_stmt)).scalar() or 0
+
+    fallback_pts = load_fallback_reference_points(jurisdiction_code)
+    if total_db_count == 0:
+        if fallback_pts:
+            return {
+                "reference_points": fallback_pts[offset : offset + limit],
+                "count": len(fallback_pts),
+            }
+
     stmt = select(LandCoverReferencePoint)
 
     if jurisdiction_code:
@@ -792,20 +861,12 @@ async def list_reference_points(
     result = await db.execute(stmt)
     points = result.scalars().all()
 
-    if not points:
-        fallback_pts = load_fallback_reference_points(jurisdiction_code)
-        if fallback_pts:
-            return {
-                "reference_points": fallback_pts[offset : offset + limit],
-                "count": len(fallback_pts),
-            }
-
     return {
         "reference_points": [
             {
                 "id": str(p.id),
                 "jurisdiction_code": safe_jurisdiction_code(p),
-                "geometry": mapping(to_shape(p.geometry)),
+                "geometry": GeospatialService.geometry_to_geojson(p.geometry),
                 "class_label": p.class_label.value if hasattr(p.class_label, "value") else str(p.class_label),
                 "agroforestry_subtype": (
                     p.agroforestry_subtype.value
@@ -821,8 +882,85 @@ async def list_reference_points(
             }
             for p in points
         ],
-        "count": len(points),
+        "count": total_db_count,
     }
+
+
+@router.get("/deforestation-alerts")
+async def list_deforestation_alerts(
+    jurisdiction_code: str | None = Query(None, description="Filter by jurisdiction code"),
+    limit: int = Query(100, description="Maximum results"),
+    offset: int = Query(0, description="Pagination offset"),
+):
+    """List Global Forest Watch / RADD satellite deforestation and disturbance alerts"""
+    alerts = load_fallback_deforestation_alerts(jurisdiction_code)
+    return {
+        "alerts": alerts[offset : offset + limit],
+        "count": len(alerts),
+        "jurisdiction_code": jurisdiction_code,
+    }
+
+
+@router.get("/datapoints-summary")
+async def get_datapoints_summary(
+    jurisdiction_code: str | None = Query(None, description="Filter by jurisdiction code"),
+    db: AsyncSession = Depends(get_db_session),
+):
+    """Return consolidated count of all open-access data points across jurisdictions"""
+    regions = ["GH-AH", "ES-EX", "ET-OR"]
+    if jurisdiction_code:
+        clean = jurisdiction_code.strip()
+        canonical = (
+            "ES-EX"
+            if clean in ("ES", "ES-EX")
+            else "ET-OR"
+            if clean in ("ET", "ET-OR")
+            else "GH-AH"
+        )
+        regions = [canonical]
+
+    summary = {}
+    for r in regions:
+        try:
+            p_stmt = select(func.count(AgroforestryParcel.id)).join(Jurisdiction).where(
+                or_(
+                    Jurisdiction.code == r,
+                    Jurisdiction.code.startswith(f"{r}-"),
+                    Jurisdiction.code.startswith(r),
+                )
+            )
+            db_parcels = (await db.execute(p_stmt)).scalar() or 0
+        except Exception:
+            db_parcels = 0
+
+        fallback_parcels = len(load_fallback_parcels(r))
+        parcels_cnt = max(db_parcels, fallback_parcels)
+
+        try:
+            rp_stmt = select(func.count(LandCoverReferencePoint.id)).join(Jurisdiction).where(
+                or_(
+                    Jurisdiction.code == r,
+                    Jurisdiction.code.startswith(f"{r}-"),
+                    Jurisdiction.code.startswith(r),
+                )
+            )
+            db_refs = (await db.execute(rp_stmt)).scalar() or 0
+        except Exception:
+            db_refs = 0
+
+        fallback_refs = len(load_fallback_reference_points(r))
+        ref_cnt = max(db_refs, fallback_refs)
+
+        alerts_cnt = len(load_fallback_deforestation_alerts(r))
+        summary[r] = {
+            "jurisdiction_code": r,
+            "parcels": parcels_cnt,
+            "reference_points": ref_cnt,
+            "deforestation_alerts": alerts_cnt,
+            "total_datapoints": parcels_cnt + ref_cnt + alerts_cnt,
+        }
+
+    return {"summary": summary}
 
 
 @router.get("/satellite-imagery")

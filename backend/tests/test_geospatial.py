@@ -203,3 +203,47 @@ def test_safe_uuid_geospatial_utility():
     real_uuid = uuid.uuid4()
     assert safe_uuid(str(real_uuid)) == real_uuid
     assert safe_uuid(real_uuid) == real_uuid
+
+
+@pytest.mark.asyncio
+async def test_list_deforestation_alerts(async_client: AsyncClient):
+    """Test GFW deforestation and canopy disturbance alerts endpoint"""
+    resp = await async_client.get("/api/geospatial/deforestation-alerts?jurisdiction_code=GH-AH")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "alerts" in data
+    assert "count" in data
+    assert data["count"] > 0
+    alert = data["alerts"][0]
+    assert "id" in alert
+    assert "confidence" in alert
+    assert "status" in alert
+
+
+@pytest.mark.asyncio
+async def test_get_datapoints_summary(async_client: AsyncClient):
+    """Test consolidated open-access datapoints summary across jurisdictions"""
+    resp = await async_client.get("/api/geospatial/datapoints-summary")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "summary" in data
+    assert "GH-AH" in data["summary"]
+    assert "ES-EX" in data["summary"]
+    assert "ET-OR" in data["summary"]
+    gh = data["summary"]["GH-AH"]
+    assert gh["parcels"] > 0
+    assert gh["reference_points"] > 0
+    assert gh["deforestation_alerts"] > 0
+    assert gh["total_datapoints"] == gh["parcels"] + gh["reference_points"] + gh["deforestation_alerts"]
+
+
+@pytest.mark.asyncio
+async def test_list_reference_points(async_client: AsyncClient):
+    """Test listing ground truth reference points"""
+    resp = await async_client.get("/api/geospatial/reference-points?jurisdiction_code=GH-AH")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "reference_points" in data
+    assert "count" in data
+    assert data["count"] > 0
+

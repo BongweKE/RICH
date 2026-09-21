@@ -7,6 +7,7 @@ interface SceneDirectorProps {
   onClose: () => void;
   jurisdictionCode: string;
   onFlyToWaypoint: (wp: TourWaypoint) => void;
+  onSelectNearestParcel?: (coords: [number, number]) => void;
 }
 
 export const SceneDirector: React.FC<SceneDirectorProps> = ({
@@ -14,9 +15,11 @@ export const SceneDirector: React.FC<SceneDirectorProps> = ({
   onClose,
   jurisdictionCode,
   onFlyToWaypoint,
+  onSelectNearestParcel,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
 
   // 4-Stage Scientific Storytelling Arc for all Pilot Landscapes
   const waypointsByJurisdiction: Record<string, TourWaypoint[]> = {
@@ -182,12 +185,20 @@ export const SceneDirector: React.FC<SceneDirectorProps> = ({
   const waypoints = waypointsByJurisdiction[canonicalCode] || waypointsByJurisdiction['GH-AH'];
   const activeWp = waypoints[currentIndex] || waypoints[0];
 
+  // Reset index when changing jurisdiction
+  useEffect(() => {
+    setCurrentIndex(0);
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+  }, [canonicalCode]);
+
   // Auto-advance when playing
   useEffect(() => {
     if (!isOpen || !isPlaying) return;
     const timer = setTimeout(() => {
       handleNext();
-    }, 9000);
+    }, 9500);
     return () => clearTimeout(timer);
   }, [isOpen, isPlaying, currentIndex, waypoints]);
 
@@ -195,8 +206,39 @@ export const SceneDirector: React.FC<SceneDirectorProps> = ({
   useEffect(() => {
     if (isOpen && activeWp) {
       onFlyToWaypoint(activeWp);
+      if (currentIndex === 2 && onSelectNearestParcel) {
+        onSelectNearestParcel(activeWp.center);
+      }
     }
   }, [isOpen, currentIndex, activeWp]);
+
+  // Text-to-Speech narration
+  useEffect(() => {
+    if (!isOpen || !isVoiceEnabled) {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      return;
+    }
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window && activeWp) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(
+        `${activeWp.title}. ${activeWp.subtitle}. ${activeWp.description}`
+      );
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      window.speechSynthesis.speak(utterance);
+    }
+  }, [isOpen, isVoiceEnabled, currentIndex, activeWp]);
+
+  // Clean up speech on unmount
+  useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   const handleNext = () => {
     setCurrentIndex((prev) => (prev + 1) % waypoints.length);
@@ -206,43 +248,66 @@ export const SceneDirector: React.FC<SceneDirectorProps> = ({
     setCurrentIndex((prev) => (prev - 1 + waypoints.length) % waypoints.length);
   };
 
+  const handleSelectStage = (idx: number) => {
+    setCurrentIndex(idx);
+    setIsPlaying(false);
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 w-full max-w-xl px-4 pointer-events-auto">
-      <div className="bg-slate-950/90 backdrop-blur-md border border-emerald-500/40 rounded-xl p-4 shadow-2xl text-slate-100 space-y-3 font-sans">
+      <div className="bg-slate-950/95 backdrop-blur-md border border-emerald-500/40 rounded-xl p-4 shadow-2xl text-slate-100 space-y-3 font-sans">
         {/* Header bar */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-2">
           <div className="flex items-center space-x-2">
-            <div className="p-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            <div className="p-1.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
               <Video className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="text-xs font-bold text-white tracking-wide">SCENE DIRECTOR: GUIDED TOUR</span>
+                <span className="text-xs font-bold text-white tracking-wide">3D CINEMATIC TOUR & STORY</span>
                 <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono">
-                  {currentIndex + 1} / {waypoints.length}
+                  ACT {currentIndex + 1} / {waypoints.length}
                 </span>
               </div>
-              <span className="text-[10px] text-slate-400">Cinematic Inspection of Strategic Agroforestry Zones</span>
+              <span className="text-[10px] text-slate-400">Scientific Narrative Across Strategic Agroforestry Zones</span>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition-colors"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setIsVoiceEnabled(!isVoiceEnabled)}
+              className={`px-2 py-1 rounded text-[10px] font-semibold border transition-all ${
+                isVoiceEnabled
+                  ? 'bg-emerald-500/30 text-emerald-300 border-emerald-500/50 shadow-sm'
+                  : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-slate-200'
+              }`}
+              title={isVoiceEnabled ? 'Disable Voice Narration' : 'Enable Voice Narration (Web Speech API)'}
+            >
+              {isVoiceEnabled ? '🔊 Voice ON' : '🔈 Voice OFF'}
+            </button>
+            <button
+              onClick={() => {
+                if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+                  window.speechSynthesis.cancel();
+                }
+                onClose();
+              }}
+              className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
         {/* Waypoint content card */}
-        <div className="bg-slate-900/90 rounded-lg p-3 border border-slate-800 space-y-1.5">
+        <div className="bg-slate-900/90 rounded-lg p-3.5 border border-slate-800 space-y-2 shadow-inner">
           <div className="flex items-start justify-between">
             <div>
               <span className="text-[9px] font-mono tracking-wider font-semibold text-emerald-400 px-1.5 py-0.5 rounded bg-emerald-950/60 border border-emerald-800/60">
                 {activeWp.badge}
               </span>
-              <h3 className="text-sm font-bold text-white mt-1">{activeWp.title}</h3>
+              <h3 className="text-sm font-bold text-white mt-1.5">{activeWp.title}</h3>
               <p className="text-[11px] text-emerald-300 font-medium">{activeWp.subtitle}</p>
             </div>
             <div className="flex items-center space-x-1 text-[10px] text-slate-400 font-mono">
@@ -253,6 +318,24 @@ export const SceneDirector: React.FC<SceneDirectorProps> = ({
             </div>
           </div>
           <p className="text-xs text-slate-300 leading-relaxed pt-1">{activeWp.description}</p>
+
+          {/* Interactive Chapter Stepper */}
+          <div className="grid grid-cols-4 gap-1.5 pt-2 border-t border-slate-800/80">
+            {waypoints.map((wp, idx) => (
+              <button
+                key={wp.id}
+                onClick={() => handleSelectStage(idx)}
+                className={`py-1 px-1 rounded text-center text-[9px] font-semibold transition-all truncate ${
+                  idx === currentIndex
+                    ? 'bg-emerald-500/30 text-emerald-300 border border-emerald-500/50 shadow-sm'
+                    : 'bg-slate-950/60 text-slate-400 border border-slate-800 hover:bg-slate-800 hover:text-slate-200'
+                }`}
+                title={wp.title}
+              >
+                Act {idx + 1}: {idx === 0 ? 'Baseline' : idx === 1 ? 'Canopy' : idx === 2 ? 'Telemetry' : 'Verdict'}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Playback Controls */}
@@ -283,7 +366,7 @@ export const SceneDirector: React.FC<SceneDirectorProps> = ({
           </div>
 
           <div className="text-[10px] text-slate-400 font-mono">
-            Auto-orbits every 9s • Pitch: {activeWp.pitch}°
+            {isPlaying ? 'Auto-advancing 9.5s' : 'Paused'} • Pitch: {activeWp.pitch}°
           </div>
         </div>
       </div>
