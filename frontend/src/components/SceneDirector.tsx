@@ -18,97 +18,168 @@ export const SceneDirector: React.FC<SceneDirectorProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
 
+  // 4-Stage Scientific Storytelling Arc for all Pilot Landscapes
   const waypointsByJurisdiction: Record<string, TourWaypoint[]> = {
     'GH-AH': [
       {
         id: 'gh-1',
-        title: 'Ashanti Landscape Overview',
-        subtitle: 'Flagship Cocoa Agroforestry Belt',
+        title: 'Ashanti Regional Basin & Agroforestry Mosaic',
+        subtitle: 'Continental Flagship Cocoa Agroforestry Belt',
         center: [-1.624, 6.712],
-        zoom: 11,
-        pitch: 50,
-        bearing: -20,
-        badge: 'LANDSCAPE SCALE',
+        zoom: 9.0,
+        pitch: 45,
+        bearing: -15,
+        badge: 'STAGE 1: REGIONAL BASELINE',
         description:
-          'Continental cocoa hotspot in Ghana where multi-strata shade cacao farms bridge protected forest reserves and agricultural land.',
+          'Macro-scale landscape overview showing the Guinean moist forest eco-region in Ghana where smallholder shade cacao agroforests connect protected reserves with the Offin River agricultural basin.',
       },
       {
         id: 'gh-2',
-        title: 'Shade Cocoa Agroforestry Cluster',
-        subtitle: 'Canopy Density 85% • Multi-Strata Native Trees',
-        center: [-1.642, 6.728],
-        zoom: 13.5,
-        pitch: 60,
-        bearing: 45,
-        badge: 'MODEL AGROFORESTRY',
+        title: 'Canopy Strata & Bobiri Forest Buffer',
+        subtitle: '85% Canopy Cover • Native Shade Trees',
+        center: [-1.34, 6.68],
+        zoom: 12.8,
+        pitch: 58,
+        bearing: 35,
+        badge: 'STAGE 2: 3D CANOPY BUFFER',
         description:
-          'High structural diversity with emergent Milicia excelsa and Terminalia superba canopy providing shade, moisture conservation, and biodiversity corridors.',
+          '3D tree height model revealing emergent Milicia excelsa and Terminalia superba canopies (>28m) buffering the Bobiri Forest Reserve, mitigating edge effects and cooling regional microclimates.',
       },
       {
         id: 'gh-3',
-        title: 'EUDR 2020 Forest Baseline Frontier',
-        subtitle: 'Zero Deforestation Verification Zone',
-        center: [-1.589, 6.695],
-        zoom: 14,
-        pitch: 55,
-        bearing: 110,
-        badge: 'EUDR AUDIT ZONE',
+        title: 'Ground-Truth Shade Cacao Plot Inspection',
+        subtitle: 'GEDI LiDAR RH98 Profile • Multi-Strata Polyculture',
+        center: [-1.642, 6.728],
+        zoom: 15.2,
+        pitch: 65,
+        bearing: 75,
+        badge: 'STAGE 3: PARCEL TELEMETRY',
         description:
-          'Intersection analysis against JRC 2020 forest baseline confirms continuous agricultural tree cover prior to Dec 31, 2020, qualifying for EU market compliance.',
+          'High-resolution ground inspection of certified shade cacao parcel. GEDI LiDAR profile confirms 28.4m canopy height, 4 distinct strata, and 124.5 tCO2e/ha net carbon sequestration.',
       },
       {
         id: 'gh-4',
-        title: 'Restoration & Carbon Enhancement Zone',
-        subtitle: 'QUES-C Sequestration Pipeline',
-        center: [-1.615, 6.745],
-        zoom: 13,
-        pitch: 45,
-        bearing: 180,
-        badge: 'CARBON FINANCE',
+        title: 'EUDR 2020 Cut-Off & Carbon Resolution',
+        subtitle: 'Zero Deforestation Verified • QUES-C Compliant',
+        center: [-1.589, 6.695],
+        zoom: 13.8,
+        pitch: 50,
+        bearing: 130,
+        badge: 'STAGE 4: DUE DILIGENCE RESOLUTION',
         description:
-          'Active tree enrichment zone generating 5.4 tCO2e/ha/yr in Tier 2 IPCC carbon removals, linked to voluntary carbon market crediting.',
-      },
-    ],
-    'ET-OR': [
-      {
-        id: 'et-1',
-        title: 'Oromia Coffee Forest Overview',
-        subtitle: 'Shade-Grown Arabica Highlands',
-        center: [36.85, 7.72],
-        zoom: 11,
-        pitch: 55,
-        bearing: -15,
-        badge: 'COFFEE AGROFORESTRY',
-        description: 'Montane rainforest coffee systems preserving wild Coffea arabica genetic diversity under native Podocarpus falcatus canopy.',
-      },
-      {
-        id: 'et-2',
-        title: 'Bale Biodiversity Corridor',
-        subtitle: 'Ecological Connectivity & Habitat Integrity',
-        center: [36.88, 7.76],
-        zoom: 13.5,
-        pitch: 60,
-        bearing: 60,
-        badge: 'QUES-B CORRIDOR',
-        description: 'Biological bridge maintaining structural connectivity between fragmented protected forest reserves and highland smallholder parcels.',
+          'Spatial intersection against the Dec 31, 2020 JRC forest baseline confirms unbroken agricultural tree cover without post-cutoff deforestation, qualifying smallholder yields for unrestricted EU market entry.',
       },
     ],
     'ES-EX': [
       {
         id: 'es-1',
-        title: 'Extremadura Dehesa Silvopasture',
-        subtitle: 'Holm Oak (Quercus ilex) Cultural Landscape',
-        center: [-6.32, 39.21],
-        zoom: 11.5,
-        pitch: 52,
-        bearing: 30,
-        badge: 'MEDITERRANEAN AGROFORESTRY',
-        description: 'Ancient silvopastoral system combining open oak woodland with extensive Iberian livestock grazing and high natural conservation value.',
+        title: 'Extremadura Iberian Dehesa Landscape',
+        subtitle: 'Continental Mediterranean Silvopastoral Belt',
+        center: [-6.26, 39.25],
+        zoom: 8.5,
+        pitch: 45,
+        bearing: 15,
+        badge: 'STAGE 1: REGIONAL BASELINE',
+        description:
+          'Macro continental overview across Cáceres and Badajoz. The Dehesa is Europe’s premier high-nature-value agroforestry ecosystem, uniting ancient oak woodlands with sustainable grazing.',
+      },
+      {
+        id: 'es-2',
+        title: 'Quercus ilex Canopy Architecture & Monfragüe Corridor',
+        subtitle: 'Holm & Cork Oak Stands • Natura 2000 Buffer',
+        center: [-6.12, 39.76],
+        zoom: 12.8,
+        pitch: 58,
+        bearing: -35,
+        badge: 'STAGE 2: 3D CANOPY BUFFER',
+        description:
+          '3D canopy extrusion displays open Quercus ilex and Quercus suber canopy stands (48-55% cover) creating ecological stepping stones toward the Monfragüe Biosphere Reserve.',
+      },
+      {
+        id: 'es-3',
+        title: 'Ground-Truth Dehesa Parcel & Silvopastoral Telemetry',
+        subtitle: 'CSIC Station Cáceres • Acorn Mast & Grassland Strata',
+        center: [-6.325, 39.185],
+        zoom: 15.0,
+        pitch: 62,
+        bearing: 50,
+        badge: 'STAGE 3: PARCEL TELEMETRY',
+        description:
+          'Deep 3D inspection of an Iberian silvopastoral parcel. Sentinel-2 multi-year NDVI confirms stable tree vitality, active soil carbon accumulation (74 tC/ha), and low wildfire fuel loads.',
+      },
+      {
+        id: 'es-4',
+        title: 'EUDR & Common Agricultural Policy Verification',
+        subtitle: 'Article 2(4-6) Exemption • Land Cover Stability',
+        center: [-6.338, 39.201],
+        zoom: 13.5,
+        pitch: 48,
+        bearing: 105,
+        badge: 'STAGE 4: DUE DILIGENCE RESOLUTION',
+        description:
+          'Compliance confirmation: Dehesa tree cover constitutes permanent agricultural land use under EUDR Article 2(4-6), with zero forest conversion and guaranteed legal provenance for premium livestock exports.',
+      },
+    ],
+    'ET-OR': [
+      {
+        id: 'et-1',
+        title: 'Oromia Afromontane Rainforest Highlands',
+        subtitle: 'Birthplace of Wild Arabica Coffee',
+        center: [37.29, 8.00],
+        zoom: 8.2,
+        pitch: 48,
+        bearing: -20,
+        badge: 'STAGE 1: REGIONAL BASELINE',
+        description:
+          'Landscape establishing shot of the Jimma and Didessa highlands. Pristine montane rainforests shelter the global genetic reservoir of Coffea arabica under complex indigenous agroforestry management.',
+      },
+      {
+        id: 'et-2',
+        title: 'Montane Cloud Canopy & Yayu Biosphere Buffer',
+        subtitle: '30m+ Multi-Strata Podocarpus Canopy',
+        center: [36.792, 7.698],
+        zoom: 12.9,
+        pitch: 60,
+        bearing: 35,
+        badge: 'STAGE 2: 3D CANOPY BUFFER',
+        description:
+          '3D extrusion showcases high-altitude canopy (>30m) dominated by Podocarpus falcatus and Albizia gummifera, providing thermal insulation against highland frost and preserving soil moisture.',
+      },
+      {
+        id: 'et-3',
+        title: 'Gomma Smallholder Polyculture Coffee Parcel',
+        subtitle: 'Jimma University Benchmark • 88% Canopy Density',
+        center: [36.81, 7.66],
+        zoom: 15.2,
+        pitch: 65,
+        bearing: 80,
+        badge: 'STAGE 3: PARCEL TELEMETRY',
+        description:
+          'Micro-scale parcel inspection of a smallholder cooperative plot. High-density canopy (88%) intercropped with enset and native legumes yields 192 tC/ha total carbon stock and exceptional cup quality.',
+      },
+      {
+        id: 'et-4',
+        title: 'EUDR Article 9 Geolocation & Compliance Resolution',
+        subtitle: 'Zero Deforestation • Smallholder Legal Due Diligence',
+        center: [36.805, 7.704],
+        zoom: 13.8,
+        pitch: 50,
+        bearing: 140,
+        badge: 'STAGE 4: DUE DILIGENCE RESOLUTION',
+        description:
+          'Autonomous due diligence statement: Satellite multi-spectral time series confirms agricultural coffee production under natural shade canopy since 2017, proving zero forest conversion post-2020.',
       },
     ],
   };
 
-  const waypoints = waypointsByJurisdiction[jurisdictionCode] || waypointsByJurisdiction['GH-AH'];
+  const canonicalCode =
+    jurisdictionCode.startsWith('ES')
+      ? 'ES-EX'
+      : jurisdictionCode.startsWith('ET')
+      ? 'ET-OR'
+      : 'GH-AH';
+
+  const waypoints = waypointsByJurisdiction[canonicalCode] || waypointsByJurisdiction['GH-AH'];
   const activeWp = waypoints[currentIndex] || waypoints[0];
 
   // Auto-advance when playing
@@ -118,7 +189,7 @@ export const SceneDirector: React.FC<SceneDirectorProps> = ({
       handleNext();
     }, 9000);
     return () => clearTimeout(timer);
-  }, [isOpen, isPlaying, currentIndex]);
+  }, [isOpen, isPlaying, currentIndex, waypoints]);
 
   // Trigger flyTo whenever waypoint changes
   useEffect(() => {

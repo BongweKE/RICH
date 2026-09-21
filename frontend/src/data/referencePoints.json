@@ -1,0 +1,272 @@
+[
+  {
+    "id": "ref-gh-1",
+    "name": "CIFOR-ICRAF Agroforestry Station Kumasi",
+    "jurisdiction_code": "GH-AH",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "shade_cocoa",
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.98,
+    "source": "CIFOR-ICRAF Field Benchmark 2023",
+    "canopy_cover_pct": 84.5,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.624,
+        6.712
+      ]
+    }
+  },
+  {
+    "id": "ref-gh-2",
+    "name": "CRIG Cocoa Research Institute Trial Plot",
+    "jurisdiction_code": "GH-AH",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "shade_cocoa",
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.95,
+    "source": "CRIG Tafo Long-Term Trial",
+    "canopy_cover_pct": 79.2,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.589,
+        6.695
+      ]
+    }
+  },
+  {
+    "id": "ref-gh-3",
+    "name": "KNUST Agroforestry Canopy Observatory",
+    "jurisdiction_code": "GH-AH",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "alley_cropping",
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.94,
+    "source": "KNUST Faculty of Renewable Natural Resources",
+    "canopy_cover_pct": 72.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.642,
+        6.728
+      ]
+    }
+  },
+  {
+    "id": "ref-gh-4",
+    "name": "Offin River Agroforestry Buffer Point",
+    "jurisdiction_code": "GH-AH",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "parkland",
+    "validation_status": "validated",
+    "quality_score": 0.91,
+    "source": "Water Resources Commission Ghana",
+    "canopy_cover_pct": 68.4,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.615,
+        6.745
+      ]
+    }
+  },
+  {
+    "id": "ref-gh-5",
+    "name": "Bobiri Forest Reserve Agroforestry Boundary",
+    "jurisdiction_code": "GH-AH",
+    "class_label": "forest",
+    "agroforestry_subtype": "boundary_planting",
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.97,
+    "source": "Forestry Commission of Ghana",
+    "canopy_cover_pct": 92.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.34,
+        6.68
+      ]
+    }
+  },
+  {
+    "id": "ref-es-1",
+    "name": "C\u00e1ceres Dehesa Long-Term Ecological Station",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "dehesa",
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.99,
+    "source": "SITEX Extremadura + CSIC",
+    "canopy_cover_pct": 48.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -6.325,
+        39.185
+      ]
+    }
+  },
+  {
+    "id": "ref-es-2",
+    "name": "Monfrag\u00fce Biosphere Agro-Silvo-Pastoral Plot",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "silvopasture",
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.96,
+    "source": "Junta de Extremadura Red Natura 2000",
+    "canopy_cover_pct": 52.5,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -6.305,
+        39.192
+      ]
+    }
+  },
+  {
+    "id": "ref-es-3",
+    "name": "M\u00e9rida Oak Regeneration Observatory",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "dehesa",
+    "validation_status": "validated",
+    "quality_score": 0.93,
+    "source": "University of Extremadura Forestry Dept",
+    "canopy_cover_pct": 44.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -6.338,
+        39.201
+      ]
+    }
+  },
+  {
+    "id": "ref-es-4",
+    "name": "Zafra Montado Cork Oak Benchmark",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "montado",
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.95,
+    "source": "IPLOS Cork & Silviculture Institute",
+    "canopy_cover_pct": 58.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -6.285,
+        39.178
+      ]
+    }
+  },
+  {
+    "id": "ref-es-5",
+    "name": "Guadiana Basin Dehesa Riparian Corridor",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "parkland",
+    "validation_status": "validated",
+    "quality_score": 0.9,
+    "source": "Confederaci\u00f3n Hidrogr\u00e1fica del Guadiana",
+    "canopy_cover_pct": 41.5,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -6.318,
+        39.214
+      ]
+    }
+  },
+  {
+    "id": "ref-et-1",
+    "name": "Jimma University College of Agriculture Agroforestry Plot",
+    "jurisdiction_code": "ET-OR",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "shade_coffee",
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.98,
+    "source": "Jimma University / CIFOR Ethiopia",
+    "canopy_cover_pct": 88.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        36.81,
+        7.66
+      ]
+    }
+  },
+  {
+    "id": "ref-et-2",
+    "name": "Yayu Coffee Forest Biosphere Reserve Core Point",
+    "jurisdiction_code": "ET-OR",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "shade_coffee",
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.97,
+    "source": "UNESCO MAB / Ethiopian Environment and Forest Research Institute",
+    "canopy_cover_pct": 91.5,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        36.792,
+        7.698
+      ]
+    }
+  },
+  {
+    "id": "ref-et-3",
+    "name": "Gomma Smallholder Cooperative Canopy Benchmark",
+    "jurisdiction_code": "ET-OR",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "homegarden",
+    "validation_status": "validated",
+    "quality_score": 0.92,
+    "source": "Oromia Coffee Farmers Cooperative Union (OCFCU)",
+    "canopy_cover_pct": 76.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        36.805,
+        7.704
+      ]
+    }
+  },
+  {
+    "id": "ref-et-4",
+    "name": "Bale Highland Cloud Forest Agroforestry Boundary",
+    "jurisdiction_code": "ET-OR",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "forest_farming",
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.95,
+    "source": "Frankfurt Zoological Society / Bale Mountain Project",
+    "canopy_cover_pct": 85.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        36.782,
+        7.711
+      ]
+    }
+  },
+  {
+    "id": "ref-et-5",
+    "name": "Didessa River Basin Coffee Agroforestry Transect",
+    "jurisdiction_code": "ET-OR",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "silvopasture",
+    "validation_status": "validated",
+    "quality_score": 0.91,
+    "source": "Ethiopian Coffee and Tea Authority",
+    "canopy_cover_pct": 69.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        36.818,
+        7.691
+      ]
+    }
+  }
+]

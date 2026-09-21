@@ -14,276 +14,27 @@ import { PlotInboxDrawer } from './components/PlotInboxDrawer';
 import { Jurisdiction, Parcel, LayerState, LayerOpacityState, SensorMode, TourWaypoint, AGROFORESTRY_SUBTYPE_COLORS } from './types';
 import { api } from './services/api';
 
+import allParcelsData from './data/allParcels.json';
+
 const getFallbackParcels = (code?: string): Parcel[] => {
-  if (code === 'ES-EX') {
-    return [
-      {
-        id: 'es-af-1',
-        jurisdiction_code: 'ES-EX',
-        class_label: 'agroforestry',
-        agroforestry_subtype: 'dehesa',
-        confidence_score: 0.97,
-        area_ha: 48.5,
-        uncertainty: 0.03,
-        source: 'SITEX Extremadura + Sentinel-2',
-        source_year: 2023,
-        subtype_color: '#827b3d',
-        height: 45,
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[-6.325, 39.185], [-6.312, 39.186], [-6.310, 39.196], [-6.323, 39.197], [-6.325, 39.185]]],
-        },
-      },
-      {
-        id: 'es-af-2',
-        jurisdiction_code: 'ES-EX',
-        class_label: 'agroforestry',
-        agroforestry_subtype: 'dehesa',
-        confidence_score: 0.94,
-        area_ha: 72.3,
-        uncertainty: 0.05,
-        source: 'SITEX Extremadura + GEDI',
-        source_year: 2023,
-        subtype_color: '#827b3d',
-        height: 52,
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[-6.305, 39.192], [-6.290, 39.191], [-6.288, 39.204], [-6.303, 39.205], [-6.305, 39.192]]],
-        },
-      },
-      {
-        id: 'es-af-3',
-        jurisdiction_code: 'ES-EX',
-        class_label: 'agroforestry',
-        agroforestry_subtype: 'silvopasture',
-        confidence_score: 0.91,
-        area_ha: 35.0,
-        uncertainty: 0.07,
-        source: 'Copernicus High Resolution Layer',
-        source_year: 2022,
-        subtype_color: '#918242',
-        height: 38,
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[-6.338, 39.201], [-6.326, 39.202], [-6.324, 39.211], [-6.336, 39.212], [-6.338, 39.201]]],
-        },
-      },
-      {
-        id: 'es-af-4',
-        jurisdiction_code: 'ES-EX',
-        class_label: 'agroforestry',
-        agroforestry_subtype: 'dehesa',
-        confidence_score: 0.95,
-        area_ha: 55.0,
-        uncertainty: 0.04,
-        source: 'SITEX Extremadura + Sentinel-2',
-        source_year: 2024,
-        subtype_color: '#827b3d',
-        height: 48,
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[-6.285, 39.178], [-6.272, 39.179], [-6.270, 39.189], [-6.283, 39.190], [-6.285, 39.178]]],
-        },
-      },
-      {
-        id: 'es-af-5',
-        jurisdiction_code: 'ES-EX',
-        class_label: 'agroforestry',
-        agroforestry_subtype: 'parkland',
-        confidence_score: 0.89,
-        area_ha: 42.1,
-        uncertainty: 0.08,
-        source: 'Copernicus HRL Forest',
-        source_year: 2023,
-        subtype_color: '#5e8c61',
-        height: 35,
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[-6.318, 39.214], [-6.305, 39.215], [-6.303, 39.224], [-6.316, 39.225], [-6.318, 39.214]]],
-        },
-      },
-    ];
-  }
-
-  if (code === 'ET-OR') {
-    return [
-      {
-        id: 'et-af-1',
-        jurisdiction_code: 'ET-OR',
-        class_label: 'agroforestry',
-        agroforestry_subtype: 'shade_coffee',
-        confidence_score: 0.95,
-        area_ha: 16.2,
-        uncertainty: 0.04,
-        source: 'Sentinel-2 + Planet NICFI',
-        source_year: 2023,
-        subtype_color: '#2d9d78',
-        height: 36,
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[36.792, 7.698], [36.800, 7.699], [36.799, 7.706], [36.791, 7.705], [36.792, 7.698]]],
-        },
-      },
-      {
-        id: 'et-af-2',
-        jurisdiction_code: 'ET-OR',
-        class_label: 'agroforestry',
-        agroforestry_subtype: 'shade_coffee',
-        confidence_score: 0.93,
-        area_ha: 24.5,
-        uncertainty: 0.06,
-        source: 'CIFOR Ethiopia Forest Survey',
-        source_year: 2023,
-        subtype_color: '#2d9d78',
-        height: 40,
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[36.805, 7.704], [36.814, 7.703], [36.813, 7.712], [36.804, 7.713], [36.805, 7.704]]],
-        },
-      },
-      {
-        id: 'et-af-3',
-        jurisdiction_code: 'ET-OR',
-        class_label: 'agroforestry',
-        agroforestry_subtype: 'homegarden',
-        confidence_score: 0.92,
-        area_ha: 8.4,
-        uncertainty: 0.05,
-        source: 'Jimma University Agroforestry DB',
-        source_year: 2022,
-        subtype_color: '#3a7d44',
-        height: 26,
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[36.782, 7.711], [36.790, 7.712], [36.788, 7.718], [36.781, 7.717], [36.782, 7.711]]],
-        },
-      },
-      {
-        id: 'et-af-4',
-        jurisdiction_code: 'ET-OR',
-        class_label: 'agroforestry',
-        agroforestry_subtype: 'parkland',
-        confidence_score: 0.88,
-        area_ha: 19.1,
-        uncertainty: 0.08,
-        source: 'Sentinel-2 + GEDI Canopy Top Height',
-        source_year: 2023,
-        subtype_color: '#5e8c61',
-        height: 30,
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[36.818, 7.691], [36.826, 7.692], [36.825, 7.699], [36.817, 7.698], [36.818, 7.691]]],
-        },
-      },
-      {
-        id: 'et-af-5',
-        jurisdiction_code: 'ET-OR',
-        class_label: 'agroforestry',
-        agroforestry_subtype: 'silvopasture',
-        confidence_score: 0.90,
-        area_ha: 28.0,
-        uncertainty: 0.07,
-        source: 'Ethiopia Open Data + Landsat-9',
-        source_year: 2024,
-        subtype_color: '#918242',
-        height: 34,
-        geometry: {
-          type: 'Polygon',
-          coordinates: [[[36.796, 7.684], [36.806, 7.685], [36.805, 7.693], [36.795, 7.692], [36.796, 7.684]]],
-        },
-      },
-    ];
-  }
-
-  // Default to Ghana Ashanti GH-AH
-  return [
-    {
-      id: 'gh-af-1',
-      jurisdiction_code: 'GH-AH',
-      class_label: 'agroforestry',
-      agroforestry_subtype: 'shade_cocoa',
-      confidence_score: 0.96,
-      area_ha: 14.8,
-      uncertainty: 0.03,
-      source: 'CERSGIS + Sentinel-2 + Planet NICFI',
-      source_year: 2023,
-      subtype_color: '#1f8a70',
-      height: 38,
-      geometry: {
-        type: 'Polygon',
-        coordinates: [[[-1.629, 6.708], [-1.621, 6.709], [-1.620, 6.716], [-1.627, 6.717], [-1.629, 6.708]]],
-      },
-    },
-    {
-      id: 'gh-af-2',
-      jurisdiction_code: 'GH-AH',
-      class_label: 'agroforestry',
-      agroforestry_subtype: 'shade_cocoa',
-      confidence_score: 0.94,
-      area_ha: 22.4,
-      uncertainty: 0.05,
-      source: 'CERSGIS + GEDI Canopy Height',
-      source_year: 2023,
-      subtype_color: '#1f8a70',
-      height: 42,
-      geometry: {
-        type: 'Polygon',
-        coordinates: [[[-1.618, 6.714], [-1.610, 6.713], [-1.609, 6.721], [-1.616, 6.722], [-1.618, 6.714]]],
-      },
-    },
-    {
-      id: 'gh-af-3',
-      jurisdiction_code: 'GH-AH',
-      class_label: 'agroforestry',
-      agroforestry_subtype: 'alley_cropping',
-      confidence_score: 0.91,
-      area_ha: 9.2,
-      uncertainty: 0.06,
-      source: 'CIFOR-ICRAF Ground Truth Benchmark',
-      source_year: 2022,
-      subtype_color: '#4a905d',
-      height: 28,
-      geometry: {
-        type: 'Polygon',
-        coordinates: [[[-1.635, 6.718], [-1.628, 6.719], [-1.626, 6.725], [-1.634, 6.726], [-1.635, 6.718]]],
-      },
-    },
-    {
-      id: 'gh-af-4',
-      jurisdiction_code: 'GH-AH',
-      class_label: 'agroforestry',
-      agroforestry_subtype: 'parkland',
-      confidence_score: 0.89,
-      area_ha: 18.5,
-      uncertainty: 0.08,
-      source: 'Sentinel-2 + WorldCover',
-      source_year: 2023,
-      subtype_color: '#5e8c61',
-      height: 32,
-      geometry: {
-        type: 'Polygon',
-        coordinates: [[[-1.615, 6.702], [-1.608, 6.703], [-1.607, 6.710], [-1.614, 6.709], [-1.615, 6.702]]],
-      },
-    },
-    {
-      id: 'gh-af-5',
-      jurisdiction_code: 'GH-AH',
-      class_label: 'agroforestry',
-      agroforestry_subtype: 'boundary_planting',
-      confidence_score: 0.93,
-      area_ha: 11.0,
-      uncertainty: 0.04,
-      source: 'Planet NICFI + Sentinel-2',
-      source_year: 2024,
-      subtype_color: '#2a6f3b',
-      height: 24,
-      geometry: {
-        type: 'Polygon',
-        coordinates: [[[-1.626, 6.722], [-1.619, 6.723], [-1.618, 6.729], [-1.625, 6.730], [-1.626, 6.722]]],
-      },
-    },
-  ];
+  const all = allParcelsData as Parcel[];
+  if (!code) return all;
+  const clean = code.trim();
+  const canonical =
+    clean === 'ES' || clean === 'ES-EX'
+      ? 'ES-EX'
+      : clean === 'ET' || clean === 'ET-OR'
+      ? 'ET-OR'
+      : 'GH-AH';
+  const matches = all.filter(
+    (p) =>
+      p.jurisdiction_code === canonical ||
+      Boolean(p.jurisdiction_code?.startsWith(`${canonical}-`)) ||
+      Boolean(p.jurisdiction_code?.startsWith(canonical))
+  );
+  return matches.length > 0 ? matches : all;
 };
+
 
 export function App() {
   const [jurisdictions, setJurisdictions] = useState<Jurisdiction[]>([]);
@@ -381,12 +132,27 @@ export function App() {
   // Load Jurisdictions (Default to Ghana Ashanti GH-AH)
   useEffect(() => {
     const loadJurisdictions = async () => {
-      const list = await api.getJurisdictions();
-      setJurisdictions(list);
-      if (list.length > 0) {
-        // Find Ghana Ashanti as flagship, or default to first
-        const ghana = list.find((j) => j.code === 'GH-AH') || list[0];
+      const pilotJurisdictions: Jurisdiction[] = [
+        { id: '22222222-2222-4000-8000-000000000002', name: 'Ghana (Ashanti Cocoa Agroforestry)', code: 'GH-AH', level: 1, centroid: { type: 'Point', coordinates: [-1.50, 6.50] } },
+        { id: '11111111-1111-4000-8000-000000000002', name: 'Spain (Extremadura Dehesa Oak Silvopasture)', code: 'ES-EX', level: 1, centroid: { type: 'Point', coordinates: [-6.26, 39.25] } },
+        { id: '33333333-3333-4000-8000-000000000002', name: 'Ethiopia (Oromia Cloud Forest Shade Coffee)', code: 'ET-OR', level: 1, centroid: { type: 'Point', coordinates: [37.29, 8.00] } },
+      ];
+      try {
+        const list = await api.getJurisdictions();
+        const merged = [...pilotJurisdictions];
+        if (list && list.length > 0) {
+          for (const item of list) {
+            if (!merged.some((m) => m.code === item.code)) {
+              merged.push(item);
+            }
+          }
+        }
+        setJurisdictions(merged);
+        const ghana = merged.find((j) => j.code === 'GH-AH') || merged[0];
         setSelectedJurisdiction(ghana);
+      } catch {
+        setJurisdictions(pilotJurisdictions);
+        setSelectedJurisdiction(pilotJurisdictions[0]);
       }
     };
     loadJurisdictions();
@@ -396,34 +162,47 @@ export function App() {
   useEffect(() => {
     if (!selectedJurisdiction) return;
 
+    let isCurrent = true;
+    const jCode = selectedJurisdiction.code;
+    const canonicalCode =
+      jCode === 'ES' || jCode === 'ES-EX'
+        ? 'ES-EX'
+        : jCode === 'ET' || jCode === 'ET-OR'
+        ? 'ET-OR'
+        : 'GH-AH';
+
     const bbox =
-      selectedJurisdiction.code === 'ES-EX'
+      canonicalCode === 'ES-EX'
         ? [-7.5, 38.0, -5.0, 40.5]
-        : selectedJurisdiction.code === 'GH-AH'
+        : canonicalCode === 'GH-AH'
         ? [-2.5, 5.5, -0.5, 7.5]
         : [35.0, 6.5, 39.5, 9.5];
 
-    // First attempt direct parcel listing via GET /api/geospatial/parcels
-    api
-      .getParcels(selectedJurisdiction.code, 150)
-      .then((data) => {
-        if (data && data.length > 0) {
-          setParcels(data);
-        } else {
-          return api.searchParcels(bbox, selectedJurisdiction.code);
+    const loadLandscapeParcels = async () => {
+      try {
+        let data = await api.getParcels(canonicalCode, 250);
+        if (!data || data.length === 0) {
+          data = await api.searchParcels(bbox, canonicalCode);
         }
-      })
-      .then((data) => {
-        if (data && data.length > 0) {
-          setParcels(data);
-        } else if (!parcels || parcels.length === 0) {
-          setParcels(getFallbackParcels(selectedJurisdiction.code));
+        if (!data || data.length === 0) {
+          data = getFallbackParcels(canonicalCode);
         }
-      })
-      .catch((e) => {
-        console.warn('Error loading parcels, using realistic fallback:', e);
-        setParcels(getFallbackParcels(selectedJurisdiction.code));
-      });
+        if (isCurrent && data && data.length > 0) {
+          setParcels(data);
+        }
+      } catch (e) {
+        console.warn('Error loading parcels, using exhaustive local dataset:', e);
+        if (isCurrent) {
+          setParcels(getFallbackParcels(canonicalCode));
+        }
+      }
+    };
+
+    loadLandscapeParcels();
+
+    return () => {
+      isCurrent = false;
+    };
   }, [selectedJurisdiction]);
 
   const handleLoadUploadedParcels = useCallback(
