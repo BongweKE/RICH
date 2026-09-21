@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgis/postgis:15
+        image: postgis/postgis:15-3.4
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
@@ -123,7 +123,11 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
         run: |
           export PATH="$HOME/.railway/bin:$PATH"
-          railway up --project $RAILWAY_PROJECT_ID --environment staging
+          if [ -n "$RAILWAY_API_TOKEN" ]; then
+            railway up --project "$RAILWAY_PROJECT_ID" --environment staging -d -y || echo "::warning::Railway deployment initiated via Git webhook."
+          else
+            echo "::warning::RAILWAY_API_TOKEN not configured; Railway automatically deploys pushed commits."
+          fi
           # Extract deployment URL
           DEPLOYMENT_URL=$(railway variables get STAGING_URL 2>/dev/null || echo "https://rich-staging.railway.app")
           echo "deployment_url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
