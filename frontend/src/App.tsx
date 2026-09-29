@@ -447,6 +447,7 @@ export function App() {
         {/* Elite Parcel Telemetry Dossier Drawer */}
         <ParcelInspector
           parcel={selectedParcel}
+          hidden={isChatOpen}
           onClose={() => setSelectedParcel(null)}
           onRunEUDR={() => setIsPolicyOpen(true)}
           onAskAI={(prompt) => {

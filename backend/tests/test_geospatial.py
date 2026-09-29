@@ -294,10 +294,28 @@ def test_schema_reconciliation_covers_orm_columns():
         ("land_cover_reference_points", LandCoverReferencePoint),
     ):
         for col in model.__table__.columns.keys():
-            if col in ("id", "jurisdiction_id", "geometry", "class_label", "agroforestry_subtype",
-                       "confidence_score", "area_ha", "uncertainty", "geospatial_embedding",
-                       "document_embedding", "metadata", "created_at", "updated_at",
-                       "processing_method", "model_version", "source", "source_year",
-                       "quality_score", "validator_id", "validation_date", "validation_status"):
+            if col in (
+                "id",
+                "jurisdiction_id",
+                "geometry",
+                "class_label",
+                "agroforestry_subtype",
+                "confidence_score",
+                "area_ha",
+                "uncertainty",
+                "geospatial_embedding",
+                "document_embedding",
+                "metadata",
+                "created_at",
+                "updated_at",
+                "processing_method",
+                "model_version",
+                "source",
+                "source_year",
+                "quality_score",
+                "validator_id",
+                "validation_date",
+                "validation_status",
+            ):
                 continue
             assert (table, col) in covered or table not in parcel_cols, f"unreconciled column {table}.{col}"

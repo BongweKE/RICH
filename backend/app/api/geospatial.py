@@ -422,7 +422,9 @@ async def list_parcels(
                 "source": p.source,
                 "source_year": p.source_year,
                 "data_origin": (
-                    p.data_origin.value if hasattr(p.data_origin, "value") else (str(p.data_origin) if p.data_origin else None)
+                    p.data_origin.value
+                    if hasattr(p.data_origin, "value")
+                    else (str(p.data_origin) if p.data_origin else None)
                 ),
                 "generation_method": p.generation_method,
                 "validation_status": (
@@ -540,7 +542,9 @@ async def search_parcels(
                 "source": p.source,
                 "source_year": p.source_year,
                 "data_origin": (
-                    p.data_origin.value if hasattr(p.data_origin, "value") else (str(p.data_origin) if p.data_origin else None)
+                    p.data_origin.value
+                    if hasattr(p.data_origin, "value")
+                    else (str(p.data_origin) if p.data_origin else None)
                 ),
                 "generation_method": p.generation_method,
                 "validation_status": (

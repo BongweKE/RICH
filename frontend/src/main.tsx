@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { PlannerApp } from './components/planner/PlannerApp';
+import { LandingPage } from './components/LandingPage';
 import './index.css';
 
 function usePath(): string {
@@ -16,7 +17,9 @@ function usePath(): string {
 
 function Root() {
   const path = usePath();
-  return path === '/planner' ? <PlannerApp /> : <App />;
+  if (path === '/planner' || path.startsWith('/planner/')) return <PlannerApp />;
+  if (path === '/' || path === '/index.html') return <LandingPage />;
+  return <App />;
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

@@ -13,6 +13,7 @@ import { api } from '../services/api';
 
 interface ParcelInspectorProps {
   parcel: Parcel | null;
+  hidden?: boolean;
   onClose: () => void;
   onRunEUDR: (parcel: Parcel) => void;
   onAskAI?: (prompt: string) => void;
@@ -20,6 +21,7 @@ interface ParcelInspectorProps {
 
 export const ParcelInspector: React.FC<ParcelInspectorProps> = ({
   parcel,
+  hidden = false,
   onClose,
   onRunEUDR,
   onAskAI,
@@ -119,8 +121,10 @@ export const ParcelInspector: React.FC<ParcelInspectorProps> = ({
     a.click();
     URL.revokeObjectURL(url);
   };
+  if (!parcel || hidden) return null;
+
   return (
-    <div className="absolute bottom-6 left-4 z-20 w-96 max-h-[75vh] bg-slate-950/95 backdrop-blur-md border border-slate-800 rounded-xl shadow-2xl flex flex-col text-xs font-sans overflow-hidden select-none">
+    <div className="absolute bottom-6 right-4 z-30 w-96 max-w-[calc(100vw-2rem)] max-h-[75vh] bg-slate-950/95 backdrop-blur-md border border-slate-800 rounded-xl shadow-2xl flex flex-col text-xs font-sans overflow-y-auto overscroll-contain select-none">
       {/* Inspector Header */}
       <div className="px-4 py-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between shrink-0">
         <div className="flex items-center space-x-2.5">

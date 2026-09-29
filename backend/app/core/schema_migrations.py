@@ -42,8 +42,7 @@ async def reconcile_schema(engine: AsyncEngine) -> None:
     for table, column, ddl in COLUMN_MIGRATIONS:
         statements.append(f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS {column} {ddl}")
     statements.append(
-        "CREATE INDEX IF NOT EXISTS idx_parcels_validation_status "
-        "ON agroforestry_parcels (validation_status)"
+        "CREATE INDEX IF NOT EXISTS idx_parcels_validation_status " "ON agroforestry_parcels (validation_status)"
     )
     try:
         async with engine.begin() as conn:
