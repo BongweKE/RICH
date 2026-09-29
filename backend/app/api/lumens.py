@@ -114,8 +114,7 @@ async def interactive_tradeoff(
     )
     result["mode"] = "illustrative_demo"
     result["disclaimer"] = (
-        "Synthetic demonstration output; scenario metrics are illustrative "
-        "and not derived from real land-use data."
+        "Synthetic demonstration output; scenario metrics are illustrative " "and not derived from real land-use data."
     )
     return result
 

@@ -249,4 +249,3 @@ async def test_list_reference_points_for_jurisdiction(async_client: AsyncClient)
     assert "reference_points" in data
     assert "count" in data
     assert data["count"] > 0
-

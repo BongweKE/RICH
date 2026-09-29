@@ -225,7 +225,9 @@ class ArchitectAgent:
             search_strategies.append("lumens_preques")
         if any(term in q_lower for term in ["ques-c", "carbon pool", "agb", "bgb", "soc", "deadwood"]):
             search_strategies.append("lumens_ques_c")
-        if any(term in q_lower for term in ["ques-h", "hydrology", "rusle", "swat", "soil loss", "erosion", "sediment"]):
+        if any(
+            term in q_lower for term in ["ques-h", "hydrology", "rusle", "swat", "soil loss", "erosion", "sediment"]
+        ):
             search_strategies.append("lumens_ques_h")
         if any(term in q_lower for term in ["ques-b", "biodiversity", "corridor", "mspa", "habitat", "invest"]):
             search_strategies.append("lumens_ques_b")
@@ -530,7 +532,11 @@ class SynthesisAgent:
         return (
             "I don't have a language model available right now, so I can't produce a "
             "narrative analysis. Here is what the retrieved records actually show:\n\n"
-            + ("\n".join(retrieved_summary) if retrieved_summary else "- No matching records were found for this query.")
+            + (
+                "\n".join(retrieved_summary)
+                if retrieved_summary
+                else "- No matching records were found for this query."
+            )
             + "\n\nCarbon stock, sequestration, NDVI trajectories, GEDI canopy metrics, and "
             "compliance verdicts are **not** available for these records and cannot be "
             "estimated without validated field data. To request validation or attach "

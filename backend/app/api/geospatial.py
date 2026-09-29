@@ -352,7 +352,6 @@ async def get_jurisdiction(
     }
 
 
-
 @router.get("/parcels")
 async def list_parcels(
     jurisdiction_code: str | None = Query(None, description="Filter by jurisdiction code"),
@@ -922,23 +921,21 @@ async def get_datapoints_summary(
     regions = ["GH-AH", "ES-EX", "ET-OR"]
     if jurisdiction_code:
         clean = jurisdiction_code.strip()
-        canonical = (
-            "ES-EX"
-            if clean in ("ES", "ES-EX")
-            else "ET-OR"
-            if clean in ("ET", "ET-OR")
-            else "GH-AH"
-        )
+        canonical = "ES-EX" if clean in ("ES", "ES-EX") else "ET-OR" if clean in ("ET", "ET-OR") else "GH-AH"
         regions = [canonical]
 
     summary = {}
     for r in regions:
         try:
-            p_stmt = select(func.count(AgroforestryParcel.id)).join(Jurisdiction).where(
-                or_(
-                    Jurisdiction.code == r,
-                    Jurisdiction.code.startswith(f"{r}-"),
-                    Jurisdiction.code.startswith(r),
+            p_stmt = (
+                select(func.count(AgroforestryParcel.id))
+                .join(Jurisdiction)
+                .where(
+                    or_(
+                        Jurisdiction.code == r,
+                        Jurisdiction.code.startswith(f"{r}-"),
+                        Jurisdiction.code.startswith(r),
+                    )
                 )
             )
             db_parcels = (await db.execute(p_stmt)).scalar() or 0
@@ -949,11 +946,15 @@ async def get_datapoints_summary(
         parcels_cnt = max(db_parcels, fallback_parcels)
 
         try:
-            rp_stmt = select(func.count(LandCoverReferencePoint.id)).join(Jurisdiction).where(
-                or_(
-                    Jurisdiction.code == r,
-                    Jurisdiction.code.startswith(f"{r}-"),
-                    Jurisdiction.code.startswith(r),
+            rp_stmt = (
+                select(func.count(LandCoverReferencePoint.id))
+                .join(Jurisdiction)
+                .where(
+                    or_(
+                        Jurisdiction.code == r,
+                        Jurisdiction.code.startswith(f"{r}-"),
+                        Jurisdiction.code.startswith(r),
+                    )
                 )
             )
             db_refs = (await db.execute(rp_stmt)).scalar() or 0
