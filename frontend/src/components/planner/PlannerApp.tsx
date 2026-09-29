@@ -206,6 +206,7 @@ export function PlannerApp() {
                 <PlannerMapWorkspace
                   parcels={parcels}
                   jurisdiction={jurisdiction}
+                  selectedParcel={selectedParcel}
                   onSelectParcel={setSelectedParcel}
                   onParcelValidated={(parcelId, decision) => {
                     if (decision === 'confirmed') {

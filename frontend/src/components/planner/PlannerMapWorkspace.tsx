@@ -39,14 +39,16 @@ function parcelFillColor(p: Parcel): string {
 interface Props {
   parcels: Parcel[];
   jurisdiction: Jurisdiction;
+  selectedParcel?: Parcel | null;
   onSelectParcel: (p: Parcel) => void;
   onParcelValidated?: (parcelId: string, decision: string) => void;
 }
 
-export function PlannerMapWorkspace({ parcels, jurisdiction, onSelectParcel, onParcelValidated }: Props) {
+export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onSelectParcel, onParcelValidated }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const popupRef = useRef<maplibregl.Popup | null>(null);
+  const [basemap, setBasemap] = useState<'satellite' | 'osm'>('satellite');
   const [showSynthetic, setShowSynthetic] = useState(true);
   const [showReferencePoints, setShowReferencePoints] = useState(true);
   const [subtypeFilter, setSubtypeFilter] = useState<string>('all');
@@ -97,9 +99,13 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, onSelectParcel, onP
         sources: {
           osm: {
             type: 'raster',
-            tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+            tiles: [
+              basemap === 'satellite'
+                ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+                : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            ],
             tileSize: 256,
-            attribution: '© OpenStreetMap contributors',
+            attribution: '© OpenStreetMap contributors / Esri Satellite',
           },
         },
         layers: [
@@ -202,6 +208,16 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, onSelectParcel, onP
       map.on('mouseleave', 'reference-points-layer', () => { map.getCanvas().style.cursor = ''; });
     });
   }, [popupHtml]);
+  useEffect(() => {
+    const map = mapRef.current;
+    const src = map?.getSource('osm') as any;
+    if (!src?.setTiles) return;
+    src.setTiles([
+      basemap === 'satellite'
+        ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+        : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    ]);
+  }, [basemap]);
 
   const filteredParcels = useMemo(() => {
     return parcels.filter((p) => {
@@ -255,6 +271,14 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, onSelectParcel, onP
     const center = jurisdiction.centroid?.coordinates as [number, number] | undefined;
     if (map && center) map.easeTo({ center, duration: 600 });
   }, [jurisdiction]);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !selectedParcel?.geometry) return;
+    const coords = (selectedParcel.geometry as any)?.coordinates?.[0]?.[0];
+    if (Array.isArray(coords) && coords.length >= 2) {
+      map.easeTo({ center: [coords[0], coords[1]], zoom: Math.max(map.getZoom(), 13), duration: 700 });
+    }
+  }, [selectedParcel]);
 
   const subtypesPresent = useMemo(
     () => Array.from(new Set(parcels.map((p) => p.agroforestry_subtype).filter(Boolean))) as string[],
@@ -273,6 +297,17 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, onSelectParcel, onP
           <label className="flex items-center gap-1.5">
             <input type="checkbox" checked={showReferencePoints} onChange={(e) => setShowReferencePoints(e.target.checked)} className="accent-blue-700 h-4 w-4" />
             Reference points
+          </label>
+          <label className="flex items-center gap-1.5" aria-label="Basemap style">
+            Basemap
+            <select
+              value={basemap}
+              onChange={(e) => setBasemap(e.target.value as 'satellite' | 'osm')}
+              className="rounded border border-stone-300 bg-white px-2 py-1"
+            >
+              <option value="satellite">Satellite</option>
+              <option value="osm">Street map</option>
+            </select>
           </label>
         </div>
       </div>
