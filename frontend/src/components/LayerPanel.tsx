@@ -10,6 +10,7 @@ import {
   ChevronDown,
   ChevronUp,
   Flame,
+  Gauge,
 } from 'lucide-react';
 import { LayerState, LayerOpacityState } from '../types';
 
@@ -251,6 +252,29 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({
               )}
             </div>
 
+            {/* 7. Uncertainty Overlay */}
+            <div className="p-2 rounded-lg bg-slate-900/70 border border-slate-800/80 space-y-1.5">
+              <div
+                onClick={() => onToggleLayer('uncertaintyOverlay')}
+                className="flex items-center justify-between cursor-pointer"
+                title="Recolor parcels by model uncertainty instead of subtype"
+              >
+                <div className="flex items-center space-x-2">
+                  <Gauge className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="text-slate-200 font-medium">Uncertainty Overlay</span>
+                </div>
+                {layers.uncertaintyOverlay ? (
+                  <Eye className="w-3.5 h-3.5 text-amber-400" />
+                ) : (
+                  <EyeOff className="w-3.5 h-3.5 text-slate-600" />
+                )}
+              </div>
+              {layers.uncertaintyOverlay && (
+                <p className="text-[10px] text-slate-400 pl-5">
+                  Green = low uncertainty &middot; amber = high uncertainty (model needs review)
+                </p>
+              )}
+            </div>
             {/* 6. Satellite Imagery */}
             <div className="p-2 rounded-lg bg-slate-900/70 border border-slate-800/80 space-y-1.5">
               <div

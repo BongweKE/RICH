@@ -166,6 +166,19 @@ export const MapViewer: React.FC<MapViewerProps> = ({
 
   // MapLibre color expressions for parcels
   const getParcelColorExpression = () => {
+    if (layers.uncertaintyOverlay) {
+      // Amber ramp by model uncertainty: pale green (certain) -> amber (uncertain)
+      return [
+        'case',
+        ['boolean', ['get', 'selected'], false],
+        '#38bdf8',
+        ['>=', ['coalesce', ['get', 'uncertainty'], 0], 0.05],
+        '#f59e0b',
+        ['>=', ['coalesce', ['get', 'uncertainty'], 0], 0.02],
+        '#fcd34d',
+        '#a3e635',
+      ];
+    }
     return [
       'case',
       ['boolean', ['get', 'selected'], false],
@@ -413,6 +426,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
                   id: p.id,
                   subtype: p.agroforestry_subtype,
                   confidence: p.confidence_score,
+                  uncertainty: p.uncertainty ?? null,
                   area_ha: p.area_ha || 15.0,
                   height: height,
                   selected: isSelected,
@@ -520,7 +534,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     } else {
       map.once('load', syncParcels);
     }
-  }, [parcels, selectedParcel, layers.agroforestryParcels, is3DMode, opacities.agroforestryParcels, ]);
+  }, [parcels, selectedParcel, layers.agroforestryParcels, layers.uncertaintyOverlay, is3DMode, opacities.agroforestryParcels, ]);
 
   // Sync CIFOR-ICRAF Ground Reference Points Layer
   useEffect(() => {

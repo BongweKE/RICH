@@ -49,6 +49,7 @@ export function App() {
     canopyDensity: true,
     satelliteBasemap: false,
     carbonDensityHeatmap: false,
+    uncertaintyOverlay: false,
   });
 
   const [opacities, setOpacities] = useState<LayerOpacityState>({
@@ -59,6 +60,7 @@ export function App() {
     canopyDensity: 60,
     satelliteBasemap: 100,
     carbonDensityHeatmap: 50,
+    uncertaintyOverlay: 70,
   });
 
   const [referencePoints, setReferencePoints] = useState<any[]>([]);
