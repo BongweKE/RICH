@@ -6,12 +6,11 @@ import {
   ShieldCheck,
   Sparkles,
   Video,
-  Eye,
   Volume2,
   VolumeX,
   Upload,
 } from 'lucide-react';
-import { Jurisdiction, SensorMode } from '../types';
+import { Jurisdiction } from '../types';
 
 interface HeaderProps {
   jurisdictions: Jurisdiction[];
@@ -29,8 +28,6 @@ interface HeaderProps {
   onOpenPolicy: () => void;
   onToggleChat: () => void;
   isChatOpen: boolean;
-  sensorMode: SensorMode;
-  onSelectSensorMode: (mode: SensorMode) => void;
   onOpenTour: () => void;
   isTourOpen: boolean;
   isAudioMuted: boolean;
@@ -53,8 +50,6 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenPolicy,
   onToggleChat,
   isChatOpen,
-  sensorMode,
-  onSelectSensorMode,
   onOpenTour,
   isTourOpen,
   isAudioMuted,
@@ -137,7 +132,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Action Tools & God's Eye View Interactivity Controls */}
+      {/* Map Interactivity Controls */}
       <div className="flex items-center space-x-2">
         {/* Plot Inbox (User Upload) */}
         <button
@@ -152,23 +147,6 @@ export const Header: React.FC<HeaderProps> = ({
           <Upload className="w-3.5 h-3.5 text-sky-400" />
           <span className="hidden sm:inline">Plot Inbox</span>
         </button>
-
-        {/* Sensor Mode Selector */}
-        <div className="relative flex items-center bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-xs">
-          <Eye className="w-3.5 h-3.5 text-emerald-400 mr-1.5" />
-          <select
-            value={sensorMode}
-            onChange={(e) => onSelectSensorMode(e.target.value as SensorMode)}
-            className="bg-transparent text-slate-200 text-xs focus:outline-none cursor-pointer"
-            title="Sensor Mode (Hotkeys 1-5)"
-          >
-            <option value="normal" className="bg-slate-900">Sensor: Normal</option>
-            <option value="nvg" className="bg-slate-900">Sensor: NVG Green</option>
-            <option value="flir" className="bg-slate-900">Sensor: FLIR Thermal</option>
-            <option value="crt" className="bg-slate-900">Sensor: CRT Tactical</option>
-            <option value="noir" className="bg-slate-900">Sensor: Noir Recon</option>
-          </select>
-        </div>
 
         {/* Scene Director Guided Tour */}
         <button
@@ -222,7 +200,7 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           onClick={onToggleAudio}
           className="p-1.5 rounded-md bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-700 transition-colors"
-          title={isAudioMuted ? 'Unmute Tactical Audio' : 'Mute Tactical Audio'}
+          title={isAudioMuted ? 'Unmute Audio' : 'Mute Audio'}
         >
           {isAudioMuted ? <VolumeX className="w-4 h-4 text-slate-500" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
         </button>

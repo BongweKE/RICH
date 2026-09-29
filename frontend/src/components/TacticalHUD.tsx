@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Compass, Radio, Target } from 'lucide-react';
-import { SensorMode, Parcel } from '../types';
+import { Parcel } from '../types';
 
 interface TacticalHUDProps {
   cursorCoords: [number, number] | null;
   cameraPitch: number;
   cameraBearing: number;
   cameraZoom: number;
-  sensorMode: SensorMode;
   parcelCount: number;
   totalDatapoints?: number;
   is3DMode: boolean;
@@ -20,7 +19,6 @@ export const TacticalHUD: React.FC<TacticalHUDProps> = ({
   cameraPitch,
   cameraBearing,
   cameraZoom,
-  sensorMode,
   parcelCount,
   totalDatapoints,
   is3DMode,
@@ -61,7 +59,7 @@ export const TacticalHUD: React.FC<TacticalHUDProps> = ({
         {selectedParcel && (
           <div className="mt-2 px-2 py-0.5 rounded bg-slate-950/90 border border-emerald-500/60 text-emerald-300 text-[9px] tracking-wider uppercase font-bold flex items-center space-x-1 shadow-lg backdrop-blur-sm">
             <Target className="w-3 h-3 text-emerald-400 animate-spin" />
-            <span>TARGET LOCK: {selectedParcel.id.slice(0, 8)} ({selectedParcel.agroforestry_subtype || selectedParcel.class_label})</span>
+            <span>Selected: {selectedParcel.id.slice(0, 8)} ({selectedParcel.agroforestry_subtype || selectedParcel.class_label})</span>
           </div>
         )}
       </div>
@@ -70,13 +68,10 @@ export const TacticalHUD: React.FC<TacticalHUDProps> = ({
       <div className="absolute top-16 left-[19.5rem] bg-slate-950/80 backdrop-blur-sm border border-emerald-500/30 rounded p-2 text-emerald-400 shadow-lg space-y-1">
         <div className="flex items-center space-x-2 text-[10px] tracking-wider text-emerald-300 font-bold uppercase border-b border-emerald-500/20 pb-1">
           <Radio className="w-3 h-3 animate-pulse text-emerald-400" />
-          <span>RICH Tactical Telemetry</span>
-          <span className="px-1 bg-emerald-500/20 rounded text-[9px] text-emerald-300">
-            {sensorMode.toUpperCase()}
-          </span>
+          <span>RICH Viewer Telemetry</span>
           {selectedParcel && (
             <span className="px-1 bg-emerald-500/30 text-emerald-200 border border-emerald-500/40 rounded text-[8px] animate-pulse">
-              LOCKED
+              SELECTED
             </span>
           )}
         </div>
@@ -124,7 +119,7 @@ export const TacticalHUD: React.FC<TacticalHUDProps> = ({
           <span>MODE: <strong className="text-slate-200">{is3DMode ? '3D PERSPECTIVE' : '2D ORTHO'}</strong></span>
         </div>
         <div className="hidden md:flex items-center space-x-3 text-slate-400">
-          <span className="text-[9px] px-1 py-0.5 rounded bg-slate-900 border border-slate-700">Hotkeys: [1-5] Sensor Mode</span>
+          <span className="text-[9px] px-1 py-0.5 rounded bg-slate-900 border border-slate-700">Hotkeys: [T] 3D &middot; [Space] Tour</span>
           <span className="text-[9px] px-1 py-0.5 rounded bg-slate-900 border border-slate-700">[T] 3D Toggle</span>
           <span className="text-[9px] px-1 py-0.5 rounded bg-slate-900 border border-slate-700">[Space] Tour/Time</span>
         </div>

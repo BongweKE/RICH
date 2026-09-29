@@ -7,11 +7,10 @@ import { AIChatDrawer } from './components/AIChatDrawer';
 import { LUMENSModal } from './components/LUMENSModal';
 import { PolicyModal } from './components/PolicyModal';
 import { TacticalHUD } from './components/TacticalHUD';
-import { SensorOverlay } from './components/SensorOverlay';
 import { SceneDirector } from './components/SceneDirector';
 import { TemporalScrubber } from './components/TemporalScrubber';
 import { PlotInboxDrawer } from './components/PlotInboxDrawer';
-import { Jurisdiction, Parcel, LayerState, LayerOpacityState, SensorMode, TourWaypoint, AGROFORESTRY_SUBTYPE_COLORS } from './types';
+import { Jurisdiction, Parcel, LayerState, LayerOpacityState, TourWaypoint, AGROFORESTRY_SUBTYPE_COLORS } from './types';
 import { api } from './services/api';
 
 import allParcelsData from './data/allParcels.json';
@@ -66,7 +65,6 @@ export function App() {
   const [deforestationAlerts, setDeforestationAlerts] = useState<any[]>([]);
 
   const [is3DMode, setIs3DMode] = useState(true); // default to 3D perspective
-  const [sensorMode, setSensorMode] = useState<SensorMode>('normal');
   const [currentYear, setCurrentYear] = useState<number>(2024);
   const [isSplitCompare, setIsSplitCompare] = useState<boolean>(false);
   const [isTourOpen, setIsTourOpen] = useState<boolean>(false);
@@ -93,8 +91,8 @@ export function App() {
   const [isPolicyOpen, setIsPolicyOpen] = useState(false);
   const [isInboxOpen, setIsInboxOpen] = useState(false);
 
-  // Tactical SFX audio synthesizer
-  const playTacticalSFX = useCallback(
+  // UI SFX audio synthesizer
+  const playSfx = useCallback(
     (type: 'beep' | 'toggle' | 'sensor' | 'tour') => {
       if (isAudioMuted) return;
       try {
@@ -243,9 +241,9 @@ export function App() {
         setSelectedParcel(newParcels[0]);
       }
       setLayers((prev) => ({ ...prev, agroforestryParcels: true }));
-      playTacticalSFX('beep');
+      playSfx('beep');
     },
-    [selectedJurisdiction, playTacticalSFX]
+    [selectedJurisdiction, playSfx]
   );
 
   // Global Keyboard Shortcuts
@@ -253,28 +251,13 @@ export function App() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['input', 'textarea'].includes((e.target as HTMLElement)?.tagName?.toLowerCase())) return;
 
-      if (e.key === '1') {
-        setSensorMode('normal');
-        playTacticalSFX('sensor');
-      } else if (e.key === '2') {
-        setSensorMode('nvg');
-        playTacticalSFX('sensor');
-      } else if (e.key === '3') {
-        setSensorMode('flir');
-        playTacticalSFX('sensor');
-      } else if (e.key === '4') {
-        setSensorMode('crt');
-        playTacticalSFX('sensor');
-      } else if (e.key === '5') {
-        setSensorMode('noir');
-        playTacticalSFX('sensor');
-      } else if (e.key === 't' || e.key === 'T') {
+      if (e.key === 't' || e.key === 'T') {
         setIs3DMode((prev) => !prev);
-        playTacticalSFX('toggle');
+        playSfx('toggle');
       } else if (e.key === ' ' || e.code === 'Space') {
         e.preventDefault();
         setIsTourOpen((prev) => !prev);
-        playTacticalSFX('tour');
+        playSfx('tour');
       } else if (e.key === 'Escape') {
         setSelectedParcel(null);
         setIsTourOpen(false);
@@ -283,30 +266,30 @@ export function App() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [playTacticalSFX]);
+  }, [playSfx]);
 
   const toggleLayer = (layer: keyof LayerState) => {
     setLayers((prev) => ({ ...prev, [layer]: !prev[layer] }));
-    playTacticalSFX('toggle');
+    playSfx('toggle');
   };
 
   const handleOpacityChange = (layer: keyof LayerOpacityState, value: number) => {
     setOpacities((prev) => ({ ...prev, [layer]: value }));
-    playTacticalSFX('beep');
+    playSfx('beep');
   };
 
   const totalDatapoints = parcels.length + referencePoints.length + deforestationAlerts.length;
 
   return (
     <div className="flex flex-col w-screen h-screen bg-slate-950 text-slate-100 overflow-hidden font-sans select-none">
-      {/* Top Tactical Navigation Bar */}
+      {/* Top Navigation Bar */}
       <Header
         jurisdictions={jurisdictions}
         selectedJurisdiction={selectedJurisdiction}
         onSelectJurisdiction={(j) => {
           setSelectedJurisdiction(j);
           setSelectedParcel(null);
-          playTacticalSFX('beep');
+          playSfx('beep');
         }}
         parcelCount={parcels.length}
         totalDatapoints={totalDatapoints}
@@ -314,35 +297,30 @@ export function App() {
         alertsCount={deforestationAlerts.length}
         onOpenInbox={() => {
           setIsInboxOpen(true);
-          playTacticalSFX('beep');
+          playSfx('beep');
         }}
         isInboxOpen={isInboxOpen}
         is3DMode={is3DMode}
         onToggle3D={() => {
           setIs3DMode(!is3DMode);
-          playTacticalSFX('toggle');
+          playSfx('toggle');
         }}
         onOpenLumens={() => {
           setIsLumensOpen(true);
-          playTacticalSFX('beep');
+          playSfx('beep');
         }}
         onOpenPolicy={() => {
           setIsPolicyOpen(true);
-          playTacticalSFX('beep');
+          playSfx('beep');
         }}
         onToggleChat={() => {
           setIsChatOpen(!isChatOpen);
-          playTacticalSFX('beep');
+          playSfx('beep');
         }}
         isChatOpen={isChatOpen}
-        sensorMode={sensorMode}
-        onSelectSensorMode={(mode) => {
-          setSensorMode(mode);
-          playTacticalSFX('sensor');
-        }}
         onOpenTour={() => {
           setIsTourOpen(!isTourOpen);
-          playTacticalSFX('tour');
+          playSfx('tour');
         }}
         isTourOpen={isTourOpen}
         isAudioMuted={isAudioMuted}
@@ -351,13 +329,12 @@ export function App() {
 
       {/* Main Map Viewer & Interactivity Area */}
       <div className="relative flex-1 flex overflow-hidden">
-        {/* God's Eye View Tactical HUD */}
+        {/* Viewer Telemetry HUD */}
         <TacticalHUD
           cursorCoords={cursorCoords}
           cameraPitch={cameraTelemetry.pitch}
           cameraBearing={cameraTelemetry.bearing}
           cameraZoom={cameraTelemetry.zoom}
-          sensorMode={sensorMode}
           parcelCount={parcels.length}
           totalDatapoints={totalDatapoints}
           is3DMode={is3DMode}
@@ -365,8 +342,6 @@ export function App() {
           selectedParcel={selectedParcel}
         />
 
-        {/* Post-Processing Sensor Mode Shader Overlay */}
-        <SensorOverlay mode={sensorMode} />
 
         {/* Scene Director Guided Tour Controller */}
         <SceneDirector
@@ -375,7 +350,7 @@ export function App() {
           jurisdictionCode={selectedJurisdiction?.code || 'GH-AH'}
           onFlyToWaypoint={(wp) => {
             setTourWaypoint(wp);
-            playTacticalSFX('beep');
+            playSfx('beep');
           }}
           onSelectNearestParcel={(coords) => {
             if (parcels.length > 0) {
@@ -404,12 +379,12 @@ export function App() {
           currentYear={currentYear}
           onYearChange={(yr) => {
             setCurrentYear(yr);
-            playTacticalSFX('beep');
+            playSfx('beep');
           }}
           isSplitCompare={isSplitCompare}
           onToggleSplitCompare={() => {
             setIsSplitCompare(!isSplitCompare);
-            playTacticalSFX('toggle');
+            playSfx('toggle');
           }}
         />
 
@@ -429,12 +404,11 @@ export function App() {
           selectedParcel={selectedParcel}
           onSelectParcel={(p) => {
             setSelectedParcel(p);
-            playTacticalSFX('beep');
+            playSfx('beep');
           }}
           layers={layers}
           opacities={opacities}
           is3DMode={is3DMode}
-          sensorMode={sensorMode}
           currentYear={currentYear}
           isSplitCompare={isSplitCompare}
           tourWaypoint={tourWaypoint}
@@ -481,7 +455,7 @@ export function App() {
             }
             if (found) {
               setSelectedParcel(found);
-              playTacticalSFX('beep');
+              playSfx('beep');
             }
           }}
         />

@@ -63,7 +63,6 @@ export interface ChatMessage {
   rating?: number;
 }
 
-export type SensorMode = 'normal' | 'nvg' | 'flir' | 'crt' | 'noir';
 
 export interface NDVIHistoryPoint {
   year: number;
