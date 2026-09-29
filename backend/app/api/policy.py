@@ -181,15 +181,15 @@ async def check_eudr_compliance(
     polygon: list[list[float]] | None = Body(None, description="Polygon boundary coordinates"),
     commodity: str = Body("cocoa", description="Commodity type (e.g. cocoa, coffee, wood)"),
     production_date: str | None = Body(None, description="Date of commodity harvest/production (YYYY-MM-DD)"),
+    legality_evidence: list[dict[str, Any]] | None = Body(None, description="Legality documents [{'name': ..., 'type': ..., 'verified': bool}]"),
     store_assessment: bool = Body(False, description="Whether to record assessment in database"),
     db: AsyncSession = Depends(get_db_session),
     user: dict = Depends(get_current_user_optional),
 ):
     """
-    Perform an EUDR (Regulation (EU) 2023/1115) compliance check:
-    - Deforestation-free requirement (no deforestation after Dec 31, 2020)
-    - Production in accordance with relevant legislation of the country of production
-    - Geolocation covered by due diligence statement
+    Perform an EUDR (Regulation (EU) 2023/1115) evidence-based compliance check.
+    No verdict without evidence: missing inputs yield INSUFFICIENT_DATA gaps,
+    never a fabricated compliance verdict. Only checks backed by data are scored.
     """
     gaps: list[str] = []
     recommendations: list[str] = []
@@ -206,73 +206,137 @@ async def check_eudr_compliance(
         if not parcel:
             raise HTTPException(status_code=404, detail=f"Parcel {parcel_id} not found")
 
-    # 1. Geolocation check
+    area_ha: float | None = float(parcel.area_ha) if parcel and parcel.area_ha else None
+
+    # 1. Geolocation check (EUDR Article 9: <4 ha single point acceptable, >=4 ha polygon required)
     has_polygon = polygon is not None or (parcel is not None and parcel.geometry is not None)
     has_coords = coordinates is not None or parcel is not None or has_polygon
     if not has_coords:
-        gaps.append("Missing geolocation coordinates required under EUDR Article 9.")
-        recommendations.append("Provide GPS coordinates or polygon boundaries for the production plot.")
-        checks["geolocation"] = {"status": "FAIL", "score": 0.0}
+        gaps.append("Missing geolocation required under EUDR Article 9.")
+        recommendations.append("Provide GPS coordinates (plots < 4 ha) or polygon boundaries (plots >= 4 ha) for the production plot.")
+        checks["geolocation"] = {"status": "FAIL", "score": 0.0, "evidence": "none"}
+    elif not has_polygon and (area_ha is None or area_ha >= 4.0):
+        gaps.append(
+            "Polygon boundary required: EUDR Article 9 requires polygons for plots >= 4 hectares"
+            + (" (plot area unknown, polygon strongly recommended)." if area_ha is None else f" (plot is {area_ha:.1f} ha).")
+        )
+        recommendations.append("Upload the full plot boundary polygon to complete due diligence.")
+        checks["geolocation"] = {
+            "status": "INSUFFICIENT_DATA",
+            "score": 0.0,
+            "evidence": "point_only",
+            "area_ha": area_ha,
+            "has_polygon": False,
+        }
     else:
-        checks["geolocation"] = {"status": "PASS", "score": 1.0, "has_polygon": has_polygon}
+        checks["geolocation"] = {
+            "status": "PASS",
+            "score": 1.0,
+            "evidence": "polygon" if has_polygon else "point",
+            "area_ha": area_ha,
+            "has_polygon": has_polygon,
+        }
 
-    # 2. Deforestation cutoff check (December 31, 2020)
-    deforestation_risk = "LOW"
-    if parcel:
-        source_year = parcel.source_year or 2022
-        if source_year <= 2020:
+    # 2. Deforestation cutoff check (December 31, 2020) - evidence-gated
+    deforestation_risk = "UNKNOWN"
+    if parcel and parcel.source_year is not None and parcel.source_year <= 2020:
+        deforestation_risk = "LOW"
+        checks["cutoff_compliance"] = {
+            "status": "PASS",
+            "score": 1.0,
+            "evidence": "parcel_record_source_year",
+            "notes": f"Parcel record (source year {parcel.source_year}) predates the 2020-12-31 cut-off.",
+        }
+    elif parcel:
+        p_class = parcel.class_label.value if hasattr(parcel.class_label, "value") else str(parcel.class_label)
+        p_origin = parcel.data_origin.value if hasattr(parcel.data_origin, "value") else str(parcel.data_origin) if parcel.data_origin else None
+        if p_class == "agroforestry" and p_origin in ("field_validated", "derived"):
             deforestation_risk = "LOW"
             checks["cutoff_compliance"] = {
                 "status": "PASS",
-                "score": 1.0,
-                "notes": f"Parcel established prior to cut-off date ({source_year} <= 2020)",
+                "score": 0.9,
+                "evidence": f"parcel_record_{p_origin}",
+                "notes": f"Validated agroforestry parcel record (origin: {p_origin}); canopy persistence consistent with agroforestry land use.",
+            }
+        elif p_class == "agroforestry":
+            deforestation_risk = "UNKNOWN"
+            gaps.append("Parcel record exists but is not independently validated; cut-off compliance cannot be confirmed.")
+            recommendations.append("Field-validate the parcel or attach satellite time-series evidence covering 2020-12-31.")
+            checks["cutoff_compliance"] = {
+                "status": "INSUFFICIENT_DATA",
+                "score": 0.0,
+                "evidence": "unvalidated_parcel_record",
             }
         else:
-            # Established after 2020: verify if land cover converted from primary forest
-            p_class = parcel.class_label.value if hasattr(parcel.class_label, "value") else str(parcel.class_label)
-            if p_class == "agroforestry":
-                checks["cutoff_compliance"] = {
-                    "status": "PASS",
-                    "score": 0.95,
-                    "notes": "Agroforestry parcel maintains tree cover and canopy density without clearcut deforestation.",
-                }
-            else:
-                deforestation_risk = "MEDIUM"
-                checks["cutoff_compliance"] = {
-                    "status": "REVIEW",
-                    "score": 0.7,
-                    "notes": "Historical land use change validation recommended.",
-                }
+            deforestation_risk = "MEDIUM"
+            gaps.append("Parcel land cover class is not agroforestry; historical land use change validation required.")
+            recommendations.append("Conduct high-resolution Planet/Sentinel-2 change detection over 2019-2023 baseline.")
+            checks["cutoff_compliance"] = {
+                "status": "REVIEW",
+                "score": 0.7,
+                "evidence": "parcel_record_non_agroforestry_class",
+            }
     else:
+        gaps.append("No land-cover evidence available for the cut-off check; no satellite time-series was consulted.")
+        recommendations.append("Attach a parcel record or satellite time-series evidence covering 2020-12-31 to assess deforestation-free production.")
         checks["cutoff_compliance"] = {
-            "status": "PASS",
-            "score": 0.9,
-            "notes": "Satellite time-series confirms canopy persistence post Dec 31, 2020.",
+            "status": "INSUFFICIENT_DATA",
+            "score": 0.0,
+            "evidence": "none",
         }
 
-    # 3. Commodity Legality & Country Risk check
-    checks["legality"] = {
-        "status": "PASS",
-        "score": 0.95,
-        "national_registry_verified": True,
-        "labor_rights_risk": "LOW",
-    }
+    # 3. Commodity Legality & Country Risk check - evidence-gated, never fabricated
+    legality_docs: list[dict[str, Any]] | None = None
+    if legality_evidence is not None:
+        legality_docs = legality_evidence
+        verified = [d for d in legality_docs if d.get("verified")]
+        if len(verified) == len(legality_docs) and legality_docs:
+            checks["legality"] = {
+                "status": "PASS",
+                "score": 1.0,
+                "evidence": "provided_documents",
+                "documents": legality_docs,
+            }
+        else:
+            unverified = [d.get("name", "document") for d in legality_docs if not d.get("verified")]
+            gaps.append(f"Legality documentation not yet verified: {', '.join(unverified)}.")
+            checks["legality"] = {
+                "status": "INSUFFICIENT_DATA",
+                "score": 0.0,
+                "evidence": "unverified_documents",
+                "documents": legality_docs,
+            }
+    else:
+        gaps.append("No legality documentation provided; production legality cannot be assessed.")
+        recommendations.append("Provide production-country legality documents (land title, harvest permit, or certificate).")
+        checks["legality"] = {
+            "status": "INSUFFICIENT_DATA",
+            "score": 0.0,
+            "evidence": "none",
+        }
 
-    # Overall scoring
+    # Overall scoring: only evidence-backed checks contribute; verdict requires all three checks
     score_weights = {"geolocation": 0.35, "cutoff_compliance": 0.45, "legality": 0.20}
     total_score = sum(
         (float(checks[k]["score"]) * score_weights[k] for k in score_weights if k in checks),
         0.0,
     )
-    is_compliant = total_score >= 0.85 and len(gaps) == 0
-
-    if total_score < 0.85 and not gaps:
-        gaps.append("Due diligence score below 0.85 threshold; enhanced satellite audit required.")
-        recommendations.append("Conduct high-resolution Planet/Sentinel-2 change detection over 2019-2023 baseline.")
+    all_checks_evidenced = all(checks.get(k, {}).get("evidence", "none") not in ("none",) for k in score_weights)
+    is_compliant = all_checks_evidenced and total_score >= 0.85 and len(gaps) == 0
+    if not all_checks_evidenced:
+        assessment_status = "INSUFFICIENT_DATA"
+    elif is_compliant:
+        assessment_status = "COMPLIANT"
+    else:
+        assessment_status = "NON_COMPLIANT"
+        if not gaps:
+            gaps.append("Due diligence score below 0.85 threshold; enhanced satellite audit required.")
+            recommendations.append("Conduct high-resolution Planet/Sentinel-2 change detection over 2019-2023 baseline.")
 
     report = {
         "framework": "EUDR",
         "commodity": commodity,
+        "assessment_status": assessment_status,
         "is_compliant": is_compliant,
         "compliance_score": round(total_score, 3),
         "cutoff_date": "2020-12-31",

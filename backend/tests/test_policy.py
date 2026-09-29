@@ -26,8 +26,8 @@ async def test_get_framework_eudr(async_client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_eudr_check_compliant_with_coordinates(async_client: AsyncClient):
-    """Test EUDR compliance check with valid coordinates"""
+async def test_eudr_check_coordinates_alone_are_insufficient(async_client: AsyncClient):
+    """A bare coordinate carries no evidence: must never be compliant (issue #3)."""
     payload = {
         "coordinates": [-1.74, 6.66],
         "commodity": "cocoa",
@@ -36,12 +36,39 @@ async def test_eudr_check_compliant_with_coordinates(async_client: AsyncClient):
     response = await async_client.post("/api/policy/eudr-check", json=payload)
     assert response.status_code == 200
     data = response.json()
-    assert data["framework"] == "EUDR"
-    assert data["commodity"] == "cocoa"
-    assert data["is_compliant"] is True
-    assert data["compliance_score"] >= 0.85
-    assert data["cutoff_date"] == "2020-12-31"
-    assert data["deforestation_risk"] == "LOW"
+    assert data["assessment_status"] == "INSUFFICIENT_DATA"
+    assert data["is_compliant"] is False
+    assert len(data["gaps"]) > 0
+    assert data["compliance_score"] < 0.85
+    assert data["deforestation_risk"] == "UNKNOWN"
+
+
+@pytest.mark.asyncio
+async def test_eudr_check_polygon_required_for_large_plots(async_client: AsyncClient):
+    """Article 9: plots >= 4 ha require a polygon; a point alone is insufficient."""
+    payload = {
+        "coordinates": [-1.74, 6.66],
+        "commodity": "cocoa",
+        "store_assessment": False,
+    }
+    response = await async_client.post("/api/policy/eudr-check", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["checks"]["geolocation"]["status"] == "INSUFFICIENT_DATA"
+    assert any("polygon" in g.lower() for g in data["gaps"])
+
+
+@pytest.mark.asyncio
+async def test_eudr_check_no_fabricated_evidence(async_client: AsyncClient):
+    """The checker must not claim satellite time-series or registry verification it never did."""
+    payload = {"coordinates": [-1.74, 6.66], "commodity": "cocoa"}
+    response = await async_client.post("/api/policy/eudr-check", json=payload)
+    data = response.json()
+    assert "national_registry_verified" not in str(data)
+    assert "satellite time-series confirms" not in str(data).lower()
+    assert all(c.get("evidence") != "fabricated" for c in data["checks"].values())
+    assert data["checks"]["cutoff_compliance"]["status"] == "INSUFFICIENT_DATA"
+    assert data["checks"]["legality"]["status"] == "INSUFFICIENT_DATA"
 
 
 @pytest.mark.asyncio
