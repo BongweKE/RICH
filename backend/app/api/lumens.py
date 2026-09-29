@@ -710,7 +710,7 @@ async def list_scenarios(
 
     stmt = stmt.order_by(Scenario.created_at.desc()).limit(limit).offset(offset)
     result = await db.execute(stmt)
-    scenarios = result.scalars().all()
+    scenarios: list[Any] = list(result.scalars().all())
 
     return {
         "scenarios": [

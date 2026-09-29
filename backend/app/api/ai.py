@@ -2,6 +2,7 @@
 # Multi-agent RAG system with geospatial context
 
 from datetime import datetime
+from typing import Any
 
 from fastapi import APIRouter, Body, Depends, Query
 from sqlalchemy import func, select
@@ -87,7 +88,7 @@ async def get_chat_history(
     )
 
     result = await db.execute(stmt)
-    logs = result.scalars().all()
+    logs: list[Any] = list(result.scalars().all())
 
     return {
         "session_id": session_id,
@@ -238,7 +239,7 @@ async def list_documents(
     """List authoritative compliance documents and scientific literature in the catalog"""
     stmt = select(DocumentCatalog).order_by(DocumentCatalog.created_at.desc()).limit(limit)
     res = await db.execute(stmt)
-    docs = res.scalars().all()
+    docs: list[Any] = list(res.scalars().all())
     return {
         "documents": [
             {

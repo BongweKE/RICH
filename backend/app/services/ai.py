@@ -6,7 +6,7 @@ import logging
 import re
 import time
 import uuid
-from typing import Any
+from typing import Any, cast
 
 import httpx
 from geoalchemy2 import functions as geofunc
@@ -264,8 +264,8 @@ class SynthesisAgent:
         db: AsyncSession,
     ) -> dict[str, Any]:
         """Perform hybrid retrieval across PostGIS parcels and document catalog"""
-        retrieved_docs = []
-        retrieved_parcels = []
+        retrieved_docs: list[Any] = []
+        retrieved_parcels: list[Any] = []
         retrieved_jurisdiction = None
 
         j_code = guardian_result.get("extracted_jurisdiction")
@@ -319,7 +319,9 @@ class SynthesisAgent:
                     .limit(5)
                 )
                 res = await db.execute(stmt)
-                retrieved_parcels.extend([p for p in res.scalars().all() if p not in retrieved_parcels])
+                retrieved_parcels.extend(
+                    [p for p in cast(list[Any], res.scalars().all()) if p not in retrieved_parcels]
+                )
             except Exception as e:
                 logger.warning(f"Error querying bbox parcels: {e}")
 
@@ -335,7 +337,7 @@ class SynthesisAgent:
             retrieved_parcels = list(res.scalars().all())
 
         # 3. Retrieve Documents and Clause Chunks using pgvector Cosine Distance + Keywords
-        retrieved_chunks = []
+        retrieved_chunks: list[Any] = []
         try:
             from app.utils.embeddings import generate_embedding
 
@@ -354,7 +356,7 @@ class SynthesisAgent:
             stmt_chunks = select(DocumentEmbedding).where(or_(*chunk_conditions)).limit(4)
             res_chunks = await db.execute(stmt_chunks)
             existing_chunk_ids = {c.id for c in retrieved_chunks}
-            for ch in res_chunks.scalars().all():
+            for ch in cast(list[Any], res_chunks.scalars().all()):
                 if ch.id not in existing_chunk_ids:
                     retrieved_chunks.append(ch)
                     existing_chunk_ids.add(ch.id)
@@ -816,7 +818,7 @@ class AIService:
                 .limit(limit - len(results))
             )
             res_docs = await db.execute(stmt_docs)
-            for d in res_docs.scalars().all():
+            for d in cast(list[Any], res_docs.scalars().all()):
                 if str(d.id) not in [r["id"] for r in results]:
                     results.append(
                         {
@@ -846,7 +848,7 @@ class AIService:
                     .limit(limit)
                 )
                 res_parcels = await db.execute(stmt_parcels)
-                parcels = res_parcels.scalars().all()
+                parcels: list[Any] = list(res_parcels.scalars().all())
                 for p in parcels:
                     results.append(
                         {

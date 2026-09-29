@@ -41,7 +41,7 @@ async def list_frameworks(
     """List available policy frameworks (EUDR, REDD+, NDC, etc.)"""
     stmt = select(PolicyFramework)
     result = await db.execute(stmt)
-    frameworks = result.scalars().all()
+    frameworks: list[Any] = list(result.scalars().all())
 
     # Filter by jurisdiction if requested
     if jurisdiction_code:
@@ -605,7 +605,7 @@ async def list_assessments(
 
     stmt = stmt.order_by(PolicyComplianceAssessment.created_at.desc()).limit(limit).offset(offset)
     result = await db.execute(stmt)
-    assessments = result.scalars().all()
+    assessments: list[Any] = list(result.scalars().all())
 
     return {
         "assessments": [

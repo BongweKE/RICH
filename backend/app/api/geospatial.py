@@ -307,7 +307,7 @@ async def list_jurisdictions(
 
     stmt = stmt.order_by(Jurisdiction.level, Jurisdiction.name)
     result = await db.execute(stmt)
-    jurisdictions = result.scalars().all()
+    jurisdictions: list[Any] = list(result.scalars().all())
 
     return {
         "jurisdictions": [
@@ -401,7 +401,7 @@ async def list_parcels(
     stmt = stmt.limit(limit).offset(offset)
 
     result = await db.execute(stmt)
-    parcels = result.scalars().all()
+    parcels: list[Any] = list(result.scalars().all())
 
     return {
         "parcels": [
@@ -497,7 +497,7 @@ async def search_parcels(
     stmt = stmt.order_by(AgroforestryParcel.confidence_score.desc(), AgroforestryParcel.area_ha.desc()).limit(limit)
 
     result = await db.execute(stmt)
-    parcels = result.scalars().all()
+    parcels: list[Any] = list(result.scalars().all())
 
     if not parcels:
         fallback_list = load_fallback_parcels(jurisdiction_code)
@@ -870,7 +870,7 @@ async def list_reference_points(
 
     stmt = stmt.order_by(LandCoverReferencePoint.created_at.desc()).limit(limit).offset(offset)
     result = await db.execute(stmt)
-    points = result.scalars().all()
+    points: list[Any] = list(result.scalars().all())
 
     return {
         "reference_points": [
@@ -1006,7 +1006,7 @@ async def list_satellite_imagery(
     stmt = stmt.where(SatelliteImagery.cloud_cover <= max_cloud_cover)
     stmt = stmt.order_by(SatelliteImagery.date_acquired.desc()).limit(limit).offset(offset)
     result = await db.execute(stmt)
-    images = result.scalars().all()
+    images: list[Any] = list(result.scalars().all())
 
     return {
         "imagery": [
@@ -1049,7 +1049,7 @@ async def bbox_query(
             .limit(100)
         )
         result = await db.execute(stmt)
-        parcels = result.scalars().all()
+        parcels: list[Any] = list(result.scalars().all())
         results["parcels"] = [
             {
                 "id": str(p.id),
@@ -1068,7 +1068,7 @@ async def bbox_query(
             .limit(100)
         )
         result = await db.execute(stmt)
-        points = result.scalars().all()
+        points: list[Any] = list(result.scalars().all())
         results["reference_points"] = [
             {
                 "id": str(p.id),
