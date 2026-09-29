@@ -342,8 +342,8 @@ def test_backfill_sql_targets_only_unvalidated_rows():
     """Backfill statements must never touch rows with a recorded human validator."""
     from app.core.provenance_backfill import (
         PARCEL_BACKFILL,
-        PARCEL_SOURCE_BACKFILL_NULLS,
         PARCEL_INSTITUTIONAL_SOURCE_NULLER,
+        PARCEL_SOURCE_BACKFILL_NULLS,
         REFERENCE_POINT_BACKFILL,
     )
 
