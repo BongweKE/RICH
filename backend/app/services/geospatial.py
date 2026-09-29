@@ -69,7 +69,7 @@ class GeospatialService:
         stmt = stmt.order_by(AgroforestryParcel.confidence_score.desc()).limit(limit)
 
         result = await db.execute(stmt)
-        parcels = result.scalars().all()
+        parcels: list[Any] = list(result.scalars().all())
 
         return [
             {

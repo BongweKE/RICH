@@ -14,7 +14,7 @@ An extension of [acAIcia](../acAIcia) - Landscape Alliance Knowledge Base AI Ass
 
 RICH extends the acAIcia AI assistant with **geospatial intelligence** capabilities, integrating:
 
-- **God's Eye View**: 3D geospatial visualization with live data feeds
+- **Impact Viewer**: MapLibre-based 3D-extrusion visualization for donors and Hub partners (demo data)
 - **LUMENS**: Land use planning and scenario analysis framework
 - **Mistral AI**: Small, efficient models for geospatial reasoning
 
@@ -147,6 +147,8 @@ RICH/
 
 ### Target: **Spain (Extremadura Region)**
 
+**Important data status:** all parcels, reference points, and alerts currently served by this PoC are **synthetic demo data**, clearly labeled with `data_origin: synthetic`. No real field-validated records exist yet. The governance planner app (`/planner`) exposes this provenance on every record.
+
 **Why Spain?**
 - **Dehesa System**: World's most documented agroforestry (oak + crops + livestock)
 - **Excellent Open Data**: 
@@ -213,7 +215,7 @@ RICH/
 | Component | Technology | Purpose | Status |
 |-----------|------------|---------|--------|
 | **Frontend** | Vite + React 18 + TypeScript | Primary UI | ✅ |
-| **3D Rendering** | CesiumJS | Globe visualization | ✅ |
+| **3D Visualization** | MapLibre GL fill-extrusion | Pseudo-3D canopy visualization | ✅ |
 | **2D Mapping** | MapLibre GL JS | Map visualization | ✅ |
 | **UI Framework** | Tailwind CSS + Headless UI | Styling | ✅ |
 | **State Management** | Zustand | Client state | ✅ |
@@ -222,7 +224,7 @@ RICH/
 | **Storage** | Neon Object Storage | Raster data | ✅ |
 | **AI Models** | Mistral AI (mistral-small, mistral-tiny) | LLM inference | ✅ |
 | **Embeddings** | BAAI/bge-small-en-v1.5 (384-dim) | Document embeddings | ✅ |
-| **Geospatial Embeddings** | Open source alternatives to AlphaEarth | Satellite embeddings | 🔄 |
+| **Geospatial Embeddings** | Not yet implemented (AlphaEarth/alternatives) | Satellite embeddings | ⬜ |
 | **Hosting** | Railway | Full-stack deployment | ✅ |
 | **CI/CD** | GitHub Actions | Automated testing & deployment | ✅ |
 | **Containerization** | Docker + docker-compose | Development & deployment | ✅ |
@@ -454,7 +456,8 @@ POST   /api/policy/finance-check   # Climate finance eligibility
 ### Deployment Domain
 
 - **Staging**: `rich-staging.railway.app` (Railway default)
-- **Production**: `rich.acaicia.org` (Cloudflare - eventual target)
+- **Production**: `rich-production-d1d3.up.railway.app` (Railway) — eventual target `rich.acaicia.org`
+- **Governance planner**: `<deployment>/planner` (same app, planner workspace)
 - **Development**: `localhost:4173` (Vite frontend) + `localhost:8000` (FastAPI backend)
 
 ---

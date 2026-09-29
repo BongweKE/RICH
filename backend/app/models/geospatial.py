@@ -3,6 +3,7 @@ Geospatial models for jurisdictions, reference points, parcels, and imagery.
 """
 
 import enum
+import re
 from datetime import date, datetime
 from typing import TYPE_CHECKING
 from uuid import UUID, uuid4
@@ -62,6 +63,37 @@ class ValidationStatus(str, enum.Enum):
     EXPERT_REVIEWED = "expert_reviewed"
     COMMUNITY_VALIDATED = "community_validated"
     FINAL = "final"
+
+
+class DataOrigin(str, enum.Enum):
+    SYNTHETIC = "synthetic"
+    DERIVED = "derived"
+    FIELD_VALIDATED = "field_validated"
+    MODEL_OUTPUT = "model_output"
+
+
+INSTITUTIONAL_SOURCE_PATTERN = re.compile(
+    r"(cifor|icraf|gedi|cersgis|planet\s+nicfi|spanish\s+forest\s+inventory|"
+    r"copernicus|sentinel|esa\s+worldcover|global\s+forest\s+watch|gfw|idEE)",
+    re.IGNORECASE,
+)
+
+
+def provenance_is_consistent(
+    data_origin: "DataOrigin | None",
+    source: str | None,
+    source_url: str | None,
+    validation_status: "ValidationStatus | None" = None,
+) -> bool:
+    """No output without provenance: synthetic records must cite the generator,
+    institution-named sources require a verifiable URL, and validated statuses
+    must come from human action (validator_id), never from a seeder."""
+    if data_origin == DataOrigin.SYNTHETIC:
+        if source and INSTITUTIONAL_SOURCE_PATTERN.search(source) and not source_url:
+            return False
+    if validation_status in (ValidationStatus.EXPERT_REVIEWED, ValidationStatus.COMMUNITY_VALIDATED):
+        return data_origin in (DataOrigin.FIELD_VALIDATED,) or not data_origin
+    return True
 
 
 class Jurisdiction(Base):
@@ -134,6 +166,10 @@ class LandCoverReferencePoint(Base):
     )
     validation_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     quality_score: Mapped[float | None] = mapped_column(Float, nullable=True)
+    data_origin: Mapped[DataOrigin | None] = mapped_column(String(30), nullable=True)
+    generation_method: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    source: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    source_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
     geospatial_embedding: Mapped[list[float] | None] = mapped_column(Vector(64), nullable=True)  # vector(64)
     document_embedding: Mapped[list[float] | None] = mapped_column(Vector(384), nullable=True)  # vector(384)
     metadata_: Mapped[dict] = mapped_column("metadata", JSONB, default=dict, nullable=False)
@@ -193,6 +229,8 @@ class AgroforestryParcel(Base):
     source: Mapped[str | None] = mapped_column(String(255), nullable=True)
     source_year: Mapped[int | None] = mapped_column(Integer, nullable=True)
     source_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    data_origin: Mapped[DataOrigin | None] = mapped_column(String(30), nullable=True)
+    generation_method: Mapped[str | None] = mapped_column(String(255), nullable=True)
     processing_method: Mapped[str | None] = mapped_column(String(255), nullable=True)
     model_version: Mapped[str | None] = mapped_column(String(50), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)

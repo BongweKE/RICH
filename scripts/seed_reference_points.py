@@ -59,12 +59,14 @@ async def seed():
             coords = p["geometry"]["coordinates"]
             lon, lat = coords[0], coords[1]
 
-            metadata = json.dumps({
-                "name": p.get("name"),
-                "source": p.get("source"),
-                "canopy_cover_pct": p.get("canopy_cover_pct"),
-                "ref_id": str_id,
-            })
+            metadata = json.dumps(
+                {
+                    "name": p.get("name"),
+                    "source": p.get("source"),
+                    "canopy_cover_pct": p.get("canopy_cover_pct"),
+                    "ref_id": str_id,
+                }
+            )
 
             query = """
             INSERT INTO land_cover_reference_points (
@@ -85,8 +87,17 @@ async def seed():
                 updated_at = NOW();
             """
             VALID_SUBTYPES = {
-                'dehesa', 'montado', 'silvopasture', 'shade_coffee', 'shade_cocoa',
-                'alley_cropping', 'parkland', 'homegarden', 'forest_farming', 'woodlot', 'other'
+                "dehesa",
+                "montado",
+                "silvopasture",
+                "shade_coffee",
+                "shade_cocoa",
+                "alley_cropping",
+                "parkland",
+                "homegarden",
+                "forest_farming",
+                "woodlot",
+                "other",
             }
             raw_subtype = p.get("agroforestry_subtype", "other")
             enum_subtype = raw_subtype if raw_subtype in VALID_SUBTYPES else "other"

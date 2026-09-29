@@ -247,7 +247,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
 
     const initMap = async () => {
       try {
-        const maplibregl = (window as any).maplibregl || (await import('maplibre-gl')).default;
+        const maplibregl = (window as any).maplibregl || (await import('maplibre-gl'));
         const defaultCenter: [number, number] = jurisdiction?.centroid?.coordinates || [-1.624, 6.712];
 
         const map = new maplibregl.Map({
@@ -593,7 +593,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
 
     const syncReferencePoints = async () => {
       try {
-        const maplibregl = (window as any).maplibregl || (await import('maplibre-gl')).default;
+        const maplibregl = (window as any).maplibregl || (await import('maplibre-gl'));
         const jCode = jurisdiction?.code || 'GH-AH';
         const canonical = jCode.startsWith('GH') ? 'GH-AH' : jCode.startsWith('ES') ? 'ES-EX' : 'ET-OR';
 
@@ -712,7 +712,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
 
     const syncDeforestationAlerts = async () => {
       try {
-        const maplibregl = (window as any).maplibregl || (await import('maplibre-gl')).default;
+        const maplibregl = (window as any).maplibregl || (await import('maplibre-gl'));
         const jCode = jurisdiction?.code || 'GH-AH';
         const canonical = jCode.startsWith('GH') ? 'GH-AH' : jCode.startsWith('ES') ? 'ES-EX' : 'ET-OR';
 

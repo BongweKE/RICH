@@ -79,8 +79,10 @@ def load_fallback_parcels(jurisdiction_code: str | None = None) -> list[dict[str
                     "confidence_score": conf,
                     "area_ha": area,
                     "uncertainty": float(props.get("uncertainty", 0.05)),
-                    "source": props.get("source", "Multi-Sensor Satellite + GEDI LiDAR"),
+                    "source": props.get("source", "Synthetic PoC generator (illustrative)"),
                     "source_year": int(props.get("source_year", 2023)),
+                    "data_origin": props.get("data_origin", "synthetic"),
+                    "generation_method": props.get("generation_method"),
                     "subtype_color": SUBTYPE_COLORS.get(subtype, "#10b981"),
                     "height": parcel_height(area),
                 }
@@ -305,7 +307,7 @@ async def list_jurisdictions(
 
     stmt = stmt.order_by(Jurisdiction.level, Jurisdiction.name)
     result = await db.execute(stmt)
-    jurisdictions = result.scalars().all()
+    jurisdictions: list[Any] = list(result.scalars().all())
 
     return {
         "jurisdictions": [
@@ -348,7 +350,6 @@ async def get_jurisdiction(
         "centroid": mapping(to_shape(jurisdiction.centroid)) if jurisdiction.centroid else None,
         "metadata": jurisdiction.metadata_,
     }
-
 
 
 @router.get("/parcels")
@@ -400,7 +401,7 @@ async def list_parcels(
     stmt = stmt.limit(limit).offset(offset)
 
     result = await db.execute(stmt)
-    parcels = result.scalars().all()
+    parcels: list[Any] = list(result.scalars().all())
 
     return {
         "parcels": [
@@ -496,7 +497,7 @@ async def search_parcels(
     stmt = stmt.order_by(AgroforestryParcel.confidence_score.desc(), AgroforestryParcel.area_ha.desc()).limit(limit)
 
     result = await db.execute(stmt)
-    parcels = result.scalars().all()
+    parcels: list[Any] = list(result.scalars().all())
 
     if not parcels:
         fallback_list = load_fallback_parcels(jurisdiction_code)
@@ -774,17 +775,27 @@ async def get_parcel_telemetry(
     import hashlib
 
     ref_num = abs(int(hashlib.md5(str(parcel_id).encode("utf-8")).hexdigest(), 16)) % 90000 + 10000
+    p_origin = None
+    if parcel is not None and getattr(parcel, "data_origin", None) is not None:
+        p_origin = parcel.data_origin.value if hasattr(parcel.data_origin, "value") else str(parcel.data_origin)
     eudr_audit = {
         "reference_id": f"DDS-RICH-2024-{ref_num}",
         "cutoff_date": "2020-12-31",
-        "forest_loss_post_cutoff": False,
-        "degradation_detected": False,
-        "jrc_forest_baseline_intersection_pct": 0.0,
-        "compliance_status": "COMPLIANT_ZERO_DEFORESTATION",
-        "risk_level": "LOW_RISK",
-        "audit_timestamp": "2024-09-12T12:00:00Z",
-        "issuing_authority": "CIFOR-ICRAF RICH Hub Verification Pipeline",
-        "legal_notice": "Parcel demonstrated continuous agricultural agroforestry canopy with tree cover exceeding 10% prior to Dec 31, 2020, qualifying as legitimate agricultural production under EUDR Article 2.",
+        "compliance_status": "NOT_ASSESSED",
+        "risk_level": "UNKNOWN",
+        "assessment_endpoint": "/api/policy/eudr-check",
+        "note": (
+            "No automated compliance verdict is issued for this parcel. Use the "
+            "evidence-gated EUDR check endpoint to obtain an assessment; it will "
+            "return INSUFFICIENT_DATA unless geolocation, land-cover history, and "
+            "legality documentation are provided."
+        ),
+        "legal_notice": (
+            "Telemetry values on this endpoint are illustrative demo values and do "
+            "not constitute verification of canopy persistence or legality."
+            if p_origin in (None, "synthetic")
+            else "Parcel telemetry reflects catalogued record origin: " + str(p_origin) + "."
+        ),
     }
 
     return {
@@ -859,7 +870,7 @@ async def list_reference_points(
 
     stmt = stmt.order_by(LandCoverReferencePoint.created_at.desc()).limit(limit).offset(offset)
     result = await db.execute(stmt)
-    points = result.scalars().all()
+    points: list[Any] = list(result.scalars().all())
 
     return {
         "reference_points": [
@@ -910,23 +921,21 @@ async def get_datapoints_summary(
     regions = ["GH-AH", "ES-EX", "ET-OR"]
     if jurisdiction_code:
         clean = jurisdiction_code.strip()
-        canonical = (
-            "ES-EX"
-            if clean in ("ES", "ES-EX")
-            else "ET-OR"
-            if clean in ("ET", "ET-OR")
-            else "GH-AH"
-        )
+        canonical = "ES-EX" if clean in ("ES", "ES-EX") else "ET-OR" if clean in ("ET", "ET-OR") else "GH-AH"
         regions = [canonical]
 
     summary = {}
     for r in regions:
         try:
-            p_stmt = select(func.count(AgroforestryParcel.id)).join(Jurisdiction).where(
-                or_(
-                    Jurisdiction.code == r,
-                    Jurisdiction.code.startswith(f"{r}-"),
-                    Jurisdiction.code.startswith(r),
+            p_stmt = (
+                select(func.count(AgroforestryParcel.id))
+                .join(Jurisdiction)
+                .where(
+                    or_(
+                        Jurisdiction.code == r,
+                        Jurisdiction.code.startswith(f"{r}-"),
+                        Jurisdiction.code.startswith(r),
+                    )
                 )
             )
             db_parcels = (await db.execute(p_stmt)).scalar() or 0
@@ -937,11 +946,15 @@ async def get_datapoints_summary(
         parcels_cnt = max(db_parcels, fallback_parcels)
 
         try:
-            rp_stmt = select(func.count(LandCoverReferencePoint.id)).join(Jurisdiction).where(
-                or_(
-                    Jurisdiction.code == r,
-                    Jurisdiction.code.startswith(f"{r}-"),
-                    Jurisdiction.code.startswith(r),
+            rp_stmt = (
+                select(func.count(LandCoverReferencePoint.id))
+                .join(Jurisdiction)
+                .where(
+                    or_(
+                        Jurisdiction.code == r,
+                        Jurisdiction.code.startswith(f"{r}-"),
+                        Jurisdiction.code.startswith(r),
+                    )
                 )
             )
             db_refs = (await db.execute(rp_stmt)).scalar() or 0
@@ -993,7 +1006,7 @@ async def list_satellite_imagery(
     stmt = stmt.where(SatelliteImagery.cloud_cover <= max_cloud_cover)
     stmt = stmt.order_by(SatelliteImagery.date_acquired.desc()).limit(limit).offset(offset)
     result = await db.execute(stmt)
-    images = result.scalars().all()
+    images: list[Any] = list(result.scalars().all())
 
     return {
         "imagery": [
@@ -1036,7 +1049,7 @@ async def bbox_query(
             .limit(100)
         )
         result = await db.execute(stmt)
-        parcels = result.scalars().all()
+        parcels: list[Any] = list(result.scalars().all())
         results["parcels"] = [
             {
                 "id": str(p.id),
@@ -1055,7 +1068,7 @@ async def bbox_query(
             .limit(100)
         )
         result = await db.execute(stmt)
-        points = result.scalars().all()
+        points: list[Any] = list(result.scalars().all())
         results["reference_points"] = [
             {
                 "id": str(p.id),

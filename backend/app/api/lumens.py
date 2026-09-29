@@ -51,7 +51,9 @@ async def interactive_preques(
     area_cutoff: float = Body(100.0, description="Area cutoff for Sankey (ha)"),
     change_only: bool = Body(False, description="Exclude persistence in Sankey"),
 ):
-    """Instant synchronous Pre-QuES analysis with Sankey, Transition Matrix, and Pontius decomposition"""
+    """DEMO (illustrative): synchronous Pre-QuES-style visualization on a
+    synthetic landscape. No real rasters are analyzed; outputs are generated
+    from a fixed illustrative baseline and must not be used for decisions."""
     result = await run_preques_analysis(
         raster_t1_path="",
         raster_t2_path="",
@@ -61,6 +63,12 @@ async def interactive_preques(
         change_only=change_only,
     )
     result["jurisdiction_code"] = jurisdiction_code
+    result["mode"] = "illustrative_demo"
+    result["disclaimer"] = (
+        "Synthetic demonstration output on an illustrative landscape. "
+        "Not computed from real satellite data; do not use for policy, "
+        "compliance, or finance decisions."
+    )
     return result
 
 
@@ -69,7 +77,8 @@ async def interactive_carbon(
     jurisdiction_code: str = Body("GH-AH", description="Jurisdiction code"),
     carbon_factors: dict[str, float] | None = Body(None, description="Custom class carbon density in tC/ha"),
 ):
-    """Instant synchronous QUES-C carbon assessment with 4-pool breakdown and VCM credit metrics"""
+    """DEMO (illustrative): QUES-C-style carbon visualization on a synthetic
+    landscape. No real biomass data is analyzed; outputs are illustrative."""
     result = await run_ques_carbon(
         base_scenario_id="interactive-session",
         biomass_data_path="",
@@ -77,6 +86,11 @@ async def interactive_carbon(
         emission_factors=carbon_factors,
     )
     result["jurisdiction_code"] = jurisdiction_code
+    result["mode"] = "illustrative_demo"
+    result["disclaimer"] = (
+        "Synthetic demonstration output. Carbon figures are illustrative "
+        "defaults, not measured stocks; do not use for carbon finance decisions."
+    )
     # Add voluntary carbon credit market valuation (~$12 / tCO2e for agroforestry removals)
     removals = result.get("gross_removals_tco2e", 0.0)
     result["voluntary_carbon_credits_potential_usd"] = round(removals * 12.0, 2)
@@ -90,13 +104,19 @@ async def interactive_tradeoff(
     deforestation_enforcement_pct: float = Body(90.0, description="Deforestation enforcement rate %"),
     riparian_restoration_pct: float = Body(75.0, description="Riparian buffer restoration %"),
 ):
-    """LASEM 5-axis scenario tradeoff analysis (Carbon, Biodiversity, Hydrology, NPV, Social Equity)"""
-    return await run_lasem_tradeoff(
+    """DEMO (illustrative): 5-axis scenario tradeoff visualization on a
+    synthetic landscape (Carbon, Biodiversity, Hydrology, NPV, Social Equity)."""
+    result = await run_lasem_tradeoff(
         jurisdiction_code=jurisdiction_code,
         agroforestry_expansion_pct=agroforestry_expansion_pct,
         deforestation_enforcement_pct=deforestation_enforcement_pct,
         riparian_restoration_pct=riparian_restoration_pct,
     )
+    result["mode"] = "illustrative_demo"
+    result["disclaimer"] = (
+        "Synthetic demonstration output; scenario metrics are illustrative " "and not derived from real land-use data."
+    )
+    return result
 
 
 @router.get("/hydrology")
@@ -690,7 +710,7 @@ async def list_scenarios(
 
     stmt = stmt.order_by(Scenario.created_at.desc()).limit(limit).offset(offset)
     result = await db.execute(stmt)
-    scenarios = result.scalars().all()
+    scenarios: list[Any] = list(result.scalars().all())
 
     return {
         "scenarios": [

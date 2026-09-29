@@ -78,6 +78,13 @@ export const Header: React.FC<HeaderProps> = ({
             Climate & Agroforestry Geospatial Intelligence
           </p>
         </div>
+        <a
+          href="/planner"
+          className="ml-2 text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30"
+          title="Open the governance planner workspace (map, validation inbox, assistant)"
+        >
+          Planner
+        </a>
       </div>
 
       {/* Jurisdiction Selector & Active Parcels Badge */}

@@ -134,6 +134,11 @@ CREATE TABLE land_cover_reference_points (
     validator_id UUID REFERENCES users(id) ON DELETE SET NULL,
     validation_date TIMESTAMP WITH TIME ZONE,
     quality_score FLOAT CHECK (quality_score BETWEEN 0 AND 1),
+    -- Provenance: no output without provenance
+    data_origin VARCHAR(30),
+    generation_method VARCHAR(255),
+    source VARCHAR(255),
+    source_url VARCHAR(512),
     -- AlphaEarth embedding (64-dim)
     geospatial_embedding vector(64),
     -- Document embedding (384-dim from bge-small)
@@ -170,6 +175,9 @@ CREATE TABLE agroforestry_parcels (
     source VARCHAR(255),
     source_year INTEGER,
     source_url VARCHAR(512),
+    -- Provenance: no output without provenance
+    data_origin VARCHAR(30),
+    generation_method VARCHAR(255),
     -- Processing metadata
     processing_method VARCHAR(255),
     model_version VARCHAR(50),
