@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import maplibregl from 'maplibre-gl';
+import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Jurisdiction, Parcel } from '../../types';
 
@@ -82,7 +82,7 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, onSelectParcel }: P
         source: 'planner-parcels',
         paint: { 'line-color': '#1f2937', 'line-width': 0.6 },
       });
-      map.on('click', 'parcels-fill', (e) => {
+      map.on('click', 'parcels-fill', (e: any) => {
         const f = e.features?.[0];
         if (!f) return;
         const match = parcelsRef.current.find((p) => p.id === (f.properties as any)?.id);

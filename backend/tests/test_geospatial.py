@@ -241,8 +241,8 @@ async def test_get_datapoints_summary(async_client: AsyncClient):
 
 
 @pytest.mark.asyncio
-async def test_list_reference_points(async_client: AsyncClient):
-    """Test listing ground truth reference points"""
+async def test_list_reference_points_for_jurisdiction(async_client: AsyncClient):
+    """Test listing ground truth reference points filtered by jurisdiction"""
     resp = await async_client.get("/api/geospatial/reference-points?jurisdiction_code=GH-AH")
     assert resp.status_code == 200
     data = resp.json()
