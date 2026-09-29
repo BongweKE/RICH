@@ -77,7 +77,11 @@ export function PlannerAssistant({ jurisdiction, parcels }: Props) {
       const res = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: q, jurisdiction_code: jurisdiction.code }),
+        body: JSON.stringify({
+          query: q,
+          jurisdiction_code: jurisdiction.code,
+          conversation_history: turns.slice(-6).map((t) => ({ role: t.role, content: t.content })),
+        }),
       });
       if (res.ok) {
         const data = await res.json();
