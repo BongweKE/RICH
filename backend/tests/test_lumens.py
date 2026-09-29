@@ -256,4 +256,3 @@ async def test_scenario_endpoint_rejects_bad_params(async_client):
         json={"jurisdiction_code": "GH-AH", "conservation_target_pct": 99.0},
     )
     assert resp.status_code == 422
-

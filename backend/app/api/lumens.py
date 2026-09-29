@@ -816,8 +816,12 @@ SCENARIO_DISCLAIMER = (
 @router.post("/scenario")
 async def run_scenario(
     jurisdiction_code: str = Body("GH-AH", description="Jurisdiction code"),
-    conservation_target_pct: float = Body(0.0, ge=0, le=50, description="Share of lowest-carbon parcels converted to conservation agroforestry"),
-    agroforestry_expansion_pct: float = Body(0.0, ge=0, le=50, description="Share of non-parcel area converted to agroforestry (adds area)"),
+    conservation_target_pct: float = Body(
+        0.0, ge=0, le=50, description="Share of lowest-carbon parcels converted to conservation agroforestry"
+    ),
+    agroforestry_expansion_pct: float = Body(
+        0.0, ge=0, le=50, description="Share of non-parcel area converted to agroforestry (adds area)"
+    ),
     intensification: bool = Body(False, description="Raise productivity/profit on existing agroforestry"),
     years: int = Body(10, ge=1, le=30, description="Planning horizon"),
     db: AsyncSession = Depends(get_db_session),
@@ -834,9 +838,7 @@ async def run_scenario(
     if not jurisdiction:
         raise HTTPException(status_code=404, detail="Unknown jurisdiction")
 
-    result = await db.execute(
-        select(AgroforestryParcel).where(AgroforestryParcel.jurisdiction_id == jurisdiction.id)
-    )
+    result = await db.execute(select(AgroforestryParcel).where(AgroforestryParcel.jurisdiction_id == jurisdiction.id))
     parcels = list(result.scalars().all())
     if not parcels:
         raise HTTPException(status_code=404, detail="No parcels for jurisdiction")
@@ -866,11 +868,13 @@ async def run_scenario(
             old_c = coeff(p.agroforestry_subtype)
             scenario_carbon += (SCENARIO_COEFFICIENTS["woodlot"]["carbon"] - old_c["carbon"]) * ha
             scenario_profit += (SCENARIO_COEFFICIENTS["woodlot"]["profit"] - old_c["profit"]) * ha * years
-            transitions.append({
-                "from": p.agroforestry_subtype or "other",
-                "to": "woodlot (conservation)",
-                "area_ha": round(ha, 1),
-            })
+            transitions.append(
+                {
+                    "from": p.agroforestry_subtype or "other",
+                    "to": "woodlot (conservation)",
+                    "area_ha": round(ha, 1),
+                }
+            )
             converted += ha
 
     if agroforestry_expansion_pct > 0:
@@ -879,11 +883,13 @@ async def run_scenario(
         target = SCENARIO_COEFFICIENTS["shade_cocoa"]
         scenario_carbon += (target["carbon"] - NON_AGROFORESTRY_PROXY["carbon"]) * new_area
         scenario_profit += (target["profit"] - NON_AGROFORESTRY_PROXY["profit"]) * new_area * years
-        transitions.append({
-            "from": "non-parcel land (proxy)",
-            "to": "shade_cocoa (expansion)",
-            "area_ha": round(new_area, 1),
-        })
+        transitions.append(
+            {
+                "from": "non-parcel land (proxy)",
+                "to": "shade_cocoa (expansion)",
+                "area_ha": round(new_area, 1),
+            }
+        )
 
     if intensification:
         scenario_profit *= 1.15
