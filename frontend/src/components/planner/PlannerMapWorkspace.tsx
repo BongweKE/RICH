@@ -46,6 +46,7 @@ interface Props {
 export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onSelectParcel, onParcelValidated }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
   const popupRef = useRef<maplibregl.Popup | null>(null);
   const [basemap, setBasemap] = useState<'satellite' | 'osm'>('satellite');
   const [showSynthetic, setShowSynthetic] = useState(true);
@@ -131,6 +132,7 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onS
     };
 
     map.on('load', () => {
+      setMapLoaded(true);
       map.addSource('planner-parcels', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] },
@@ -244,7 +246,7 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onS
         },
       })),
     });
-  }, [filteredParcels]);
+  }, [filteredParcels, mapLoaded]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -263,7 +265,7 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onS
       type: 'FeatureCollection',
       features: feats,
     });
-  }, [referencePoints, showReferencePoints]);
+  }, [referencePoints, showReferencePoints, mapLoaded]);
 
   useEffect(() => {
     const map = mapRef.current;

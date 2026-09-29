@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Header } from './components/Header';
 import { MapViewer } from './components/MapViewer';
 import { LayerPanel } from './components/LayerPanel';
@@ -282,8 +282,26 @@ export function App() {
 
   const totalDatapoints = parcels.length + referencePoints.length + deforestationAlerts.length;
 
+  const impactSummary = useMemo(() => {
+    const validated = parcels.filter(
+      (p) => p.validation_status === 'community_validated' || p.validation_status === 'expert_reviewed' || p.validation_status === 'final',
+    ).length;
+    const totalHa = parcels.reduce((sum, p) => sum + (p.area_ha || 0), 0);
+    const subtypes = new Map<string, number>();
+    parcels.forEach((p) => {
+      const k = p.agroforestry_subtype || 'other';
+      subtypes.set(k, (subtypes.get(k) || 0) + 1);
+    });
+    return {
+      parcels: parcels.length,
+      validated,
+      totalHa: Math.round(totalHa),
+      subtypes: Array.from(subtypes.entries()).sort((a, b) => b[1] - a[1]),
+    };
+  }, [parcels]);
+
   return (
-    <div className="flex flex-col w-screen h-screen bg-slate-950 text-slate-100 overflow-hidden font-sans select-none">
+    <div className="flex flex-col w-screen h-screen bg-slate-950 text-slate-100 overflow-hidden font-sans">
       {/* Top Navigation Bar */}
       <Header
         jurisdictions={jurisdictions}
@@ -398,6 +416,33 @@ export function App() {
           opacities={opacities}
           onOpacityChange={handleOpacityChange}
         />
+        {/* Impact Summary Card */}
+        <div className="absolute top-[calc(16rem+1rem)] left-4 z-20 w-80 bg-slate-950/90 backdrop-blur-md border border-slate-800 rounded-xl shadow-2xl p-3 text-xs font-sans">
+          <h2 className="text-slate-100 font-semibold text-[13px] mb-2">Impact summary</h2>
+          <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
+            <span className="text-slate-400">Parcels mapped</span>
+            <span className="text-right text-slate-100 tabular-nums">{impactSummary.parcels}</span>
+            <span className="text-slate-400">Human-validated</span>
+            <span className="text-right text-emerald-300 tabular-nums">{impactSummary.validated}</span>
+            <span className="text-slate-400">Total area</span>
+            <span className="text-right text-slate-100 tabular-nums">{impactSummary.totalHa.toLocaleString()} ha</span>
+          </div>
+          {impactSummary.subtypes.length > 0 && (
+            <div className="mt-2 pt-2 border-t border-slate-800">
+              <div className="text-slate-400 text-[10px] uppercase tracking-wide mb-1">Agroforestry types</div>
+              <div className="flex flex-wrap gap-1">
+                {impactSummary.subtypes.slice(0, 6).map(([k, n]) => (
+                  <span key={k} className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-300 text-[10px] capitalize">
+                    {k.replace(/_/g, ' ')} <span className="text-slate-500 tabular-nums">{n}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          <p className="mt-2 pt-2 border-t border-slate-800 text-[10px] text-slate-500">
+            Click any parcel on the map to inspect its provenance and validation status. All data is synthetic demo content.
+          </p>
+        </div>
 
         {/* 2D / 3D Map Component */}
         <MapViewer

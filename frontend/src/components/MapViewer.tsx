@@ -163,6 +163,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
   const [splitPos, setSplitPos] = useState(50);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   // MapLibre color expressions for parcels
   const getParcelColorExpression = () => {
@@ -258,6 +259,8 @@ export const MapViewer: React.FC<MapViewerProps> = ({
         map.on('rotate', updateCameraTelemetry);
 
         map.on('load', () => {
+          setMapLoaded(true);
+
           mapInstance.current = map;
           try {
             map.setLight({
@@ -534,7 +537,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     } else {
       map.once('load', syncParcels);
     }
-  }, [parcels, selectedParcel, layers.agroforestryParcels, layers.uncertaintyOverlay, is3DMode, opacities.agroforestryParcels, ]);
+  }, [parcels, selectedParcel, layers.agroforestryParcels, layers.uncertaintyOverlay, is3DMode, opacities.agroforestryParcels, , mapLoaded]);
 
   // Sync CIFOR-ICRAF Ground Reference Points Layer
   useEffect(() => {
@@ -653,7 +656,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     } else {
       map.once('load', syncReferencePoints);
     }
-  }, [jurisdiction, layers.referencePoints, opacities.referencePoints, referencePoints]);
+  }, [jurisdiction, layers.referencePoints, opacities.referencePoints, referencePoints, mapLoaded]);
 
   // Sync GFW Deforestation & Canopy Disturbance Alerts Layer
   useEffect(() => {
@@ -771,7 +774,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     } else {
       map.once('load', syncDeforestationAlerts);
     }
-  }, [jurisdiction, layers.deforestationAlerts, opacities.deforestationAlerts, deforestationAlerts]);
+  }, [jurisdiction, layers.deforestationAlerts, opacities.deforestationAlerts, deforestationAlerts, mapLoaded]);
 
   // Sync EUDR 2020 Forest Baseline Layer
   useEffect(() => {
@@ -872,7 +875,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     } else {
       map.once('load', syncEUDRBaseline);
     }
-  }, [jurisdiction, layers.eudrDeforestationBaseline, opacities.eudrDeforestationBaseline]);
+  }, [jurisdiction, layers.eudrDeforestationBaseline, opacities.eudrDeforestationBaseline, mapLoaded]);
 
   // Sync Canopy Density Heatmap Layer
   useEffect(() => {
@@ -964,7 +967,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     } else {
       map.once('load', syncCanopyDensity);
     }
-  }, [parcels, layers.canopyDensity, opacities.canopyDensity]);
+  }, [parcels, layers.canopyDensity, opacities.canopyDensity, mapLoaded]);
 
   // Sync QUES-C Biomass Carbon Stock Heatmap Layer
   useEffect(() => {
@@ -1064,11 +1067,11 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     } else {
       map.once('load', syncCarbonHeatmap);
     }
-  }, [parcels, layers.carbonDensityHeatmap, opacities.carbonDensityHeatmap]);
+  }, [parcels, layers.carbonDensityHeatmap, opacities.carbonDensityHeatmap, mapLoaded]);
 
 
   return (
-    <div className="relative w-full h-full flex-1 overflow-hidden bg-slate-950 select-none font-sans">
+    <div className="relative w-full h-full flex-1 overflow-hidden bg-slate-950 font-sans">
       {/* MapLibre WebGL Canvas Container */}
       <div
         ref={mapContainer}
