@@ -319,3 +319,33 @@ def test_schema_reconciliation_covers_orm_columns():
             ):
                 continue
             assert (table, col) in covered or table not in parcel_cols, f"unreconciled column {table}.{col}"
+
+
+def test_reference_point_corpus_is_honest():
+    """No institutional attribution or fabricated validation on synthetic demo points."""
+    import json
+    from pathlib import Path
+
+    for rel in ("../../data/reference_points.json", "../../frontend/src/data/referencePoints.json"):
+        path = (Path(__file__).parent / rel).resolve()
+        data = json.loads(path.read_text())
+        points = data if isinstance(data, list) else data.get("reference_points", [])
+        assert points, f"no reference points in {path}"
+        for p in points:
+            assert p.get("source") == "Synthetic PoC generator (illustrative)", p.get("source")
+            assert p.get("data_origin") == "synthetic"
+            assert p.get("validation_status") == "unvalidated", p.get("validation_status")
+            assert p.get("quality_score") is None
+
+
+def test_backfill_sql_targets_only_unvalidated_rows():
+    """Backfill statements must never touch rows with a recorded human validator."""
+    from app.core.provenance_backfill import (
+        PARCEL_BACKFILL,
+        PARCEL_SOURCE_BACKFILL_NULLS,
+        REFERENCE_POINT_BACKFILL,
+    )
+
+    assert "validator_id IS NULL" in PARCEL_BACKFILL
+    assert "validator_id IS NULL" in PARCEL_SOURCE_BACKFILL_NULLS
+    assert "validator_id IS NULL" in REFERENCE_POINT_BACKFILL

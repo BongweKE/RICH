@@ -17,7 +17,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -28,7 +28,7 @@
     "agroforestry_subtype": "shade_cocoa",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "CRIG Tafo Long-Term Trial",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 79.2,
     "geometry": {
       "type": "Point",
@@ -38,7 +38,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -49,7 +49,7 @@
     "agroforestry_subtype": "alley_cropping",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "KNUST Faculty of Renewable Natural Resources",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 72.0,
     "geometry": {
       "type": "Point",
@@ -59,7 +59,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -70,7 +70,7 @@
     "agroforestry_subtype": "riparian_buffer",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Ghana Forestry Commission REDD+ Unit",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 88.0,
     "geometry": {
       "type": "Point",
@@ -80,7 +80,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -91,7 +91,7 @@
     "agroforestry_subtype": "shade_cocoa",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Cocobod Climate-Smart Cocoa Pilot",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 76.8,
     "geometry": {
       "type": "Point",
@@ -101,7 +101,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -112,7 +112,7 @@
     "agroforestry_subtype": "forest_buffer",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "CSIR-FORIG Forest Research Institute",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 91.4,
     "geometry": {
       "type": "Point",
@@ -122,7 +122,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -133,7 +133,7 @@
     "agroforestry_subtype": "alley_cropping",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Juaben Rural Agroforestry Partnership",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 69.5,
     "geometry": {
       "type": "Point",
@@ -143,7 +143,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -154,7 +154,7 @@
     "agroforestry_subtype": "parkland",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Savanna Agricultural Research Institute (SARI)",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 58.2,
     "geometry": {
       "type": "Point",
@@ -164,18 +164,18 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
     "id": "ref-es-1",
-    "name": "CSIC Dehesa Experimental Station C\u00e1ceres",
+    "name": "CSIC Dehesa Experimental Station Cáceres",
     "jurisdiction_code": "ES-EX",
     "class_label": "agroforestry",
     "agroforestry_subtype": "dehesa",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "CSIC Instituto de Recursos Naturales",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 48.5,
     "geometry": {
       "type": "Point",
@@ -185,18 +185,18 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
     "id": "ref-es-2",
-    "name": "CICYTEX Agroforestry Research Plot M\u00e9rida",
+    "name": "CICYTEX Agroforestry Research Plot Mérida",
     "jurisdiction_code": "ES-EX",
     "class_label": "agroforestry",
     "agroforestry_subtype": "dehesa",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Centro de Investigaciones Cient\u00edficas de Extremadura",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 42.0,
     "geometry": {
       "type": "Point",
@@ -206,18 +206,18 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
     "id": "ref-es-3",
-    "name": "Monfrag\u00fce Biosphere Oak Canopy Observatory",
+    "name": "Monfragüe Biosphere Oak Canopy Observatory",
     "jurisdiction_code": "ES-EX",
     "class_label": "agroforestry",
     "agroforestry_subtype": "montado",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Parque Nacional de Monfrag\u00fce / Junta de Extremadura",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 56.0,
     "geometry": {
       "type": "Point",
@@ -227,7 +227,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -238,7 +238,7 @@
     "agroforestry_subtype": "montado",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Universidad de Extremadura (UEx)",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 52.3,
     "geometry": {
       "type": "Point",
@@ -248,7 +248,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -259,7 +259,7 @@
     "agroforestry_subtype": "silvopasture",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "SITEX SIGPAC Agroforestry Register",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 39.8,
     "geometry": {
       "type": "Point",
@@ -269,7 +269,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -280,7 +280,7 @@
     "agroforestry_subtype": "dehesa",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "IDEE Spain National Spatial Framework",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 44.1,
     "geometry": {
       "type": "Point",
@@ -290,7 +290,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -301,7 +301,7 @@
     "agroforestry_subtype": "dehesa",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Extremadura Forest Pathology Laboratory",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 51.2,
     "geometry": {
       "type": "Point",
@@ -311,7 +311,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -322,7 +322,7 @@
     "agroforestry_subtype": "shade_coffee",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Jimma Agricultural Research Center (EIAR)",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 88.5,
     "geometry": {
       "type": "Point",
@@ -332,7 +332,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -353,7 +353,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -364,7 +364,7 @@
     "agroforestry_subtype": "shade_coffee",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Oromia Coffee Farmers Cooperative Union (OCFCU)",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 84.0,
     "geometry": {
       "type": "Point",
@@ -374,7 +374,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -395,7 +395,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -406,7 +406,7 @@
     "agroforestry_subtype": "forest_farming",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Ethiopian Environment and Forest Research Institute",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 79.5,
     "geometry": {
       "type": "Point",
@@ -416,7 +416,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -427,7 +427,7 @@
     "agroforestry_subtype": "shade_coffee",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Jimma University College of Agriculture",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 86.4,
     "geometry": {
       "type": "Point",
@@ -437,7 +437,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -448,7 +448,7 @@
     "agroforestry_subtype": "shade_coffee",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Oromia Forest and Wildlife Enterprise (OFWE)",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 82.7,
     "geometry": {
       "type": "Point",
@@ -458,7 +458,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   },
   {
@@ -469,7 +469,7 @@
     "agroforestry_subtype": "shade_coffee",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Rainforest Alliance Ground Truth Network",
+    "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 87.1,
     "geometry": {
       "type": "Point",
@@ -479,7 +479,7 @@
       ]
     },
     "data_origin": "synthetic",
-    "generation_method": "PoC demo generator (illustrative)",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
     "source_url": null
   }
 ]

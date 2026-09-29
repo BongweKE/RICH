@@ -74,6 +74,19 @@ export function PlannerApp() {
       ...prev,
       [parcel.id]: { decision, state: ok ? 'saved' : 'failed' },
     }));
+    if (ok) {
+      setParcels((prev) =>
+        prev.map((p) =>
+          p.id === parcel.id
+            ? {
+                ...p,
+                validation_status:
+                  decision === 'confirmed' ? 'community_validated' : 'expert_reviewed',
+              }
+            : p,
+        ),
+      );
+    }
   }, []);
 
   const stats = useMemo(() => {
@@ -193,7 +206,18 @@ export function PlannerApp() {
                 <PlannerMapWorkspace
                   parcels={parcels}
                   jurisdiction={jurisdiction}
+                  selectedParcel={selectedParcel}
                   onSelectParcel={setSelectedParcel}
+                  onParcelValidated={(parcelId, decision) => {
+                    if (decision === 'confirmed') {
+                      setDecisions((prev) => ({ ...prev, [parcelId]: { decision: 'confirmed', state: 'saved' } }));
+                      setParcels((prev) =>
+                        prev.map((p) =>
+                          p.id === parcelId ? { ...p, validation_status: 'community_validated' } : p,
+                        ),
+                      );
+                    }
+                  }}
                 />
                 <ParcelDossier parcel={selectedParcel} />
               </div>
