@@ -174,26 +174,39 @@ async def test_chat_feedback_non_uuid_handling(async_client: AsyncClient):
     assert "Invalid query log UUID" in data["message"]
 
 
-def test_domain_synthesis_with_chunks():
-    """Test that domain synthesis incorporates retrieved pgvector chunks and citations"""
-    from app.models import DocumentEmbedding
+def test_honest_fallback_never_fabricates():
+    """Without an LLM the assistant must state unavailability and list only
+    retrieved records - never invented telemetry, carbon figures, or citations."""
     from app.services.ai import SynthesisAgent
 
-    chunk = DocumentEmbedding(
-        chunk_text="Article 2(4-6) establishes that crops grown under tree cover constitute agricultural plantations.",
-        metadata_={"regulation": "Regulation (EU) 2023/1115", "article": "Article 2", "page": 11},
-    )
-
-    resp = SynthesisAgent._domain_synthesis(
-        query="What are the definitions in EUDR?",
+    resp = SynthesisAgent._honest_fallback(
+        query="What is the carbon stock?",
         jurisdiction=None,
         parcels=[],
         citations=[{"title": "EUDR Article 2", "type": "regulatory_clause"}],
-        chunks=[chunk],
     )
-    assert "Grounded Legal & Scientific Corpus Excerpts" in resp
-    assert "Article 2" in resp
-    assert "crops grown under tree cover" in resp
+    assert "don't have a language model available" in resp
+    assert "1 corpus citations" in resp
+    for banned in ("GEDI RH98", "NDVI Temporal Trajectory", "tC/ha", "Sequestration"):
+        assert banned not in resp
+
+
+def test_honest_fallback_with_parcels_lists_only_records():
+    from app.services.ai import SynthesisAgent
+
+    class FakeParcel:
+        id = "689f2198-9dcb-4493-9743-79ec6c8bd591"
+        area_ha = 12.5
+
+    resp = SynthesisAgent._honest_fallback(
+        query="carbon stock near Kumasi",
+        jurisdiction=None,
+        parcels=[FakeParcel()],
+        citations=[],
+    )
+    assert "1 parcel records retrieved" in resp
+    assert "12.5 ha" in resp
+    assert "cannot be estimated without validated field data" in resp
 
 
 @pytest.mark.asyncio

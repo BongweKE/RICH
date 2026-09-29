@@ -497,188 +497,45 @@ class SynthesisAgent:
             except Exception as e:
                 logger.warning(f"Mistral API call failed or timed out: {e}. Using expert domain synthesis fallback.")
 
-        # Fallback domain-aware synthesis
-        response_text = cls._domain_synthesis(query, jurisdiction, parcels, citations, documents, chunks)
+        response_text = cls._honest_fallback(query, jurisdiction, parcels, citations)
         return {
             "response_text": response_text,
             "citations": citations,
             "sources": sources,
-            "model": "rich-domain-synthesizer-v1",
+            "model": "rich-honest-fallback-v1",
         }
 
     @classmethod
-    def _domain_synthesis(
+    def _honest_fallback(
         cls,
         query: str,
-        jurisdiction: Jurisdiction | None,
-        parcels: list[AgroforestryParcel],
-        citations: list[dict[str, Any]],
-        documents: list[DocumentCatalog] | None = None,
-        chunks: list[DocumentEmbedding] | None = None,
+        jurisdiction: "Jurisdiction | None",
+        parcels: list,
+        citations: list,
     ) -> str:
-        j_name = jurisdiction.name if jurisdiction else "the selected pilot landscape"
-        j_code = jurisdiction.code if jurisdiction else "Landscape"
-        q_lower = query.lower()
-
-        sections = []
-
-        # Header summary
-        sections.append(
-            f"### **RICH Agroforestry & Compliance Intelligence: {j_name} ({j_code})**\n"
-            f"**Analysis Scope**: {query}\n"
-        )
-
-        # Explicit LUMENS Parcel vs Region Methodology Section
-        is_lumens_methodology = any(
-            kw in q_lower
-            for kw in [
-                "lumens",
-                "parcel or region",
-                "parcels or regions",
-                "parcel vs region",
-                "review various",
-                "land parcels",
-                "how our lumens",
-                "understand how",
-            ]
-        )
-        if is_lumens_methodology:
-            sections.append(
-                "#### **LUMENS Multi-Scale Analytical Framework: Regional vs. Parcel Review**\n"
-                "The RICH system deploys CIFOR-ICRAF's **LUMENS (Land Use for Multiple Environmental Services)** framework across two synchronized spatial resolutions:\n\n"
-                "##### **1. Regional Landscape Review (Macro Spatial Policy)**\n"
-                "- **Pre-QuES (Land Use Dynamics)**: Multi-temporal satellite cross-tabulation across 2018–2024 generates wall-to-wall land use transition matrices, Sankey fluxes, and Pontius error decomposition (separating gross quantity change from spatial allocation disagreement).\n"
-                "- **QUES-C (Landscape Carbon Accounting)**: Aggregates regional carbon stock across 4 IPCC pools (AGB, BGB, SOC, deadwood). Quantifies gross emissions from deforestation frontiers vs. gross sequestration from shaded agroforests to compute net carbon balance and Voluntary Carbon Market (VCM) potential ($12–$25/tCO2e).\n"
-                "- **QUES-H (Watershed Hydrological Services)**: Calculates catchment-scale soil erosion using the Revised Universal Soil Loss Equation (RUSLE: A = R·K·LS·C·P). Multi-tier agroforestry canopy maintains low C-factors (~0.08), securing >85% sediment retention and mitigating reservoir siltation.\n"
-                "- **QUES-B (Biodiversity & Ecological Corridors)**: Uses Morphological Spatial Pattern Analysis (MSPA) and InVEST habitat models to map core forest reserves, ecological bridges, and riparian corridors, ensuring agroforest buffers preserve gene flow and keystone species habitats.\n"
-                "- **TA-Profit (Trade-Off Analysis & Opportunity Cost)**: Evaluates 20-year Net Present Value (NPV $/ha) and labor requirements across systems, deriving empirical carbon abatement cost curves ($/tCO2e avoided) to benchmark agroforestry vs. monoculture under REDD+ finance.\n\n"
-                "##### **2. Parcel-Level Micro Audit (Farm / Smallholder Due Diligence)**\n"
-                "- **Boundary Geometry & EUDR Geolocation (Art. 9)**: Audits polygon vertices (plots ≥ 4 ha) or single GPS centroid (< 4 ha) against official land registries.\n"
-                "- **Sentinel-2 NDVI Multi-Year Trajectory**: Evaluates dense 10m time-series through the critical **December 31, 2020** cut-off date, proving continuous vegetative canopy stability with zero post-2020 deforestation.\n"
-                "- **GEDI LiDAR Canopy Strata Calibration (RH98)**: Measures Relative Height 98% (canopy top height) and Foliage Height Diversity (FHD) to confirm authentic multi-layered canopy structures protecting perennial crops.\n"
-                "- **EUDR Article 2(4-6) Exemption Verification**: Overcomes the ~63% false-positive deforestation flag common in optical satellite indices by confirming multi-strata shade trees (cocoa in Ghana, coffee in Ethiopia, oak dehesa in Spain) qualify as legitimate agricultural land use.\n"
-                "- **Plot Micro-Carbon & Soil Retention**: Computes parcel-specific 4-pool carbon density and localized RUSLE avoided soil loss based on slope gradient and soil texture class.\n"
-            )
-
-        # 1. Parcel Geospatial Verification
+        """No-LLM fallback: state unavailability, list only retrieved records.
+        Never invents telemetry, carbon figures, or compliance verdicts."""
+        retrieved_summary: list[str] = []
         if parcels:
-            total_ha = sum(p.area_ha or 0 for p in parcels)
-            sections.append(
-                f"#### **1. Parcel Identification & Canopy Verification**\n"
-                f"A total of **{len(parcels)} active agroforestry parcels** ({total_ha:.1f} ha total area) "
-                f"have been verified in this sector using multi-temporal Sentinel-1 C-band SAR radar and Sentinel-2 optical imagery [1]:\n"
+            total_ha = sum(float(p.area_ha or 0) for p in parcels)
+            retrieved_summary.append(
+                f"- {len(parcels)} parcel records retrieved for this landscape "
+                f"(total recorded area {total_ha:.1f} ha). Parcel-level details, "
+                "carbon figures, and canopy telemetry require a validated dataset."
             )
-            for idx, p in enumerate(parcels[:4], start=1):
-                subtype = safe_val(p.agroforestry_subtype) or safe_val(p.class_label) or "agroforestry"
-                conf = (p.confidence_score or 0.85) * 100
-                area = p.area_ha or 12.0
-                eudr_rule = "Single GPS point (Art. 9 <4 ha)" if area < 4.0 else "Full Polygon Boundary (Art. 9 >=4 ha)"
-                sections.append(
-                    f"- **Parcel [{idx}]** (`{p.id}`): **{subtype.replace('_', ' ').title()}** | "
-                    f"Area: **{area:.1f} ha** | AI Canopy Confidence: **{conf:.1f}%** | "
-                    f"EUDR Rule: *{eudr_rule}*."
-                )
-            sections.append("")
-        else:
-            sections.append(
-                f"#### **1. Geospatial Baseline**\n"
-                f"Landscape analysis for **{j_name}** integrates regional PostGIS spatial layers, "
-                f"GEDI canopy profile indicators, and Sentinel-2 red-edge chlorophyll indices.\n"
-            )
-
-        # 2. Regulatory & EUDR Compliance
-        sections.append(
-            "#### **2. Regulatory Compliance & Cut-Off Date Verification**\n"
-            "Under the **EU Deforestation Regulation (Regulation (EU) 2023/1115)**, commodities entering European supply chains "
-            "must be verified deforestation-free after the cutoff date of **December 31, 2020**.\n"
-            "- **Canopy Protection**: Under Article 2(4-6), multi-strata shade trees over cocoa, coffee, or pasture qualify as "
-            "legitimate agricultural production and do **not** constitute deforestation or forest degradation.\n"
-            "- **Due Diligence Statement (DDS)**: Parcels with continuous canopy stability across 2018–2024 are cataloged "
-            "as low-risk with verified zero-deforestation certificates."
-        )
-
-        # 3. LUMENS Environmental Services & Carbon
-        sections.append(
-            "#### **3. LUMENS Environmental Services & Carbon Stock**\n"
-            "- **QUES-C Carbon Accounting**: Shaded agroforestry systems in this landscape sequester between "
-            "**4.5 and 8.5 tCO2e/ha/year** in aboveground biomass and soil organic carbon pools.\n"
-            "- **Pre-QuES Transition Flux**: Differentiating agroforestry from monoculture eliminates false positive deforestation flags "
-            "and establishes accurate baselines for voluntary carbon credits ($15–$25/tCO2e) and national REDD+ MRV reporting.\n"
-            "- **QUES-H Watershed Protection**: Native canopy maintenance retains >85% sediment and avoids over 350,000 tons/year "
-            "of potential soil loss according to RUSLE modeling.\n"
-            "- **QUES-B Biodiversity Habitat Corridors**: Morphological Spatial Pattern Analysis (MSPA) validates ecological connectivity, "
-            "preserving key stepping stones and core habitat corridors (InVEST habitat quality score >0.82).\n"
-            "- **TA-Profit Opportunity Cost & Abatement**: 20-year Net Present Value (NPV) modeling ($2,200–$3,800/ha at 8% discount) "
-            "demonstrates agroforestry out-values high-emission monocrop clearing on national carbon abatement curves ($15–$25/tCO2e avoided emissions)."
-        )
-
-        # 4. Parcel Biophysical Telemetry (Tailored dynamically to regional context)
-        if parcels:
-            p0 = parcels[0]
-            area = p0.area_ha or 14.5
-            subtype_str = safe_val(p0.agroforestry_subtype) or safe_val(p0.class_label) or "Agroforestry"
-
-            is_es = j_code.startswith("ES") or "dehesa" in subtype_str.lower() or "montado" in subtype_str.lower()
-            is_et = j_code.startswith("ET") or "coffee" in subtype_str.lower()
-
-            if is_es:
-                tree_species = "Quercus ilex (Holm oak) & Quercus suber (Cork oak)"
-                rh98 = "12.4 m (GEDI RH98 Mediterranean open canopy profile)"
-                fhd = "2.15 (two-tier silvopastoral savanna structure)"
-                agb, bgb, soc, dw = 41.5, 16.2, 76.4, 3.1
-                seq = "3.2 tCO2e/ha/year"
-                erosion_ret = "91.8% sediment retention; RUSLE avoided soil loss of 8.4 tons/ha/year"
-            elif is_et:
-                tree_species = "Podocarpus falcatus, Albizia gummifera, & Millettia ferruginea"
-                rh98 = "28.6 m (GEDI RH98 Afromontane montane canopy profile)"
-                fhd = "2.92 (four-tier dense cloud forest polyculture)"
-                agb, bgb, soc, dw = 96.5, 22.8, 104.2, 6.8
-                seq = "6.8 tCO2e/ha/year"
-                erosion_ret = "94.2% sediment retention; RUSLE avoided soil loss of 26.5 tons/ha/year on steep volcanic slopes"
-            else:
-                tree_species = "Terminalia superba, Milicia excelsa, & Theobroma cacao"
-                rh98 = "24.6 m (GEDI RH98 Guinean moist forest shade canopy)"
-                fhd = "2.74 (three-tier cocoa agroforest structure)"
-                agb, bgb, soc, dw = 68.2, 15.8, 61.5, 4.8
-                seq = "5.4 tCO2e/ha/year"
-                erosion_ret = "89.2% sediment retention; RUSLE avoided soil loss of 14.8 tons/ha/year"
-
-            total_c = agb + bgb + soc + dw
-
-            sections.append(
-                "#### **4. Ground-Truth Parcel Biophysical Telemetry**\n"
-                f"- **Parcel Audit Target**: `{p0.id}` ({subtype_str.replace('_', ' ').title()} | {area:.1f} ha)\n"
-                f"- **Canopy Tree Architecture**: {tree_species}\n"
-                "- **NDVI Temporal Trajectory (2018–2024)**: 0.78 (2018) → 0.81 (2020 EUDR Cutoff) → 0.83 (2024). "
-                "Zero loss or degradation observed post-cutoff date.\n"
-                f"- **GEDI LiDAR Canopy Strata**: Canopy top height = {rh98}; Foliage Height Diversity = {fhd}.\n"
-                f"- **Carbon Pool Balance (QUES-C)**: AGB {agb:.1f} tC/ha, BGB {bgb:.1f} tC/ha, SOC {soc:.1f} tC/ha, Deadwood {dw:.1f} tC/ha "
-                f"(Total Carbon Stock: **{total_c:.1f} tC/ha**; Sequestration: **{seq}**).\n"
-                f"- **Hydrological Retention (QUES-H)**: {erosion_ret}."
-            )
-
-        # 5. Relevant Legal & Scientific Corpus Excerpts
-        if chunks:
-            sections.append("#### **5. Grounded Legal & Scientific Corpus Excerpts**")
-            for idx, ch in enumerate(chunks[:3], start=1):
-                meta = ch.metadata_ if isinstance(ch.metadata_, dict) else {}
-                reg = meta.get("regulation") or "Official Corpus"
-                art = meta.get("article") or ""
-                page = meta.get("page", 1)
-                snippet = ch.chunk_text.strip()
-                if len(snippet) > 280:
-                    snippet = snippet[:280] + "..."
-                heading = f"{reg} - {art}".strip(" -")
-                sections.append(f'- **[{heading} (p.{page})]**: "{snippet}"')
-            sections.append("")
-
-        # 6. Citations & References
         if citations:
-            sections.append("\n---\n#### **6. Grounded References & Citations**:")
-            for idx, c in enumerate(citations[:6], start=1):
-                sections.append(f"[{idx}] {c.get('title', 'Reference')} ({c.get('type', 'data')})")
-
-        return "\n".join(sections)
+            retrieved_summary.append(
+                f"- {len(citations)} corpus citations retrieved from the compliance document library."
+            )
+        return (
+            "I don't have a language model available right now, so I can't produce a "
+            "narrative analysis. Here is what the retrieved records actually show:\n\n"
+            + ("\n".join(retrieved_summary) if retrieved_summary else "- No matching records were found for this query.")
+            + "\n\nCarbon stock, sequestration, NDVI trajectories, GEDI canopy metrics, and "
+            "compliance verdicts are **not** available for these records and cannot be "
+            "estimated without validated field data. To request validation or attach "
+            "evidence, use the parcel dossier in the planner app."
+        )
 
 
 # -----------------------------------------------------------------------------

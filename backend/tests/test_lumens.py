@@ -157,6 +157,8 @@ async def test_interactive_lumens_endpoints(async_client):
     preques_data = preques_resp.json()
     assert "sankey_data" in preques_data
     assert "pontius" in preques_data["statistics"]
+    assert preques_data["mode"] == "illustrative_demo"
+    assert "Not computed from real satellite data" in preques_data["disclaimer"]
 
     carbon_resp = await async_client.post(
         "/api/lumens/interactive-carbon",
@@ -165,6 +167,8 @@ async def test_interactive_lumens_endpoints(async_client):
     assert carbon_resp.status_code == 200
     carbon_data = carbon_resp.json()
     assert "voluntary_carbon_credits_potential_usd" in carbon_data
+    assert carbon_data["mode"] == "illustrative_demo"
+    assert "do not use for carbon finance decisions" in carbon_data["disclaimer"]
 
 
 @pytest.mark.asyncio
