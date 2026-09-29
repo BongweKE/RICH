@@ -35,7 +35,6 @@ function parcelFillColor(p: Parcel): string {
     return '#065f46';
   return SUBTYPE_COLORS[p.agroforestry_subtype || ''] || '#10b981';
 }
-
 interface Props {
   parcels: Parcel[];
   jurisdiction: Jurisdiction;
@@ -284,6 +283,7 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onS
     () => Array.from(new Set(parcels.map((p) => p.agroforestry_subtype).filter(Boolean))) as string[],
     [parcels],
   );
+
 
   return (
     <section aria-labelledby="map-heading" className="bg-white rounded-lg border border-stone-200">
