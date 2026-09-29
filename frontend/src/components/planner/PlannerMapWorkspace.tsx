@@ -2,39 +2,25 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Jurisdiction, Parcel } from '../../types';
+import {
+  AGROFORESTRY_SUBTYPE_COLORS,
+  subtypeColor,
+  subtypeLabel,
+  isReviewedStatus,
+  VALIDATED_OUTLINE,
+  UNVALIDATED_OUTLINE,
+} from '../../types';
 import { api } from '../../services/api';
 
-export const SUBTYPE_COLORS: Record<string, string> = {
-  shade_cocoa: '#2ca25f',
-  shade_coffee: '#66c2a5',
-  dehesa: '#fdae61',
-  montado: '#e69537',
-  silvopasture: '#a6cee3',
-  alley_cropping: '#99d8c9',
-  parkland: '#c6dbef',
-  homegarden: '#fdbb84',
-  forest_farming: '#52b788',
-  woodlot: '#756bb1',
-};
+// Kept as a named export for callers that import the palette from here.
+export const SUBTYPE_COLORS = AGROFORESTRY_SUBTYPE_COLORS;
 
-const SUBTYPE_LABELS: Record<string, string> = {
-  shade_cocoa: 'Shade cocoa',
-  shade_coffee: 'Shade coffee',
-  dehesa: 'Dehesa',
-  montado: 'Montado',
-  silvopasture: 'Silvopasture',
-  alley_cropping: 'Alley cropping',
-  parkland: 'Parkland',
-  homegarden: 'Homegarden',
-  forest_farming: 'Forest farming',
-  woodlot: 'Woodlot',
-};
-
-function parcelFillColor(p: Parcel): string {
-  if (p.validation_status === 'community_validated' || p.validation_status === 'expert_reviewed' || p.validation_status === 'final')
-    return '#065f46';
-  return SUBTYPE_COLORS[p.agroforestry_subtype || ''] || '#10b981';
+// Fill colour is always the subtype hue; validation is a separate visual
+// channel (outline + opacity) so it never erases the subtype identity.
+function parcelColor(p: Parcel): string {
+  return subtypeColor(p.agroforestry_subtype);
 }
+
 interface Props {
   parcels: Parcel[];
   jurisdiction: Jurisdiction;
@@ -71,16 +57,22 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onS
   }, [jurisdiction.code]);
 
   const popupHtml = useCallback((p: Parcel): string => {
-    const subtype = (p.agroforestry_subtype || p.class_label || 'parcel').replace(/_/g, ' ');
+    const label = subtypeLabel(p.agroforestry_subtype || p.class_label);
+    const swatch = subtypeColor(p.agroforestry_subtype);
     const area = p.area_ha != null ? `${p.area_ha.toFixed(1)} ha` : 'area unknown';
     const conf = p.confidence_score != null ? `${Math.round(p.confidence_score * 100)}%` : '—';
     const origin = p.data_origin || 'unknown';
-    const reviewed = p.validation_status === 'community_validated' || p.validation_status === 'expert_reviewed' || p.validation_status === 'final';
+    const reviewed = isReviewedStatus(p.validation_status);
+    const statusChip = reviewed
+      ? `<span style="font-size:10px;color:#065f46;background:#d1fae5;padding:1px 6px;border-radius:999px">validated · demo</span>`
+      : `<span style="font-size:10px;color:#92400e;background:#fef3c7;padding:1px 6px;border-radius:999px">unvalidated model label</span>`;
     return (
-      `<div style="font-family:inherit;min-width:200px">` +
-      `<strong style="text-transform:capitalize">${subtype}</strong>` +
-      (reviewed ? ` <span style="font-size:10px;color:#065f46;background:#d1fae5;padding:1px 5px;border-radius:8px">validated</span>` : '') +
-      `<br/><span style="color:#57534e;font-size:12px">${area} · confidence ${conf}<br/>origin: ${origin}</span>` +
+      `<div style="font-family:inherit;min-width:210px">` +
+      `<div style="display:flex;align-items:center;gap:6px">` +
+      `<span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${swatch};border:2px solid ${reviewed ? VALIDATED_OUTLINE : 'transparent'}"></span>` +
+      `<strong>${label}</strong></div>` +
+      `<div style="margin-top:4px">${statusChip}</div>` +
+      `<div style="margin-top:6px;color:#57534e;font-size:12px">${area} · confidence ${conf}<br/>origin: ${origin}</div>` +
       `<div style="margin-top:8px;display:flex;gap:4px;flex-wrap:wrap">` +
       `<button data-paction="open" style="padding:4px 8px;border-radius:6px;border:1px solid #d6d3d1;background:#059669;color:#fff;font-size:12px;cursor:pointer">Dossier</button>` +
       (reviewed
@@ -143,14 +135,17 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onS
         source: 'planner-parcels',
         paint: {
           'fill-color': ['get', 'color'],
-          'fill-opacity': 0.55,
+          'fill-opacity': ['get', 'fill_opacity'],
         },
       });
       map.addLayer({
         id: 'parcels-outline',
         type: 'line',
         source: 'planner-parcels',
-        paint: { 'line-color': '#1f2937', 'line-width': 0.6 },
+        paint: {
+          'line-color': ['case', ['boolean', ['get', 'validated'], false], VALIDATED_OUTLINE, UNVALIDATED_OUTLINE],
+          'line-width': ['case', ['boolean', ['get', 'validated'], false], 1.4, 0.5],
+        },
       });
       map.addSource('reference-points-source', {
         type: 'geojson',
@@ -193,17 +188,23 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onS
         const f = e.features?.[0];
         if (!f) return;
         const props = f.properties as any;
-        const reviewed = props.validation_status === 'community_validated' || props.validation_status === 'expert_reviewed' || props.validation_status === 'final';
+        const reviewed = isReviewedStatus(props.validation_status);
+        const typeLabel = props.subtype ? subtypeLabel(props.subtype) : (props.class_label || '—');
         new maplibregl.Popup({ closeButton: true, maxWidth: '280px' })
           .setLngLat(e.lngLat)
           .setHTML(
-            `<div style="font-family:inherit"><strong>Reference point</strong>` +
-            (reviewed
-              ? ` <span style="font-size:10px;color:#065f46;background:#d1fae5;padding:1px 5px;border-radius:8px">validated</span>`
-              : '') +
-            `<br/><span style="color:#57534e;font-size:12px">class: ${props.class_label || '—'}<br/>` +
-            `status: ${props.validation_status || 'unvalidated'}<br/>` +
-            `source: ${props.source || 'unknown'}</span>` +
+            `<div style="font-family:inherit;min-width:200px">` +
+            `<div style="font-size:10px;font-weight:700;color:#1d4ed8;text-transform:uppercase;letter-spacing:.05em">Point of interest</div>` +
+            `<div style="display:flex;align-items:center;gap:6px;margin-top:3px">` +
+            `<span style="display:inline-block;width:10px;height:10px;border-radius:999px;background:#1d4ed8"></span>` +
+            `<strong>${props.name || 'Ground reference point'}</strong>` +
+            (reviewed ? ` <span style="font-size:10px;color:#065f46;background:#d1fae5;padding:1px 5px;border-radius:8px">validated</span>` : '') +
+            `</div>` +
+            `<div style="margin-top:5px;color:#57534e;font-size:12px">` +
+            `type: ${typeLabel}<br/>` +
+            `canopy: ${props.canopy_cover_pct != null ? `${props.canopy_cover_pct}%` : '—'}<br/>` +
+            `status: ${props.validation_status || 'unvalidated'}${props.quality_score != null ? ` · ${Math.round(props.quality_score * 100)}% quality` : ''}<br/>` +
+            `source: ${props.source || 'unknown'}</div>` +
             `<div style="margin-top:6px;font-size:10px;color:#92400e;background:#fef3c7;border:1px solid #fcd34d;border-radius:6px;padding:4px 6px">` +
             `Synthetic PoC demo data — validation decisions are illustrative, not field validation.` +
             `</div></div>`,
@@ -241,17 +242,24 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onS
     if (!map || !map.getSource('planner-parcels')) return;
     (map.getSource('planner-parcels') as maplibregl.GeoJSONSource).setData({
       type: 'FeatureCollection',
-      features: filteredParcels.map((p) => ({
-        type: 'Feature' as const,
-        id: p.id,
-        geometry: p.geometry as any,
-        properties: {
+      features: filteredParcels.map((p) => {
+        const reviewed = isReviewedStatus(p.validation_status);
+        return {
+          type: 'Feature' as const,
           id: p.id,
-          color: parcelFillColor(p),
-          subtype: p.agroforestry_subtype,
-          confidence: p.confidence_score,
-        },
-      })),
+          geometry: p.geometry as any,
+          properties: {
+            id: p.id,
+            color: parcelColor(p),
+            validated: reviewed,
+            // Validated parcels read as solid figures; unvalidated model
+            // labels recede (lower opacity) — figure/ground without recolouring.
+            fill_opacity: reviewed ? 0.85 : 0.32,
+            subtype: p.agroforestry_subtype,
+            confidence: p.confidence_score,
+          },
+        };
+      }),
     });
   }, [filteredParcels, mapLoaded]);
 
@@ -263,8 +271,12 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onS
       geometry: pt.geometry as any,
       properties: {
         id: pt.id,
+        name: pt.name,
         class_label: pt.class_label,
+        subtype: pt.agroforestry_subtype,
         validation_status: pt.validation_status,
+        quality_score: pt.quality_score,
+        canopy_cover_pct: pt.canopy_cover_pct,
         source: pt.source,
       },
     }));
@@ -288,8 +300,20 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onS
     }
   }, [selectedParcel]);
 
-  const subtypesPresent = useMemo(
-    () => Array.from(new Set(parcels.map((p) => p.agroforestry_subtype).filter(Boolean))) as string[],
+  // Subtype distribution for the legend, ordered by frequency so the reader's
+  // eye lands on what dominates the landscape first (Gestalt: proximity +
+  // a stable, meaningful order rather than arbitrary first-seen).
+  const subtypeCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    parcels.forEach((p) => {
+      const key = p.agroforestry_subtype || 'other';
+      counts.set(key, (counts.get(key) || 0) + 1);
+    });
+    return Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
+  }, [parcels]);
+
+  const validatedCount = useMemo(
+    () => parcels.filter((p) => isReviewedStatus(p.validation_status)).length,
     [parcels],
   );
 
@@ -331,8 +355,8 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onS
             aria-label="Filter parcels by subtype"
           >
             <option value="all">All</option>
-            {subtypesPresent.map((s) => (
-              <option key={s} value={s}>{SUBTYPE_LABELS[s] || s.replace(/_/g, ' ')}</option>
+            {subtypeCounts.map(([s, n]) => (
+              <option key={s} value={s}>{subtypeLabel(s)} ({n})</option>
             ))}
           </select>
         </label>
@@ -357,34 +381,45 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onS
       <div className="relative">
         <div ref={containerRef} className="h-[420px] sm:h-[520px] rounded-b-lg" aria-label="Parcel map" role="region" />
 
-        <div className="absolute bottom-2 left-2 bg-white/95 border border-stone-200 rounded-lg shadow p-2 max-h-44 overflow-y-auto text-xs z-10" aria-label="Map legend">
-          <div className="font-semibold mb-1">Agroforestry subtypes</div>
-          <ul className="space-y-0.5">
-            {subtypesPresent.length === 0 && <li className="text-stone-400">No parcels loaded yet</li>}
-            {subtypesPresent.map((k) => (
-              <li key={k} className="flex items-center gap-1.5">
-                <span aria-hidden="true" className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: SUBTYPE_COLORS[k] || '#10b981' }} />
-                {SUBTYPE_LABELS[k] || k.replace(/_/g, ' ')}
+        <div className="absolute bottom-2 left-2 bg-white/95 border border-stone-200 rounded-lg shadow p-2.5 max-h-56 overflow-y-auto text-xs z-10 w-60" aria-label="Map legend">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="font-semibold">Agroforestry types</span>
+            <span className="text-[10px] text-stone-400 tabular-nums">{parcels.length} parcels</span>
+          </div>
+          {subtypeCounts.length === 0 ? (
+            <p className="text-stone-400">No parcels loaded yet</p>
+          ) : (
+            <ul className="space-y-1">
+              {subtypeCounts.map(([k, n]) => (
+                <li key={k} className="flex items-center gap-2">
+                  <span aria-hidden="true" className="inline-block w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: subtypeColor(k) }} />
+                  <span className="flex-1 truncate text-stone-700">{subtypeLabel(k)}</span>
+                  <span className="tabular-nums text-stone-500">{n}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="mt-2 pt-2 border-t border-stone-100">
+            <div className="font-semibold mb-1">
+              Review status <span className="font-normal text-stone-400">({validatedCount} validated)</span>
+            </div>
+            <ul className="space-y-1">
+              <li className="flex items-center gap-2">
+                <span aria-hidden="true" className="inline-block w-3 h-3 rounded-sm shrink-0 border-2" style={{ backgroundColor: subtypeColor('shade_cocoa'), borderColor: VALIDATED_OUTLINE }} />
+                Validated — solid fill, dark outline
               </li>
-            ))}
-          </ul>
-          <div className="font-semibold mt-2 mb-1 pt-2 border-t border-stone-100">Provenance</div>
-          <ul className="space-y-0.5">
-            <li className="flex items-center gap-1.5">
-              <span aria-hidden="true" className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: '#065f46' }} />
-              Validated (synthetic demo)
-            </li>
-            <li className="flex items-center gap-1.5">
-              <span aria-hidden="true" className="inline-block w-3 h-3 rounded-sm border border-stone-300 bg-white" />
-              Unvalidated model label
-            </li>
-            <li className="flex items-center gap-1.5">
-              <span aria-hidden="true" className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: '#1d4ed8' }} />
-              Reference point
-            </li>
-          </ul>
+              <li className="flex items-center gap-2">
+                <span aria-hidden="true" className="inline-block w-3 h-3 rounded-sm shrink-0 opacity-40" style={{ backgroundColor: subtypeColor('shade_cocoa') }} />
+                Unvalidated model label — faded
+              </li>
+              <li className="flex items-center gap-2">
+                <span aria-hidden="true" className="inline-block w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: '#1d4ed8' }} />
+                Reference point
+              </li>
+            </ul>
+          </div>
           <p className="mt-2 text-[10px] leading-snug text-amber-800 bg-amber-50 border border-amber-200 rounded px-2 py-1">
-            Validation shown here is synthetic demo data for the PoC — not field validation.
+            Validation is synthetic demo data — not field validation.
           </p>
         </div>
 

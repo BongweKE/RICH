@@ -318,16 +318,58 @@ export const LAND_COVER_COLORS: Record<string, string> = {
   water: '#636eca',
 };
 
-// Agroforestry subtype-specific colors for better visual distinction
+// Agroforestry subtype palette — one clearly distinct hue per subtype so the
+// legend, filter, chips and map all share a single perceptual encoding
+// (Gestalt "similarity": same meaning ⇒ same colour, different category ⇒
+// different hue). Hues are spread around the wheel and kept at comparable
+// saturation/lightness so no subtype dominates unintentionally.
 export const AGROFORESTRY_SUBTYPE_COLORS: Record<string, string> = {
-  shade_cocoa: '#1f8a70',
-  shade_coffee: '#2d9d78',
-  alley_cropping: '#4a905d',
-  dehesa: '#827b3d',
-  silvopasture: '#918242',
-  parkland: '#5e8c61',
-  homegarden: '#3a7d44',
-  boundary_planting: '#2a6f3b',
-  default: '#10b981',
+  shade_cocoa: '#1f8a70', // teal-green
+  shade_coffee: '#9c6b3c', // coffee brown
+  dehesa: '#e0a91e', // amber
+  montado: '#cf6a1a', // burnt orange
+  silvopasture: '#3f7fc4', // blue
+  alley_cropping: '#8db600', // yellow-green
+  parkland: '#7c6fc4', // periwinkle
+  homegarden: '#d6478c', // magenta
+  forest_farming: '#3aa655', // green
+  woodlot: '#9a4fb0', // purple
+  boundary_planting: '#cf3d3d', // red
+  default: '#7b8794',
 };
+
+export const AGROFORESTRY_SUBTYPE_LABELS: Record<string, string> = {
+  shade_cocoa: 'Shade cocoa',
+  shade_coffee: 'Shade coffee',
+  dehesa: 'Dehesa',
+  montado: 'Montado',
+  silvopasture: 'Silvopasture',
+  alley_cropping: 'Alley cropping',
+  parkland: 'Parkland',
+  homegarden: 'Homegarden',
+  forest_farming: 'Forest farming',
+  woodlot: 'Woodlot',
+  boundary_planting: 'Boundary planting',
+};
+
+// Validation is encoded as a secondary channel (outline + opacity), never by
+// replacing the subtype hue — so "validated homegarden" and "validated shade
+// cocoa" stay tellable apart (Gestalt "figure–ground" without breaking
+// "similarity").
+export const VALIDATED_OUTLINE = '#0b1220';
+export const UNVALIDATED_OUTLINE = '#cbd5e1';
+export const REVIEWED_STATUSES = ['community_validated', 'expert_reviewed', 'final'];
+
+export function isReviewedStatus(status?: string | null): boolean {
+  return !!status && REVIEWED_STATUSES.includes(status);
+}
+
+export function subtypeColor(subtype?: string | null): string {
+  return (subtype && AGROFORESTRY_SUBTYPE_COLORS[subtype]) || AGROFORESTRY_SUBTYPE_COLORS.default;
+}
+
+export function subtypeLabel(subtype?: string | null): string {
+  if (!subtype) return 'Unknown';
+  return AGROFORESTRY_SUBTYPE_LABELS[subtype] || subtype.replace(/_/g, ' ');
+}
 

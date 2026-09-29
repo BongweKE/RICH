@@ -55,19 +55,20 @@ INSTITUTIONAL_NAME = re.compile(
     re.IGNORECASE,
 )
 
+# Must mirror AGROFORESTRY_SUBTYPE_COLORS in frontend/src/types/index.ts.
 SUBTYPE_COLORS = {
     "shade_cocoa": "#1f8a70",
-    "shade_coffee": "#2d9d78",
-    "alley_cropping": "#4a905d",
-    "dehesa": "#827b3d",
-    "montado": "#8a7a36",
-    "silvopasture": "#918242",
-    "parkland": "#5e8c61",
-    "homegarden": "#3a7d44",
-    "forest_farming": "#52b788",
-    "woodlot": "#756bb1",
-    "boundary_planting": "#2a6f3b",
-    "default": "#10b981",
+    "shade_coffee": "#9c6b3c",
+    "alley_cropping": "#8db600",
+    "dehesa": "#e0a91e",
+    "montado": "#cf6a1a",
+    "silvopasture": "#3f7fc4",
+    "parkland": "#7c6fc4",
+    "homegarden": "#d6478c",
+    "forest_farming": "#3aa655",
+    "woodlot": "#9a4fb0",
+    "boundary_planting": "#cf3d3d",
+    "default": "#7b8794",
 }
 
 # Secondary subtypes that are agronomically plausible for each landscape, used
@@ -127,10 +128,9 @@ def enrich_parcels() -> int:
         # Widen regional subtype variety for a stable subset of parcels.
         pool = SECONDARY_SUBTYPES.get(jcode, [])
         if pool and stable_int(pid + "::st", 100) < 18:
-            pick = pool[stable_int(pid + "::pool", len(pool))]
-            if pick != p.get("agroforestry_subtype"):
-                p["agroforestry_subtype"] = pick
-                p["subtype_color"] = SUBTYPE_COLORS.get(pick, SUBTYPE_COLORS["default"])
+            p["agroforestry_subtype"] = pool[stable_int(pid + "::pool", len(pool))]
+        # Keep the stored colour in lock-step with the canonical palette.
+        p["subtype_color"] = SUBTYPE_COLORS.get(p.get("agroforestry_subtype", ""), SUBTYPE_COLORS["default"])
 
         status, vid, when, note = validation_for(pid)
         p["validation_status"] = status

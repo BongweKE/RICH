@@ -5,7 +5,9 @@ import {
   LayerState,
   LayerOpacityState,
   TourWaypoint,
-  AGROFORESTRY_SUBTYPE_COLORS,
+  subtypeColor as subtypeHex,
+  subtypeLabel,
+  isReviewedStatus,
 } from '../types';
 import referencePointsData from '../data/referencePoints.json';
 
@@ -188,8 +190,23 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     ];
   };
   const getParcelLineColorExpression = () => {
-    return ['case', ['boolean', ['get', 'selected'], false], '#ffffff', ['coalesce', ['get', 'subtype_color'], '#34d399']];
+    return [
+      'case',
+      ['boolean', ['get', 'selected'], false],
+      '#38bdf8',
+      ['boolean', ['get', 'validated'], false],
+      '#f1f5f9',
+      ['coalesce', ['get', 'subtype_color'], '#94a3b8'],
+    ];
   };
+  const parcelLineWidthExpression = () => [
+    'case',
+    ['boolean', ['get', 'selected'], false],
+    3,
+    ['boolean', ['get', 'validated'], false],
+    1.6,
+    0.8,
+  ];
 
   // Initialize MapLibre GL
   useEffect(() => {
@@ -418,11 +435,13 @@ export const MapViewer: React.FC<MapViewerProps> = ({
             .filter((p) => p.geometry && p.geometry.coordinates)
             .map((p) => {
               const isSelected = selectedParcel?.id === p.id;
-              const subtype = p.agroforestry_subtype || '';
-              const subtypeColor =
-                p.subtype_color || AGROFORESTRY_SUBTYPE_COLORS[subtype] || AGROFORESTRY_SUBTYPE_COLORS.default;
+              const reviewed = isReviewedStatus(p.validation_status);
+              const color = subtypeHex(p.agroforestry_subtype);
               const baseHeight = p.height ?? Math.max(8.0, (p.confidence_score || 0.8) * 45);
-              const height = isSelected ? baseHeight + 12.0 : baseHeight;
+              // Validated parcels read as solid figures; unvalidated model labels
+              // recede — the subtype hue is never replaced by the status.
+              const height = isSelected ? baseHeight + 12.0 : baseHeight * (reviewed ? 1 : 0.6);
+              const layerFrac = opacities.agroforestryParcels / 100;
               return {
                 type: 'Feature',
                 properties: {
@@ -433,7 +452,9 @@ export const MapViewer: React.FC<MapViewerProps> = ({
                   area_ha: p.area_ha || 15.0,
                   height: height,
                   selected: isSelected,
-                  subtype_color: subtypeColor,
+                  validated: reviewed,
+                  subtype_color: color,
+                  fill_opacity: reviewed ? layerFrac : layerFrac * 0.4,
                   opacity: opacities.agroforestryParcels,
                 },
                 geometry: p.geometry,
@@ -444,7 +465,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
         const existingSource = map.getSource('parcels-source');
         if (existingSource && existingSource.setData) {
           existingSource.setData(geojson);
-        } else if (map.isStyleLoaded()) {
+        } else if (map.isStyleLoaded() || mapLoaded) {
           map.addSource('parcels-source', {
             type: 'geojson',
             data: geojson,
@@ -460,7 +481,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
             },
             paint: {
               'fill-color': getParcelColorExpression(),
-              'fill-opacity': ['/', ['get', 'opacity'], 100],
+              'fill-opacity': ['get', 'fill_opacity'],
             },
           });
 
@@ -476,7 +497,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
               'fill-extrusion-color': getParcelColorExpression(),
               'fill-extrusion-height': ['get', 'height'],
               'fill-extrusion-base': 0,
-              'fill-extrusion-opacity': ['/', opacities.agroforestryParcels, 100],
+              'fill-extrusion-opacity': opacities.agroforestryParcels / 100,
               'fill-extrusion-vertical-gradient': true,
             },
           });
@@ -491,7 +512,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
             },
             paint: {
               'line-color': getParcelLineColorExpression(),
-              'line-width': ['case', ['boolean', ['get', 'selected'], false], 3, 2],
+              'line-width': parcelLineWidthExpression(),
               'line-opacity': ['/', opacities.agroforestryParcels, 100],
             },
           });
@@ -514,7 +535,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
         // Toggle layer visibility and update responsive opacity
         if (map.getLayer('parcels-fill')) {
           map.setLayoutProperty('parcels-fill', 'visibility', layers.agroforestryParcels && !is3DMode ? 'visible' : 'none');
-          map.setPaintProperty('parcels-fill', 'fill-opacity', opacities.agroforestryParcels / 100);
+          map.setPaintProperty('parcels-fill', 'fill-opacity', ['get', 'fill_opacity']);
           map.setPaintProperty('parcels-fill', 'fill-color', getParcelColorExpression());
         }
         if (map.getLayer('parcels-3d-extrusion')) {
@@ -526,13 +547,14 @@ export const MapViewer: React.FC<MapViewerProps> = ({
           map.setLayoutProperty('parcels-line', 'visibility', layers.agroforestryParcels ? 'visible' : 'none');
           map.setPaintProperty('parcels-line', 'line-opacity', opacities.agroforestryParcels / 100);
           map.setPaintProperty('parcels-line', 'line-color', getParcelLineColorExpression());
+          map.setPaintProperty('parcels-line', 'line-width', parcelLineWidthExpression());
         }
       } catch (err) {
         console.warn('Parcel sync notice:', err);
       }
     };
 
-    if (map.isStyleLoaded()) {
+    if (map.isStyleLoaded() || mapLoaded) {
       syncParcels();
     } else {
       map.once('load', syncParcels);
@@ -576,10 +598,26 @@ export const MapViewer: React.FC<MapViewerProps> = ({
         const existingSource = map.getSource('reference-points-source');
         if (existingSource && existingSource.setData) {
           existingSource.setData(geojson);
-        } else if (map.isStyleLoaded()) {
+        } else if (map.isStyleLoaded() || mapLoaded) {
           map.addSource('reference-points-source', {
             type: 'geojson',
             data: geojson,
+          });
+
+          // Invisible, generous hit target so small points of interest are easy
+          // to tap or click (Fitts's law) without visually enlarging the marker.
+          map.addLayer({
+            id: 'reference-points-hit',
+            type: 'circle',
+            source: 'reference-points-source',
+            layout: {
+              visibility: layers.referencePoints ? 'visible' : 'none',
+            },
+            paint: {
+              'circle-radius': 16,
+              'circle-color': '#000000',
+              'circle-opacity': 0,
+            },
           });
 
           map.addLayer({
@@ -590,9 +628,9 @@ export const MapViewer: React.FC<MapViewerProps> = ({
               visibility: layers.referencePoints ? 'visible' : 'none',
             },
             paint: {
-              'circle-radius': ['interpolate', ['linear'], ['zoom'], 6, 5, 12, 9, 16, 14],
+              'circle-radius': ['interpolate', ['linear'], ['zoom'], 6, 6, 12, 10, 16, 15],
               'circle-color': '#f59e0b',
-              'circle-stroke-width': 2,
+              'circle-stroke-width': 2.5,
               'circle-stroke-color': '#ffffff',
               'circle-opacity': opacities.referencePoints / 100,
             },
@@ -619,24 +657,34 @@ export const MapViewer: React.FC<MapViewerProps> = ({
             },
           });
 
-          map.on('click', 'reference-points-circle', (e: any) => {
-            if (e.features && e.features[0]) {
-              const props = e.features[0].properties;
-              new maplibregl.Popup({ offset: 12, className: 'rich-map-popup' })
-                .setLngLat(e.lngLat)
-                .setHTML(
-                  `<div style="font-family: ui-sans-serif, system-ui, sans-serif; padding: 6px; color: #0f172a; max-width: 260px;">
-                    <div style="font-size: 10px; font-weight: 800; color: #d97706; text-transform: uppercase; letter-spacing: 0.05em;">Reference point &middot; synthetic demo</div>
-                    <div style="font-size: 12px; font-weight: 700; margin: 3px 0; color: #020617;">${props.name}</div>
-                    <div style="font-size: 11px; color: #334155; margin-top: 2px;">Validation: <span style="color: #059669; font-weight: 600;">${props.validation_status}${props.quality_score != null ? ` (${Math.round(props.quality_score * 100)}%)` : ''}</span></div>
-                    <div style="font-size: 11px; color: #334155;">Canopy Cover: <b>${props.canopy_cover_pct != null ? `${props.canopy_cover_pct}%` : '—'}</b></div>
-                    <div style="font-size: 10px; color: #92400e; background:#fef3c7; border:1px solid #fcd34d; border-radius:6px; padding:4px 6px; margin-top:6px;">Synthetic PoC demo data — validation decisions are illustrative, not field validation.</div>
-                    <div style="font-size: 10px; color: #64748b; margin-top: 4px; border-top: 1px solid #e2e8f0;">Source: ${props.source}</div>
-                  </div>`
-                )
-                .addTo(map);
-            }
-          });
+          // Click (or tap) opens a provenance tooltip for the point of interest.
+          const openPointOfInterest = (e: any) => {
+            if (!e.features || !e.features[0]) return;
+            const props = e.features[0].properties;
+            const reviewed = isReviewedStatus(props.validation_status);
+            const typeLabel = props.subtype ? subtypeLabel(props.subtype) : 'ground reference';
+            new maplibregl.Popup({ offset: 14, className: 'rich-map-popup', maxWidth: '280px' })
+              .setLngLat(e.lngLat)
+              .setHTML(
+                `<div style="font-family: ui-sans-serif, system-ui, sans-serif; padding: 8px; color: #0f172a;">
+                  <div style="font-size: 10px; font-weight: 800; color: #1d4ed8; text-transform: uppercase; letter-spacing: 0.05em;">Point of interest</div>
+                  <div style="font-size: 13px; font-weight: 700; margin: 4px 0 2px; color: #020617;">${props.name || 'Ground reference point'}</div>
+                  <div style="font-size: 11px; color: #334155;">type: <b style="text-transform:capitalize">${typeLabel}</b></div>
+                  <div style="font-size: 11px; color: #334155;">canopy cover: <b>${props.canopy_cover_pct != null ? `${props.canopy_cover_pct}%` : '—'}</b></div>
+                  <div style="font-size: 11px; color: #334155;">status: <span style="color:${reviewed ? '#059669' : '#b45309'};font-weight:600;">${props.validation_status || 'unvalidated'}${props.quality_score != null ? ` · ${Math.round(props.quality_score * 100)}% quality` : ''}</span></div>
+                  <div style="font-size: 10px; color: #92400e; background:#fef3c7; border:1px solid #fcd34d; border-radius:6px; padding:4px 6px; margin-top:7px;">Synthetic PoC demo data — validation decisions are illustrative, not field validation.</div>
+                  <div style="font-size: 10px; color: #64748b; margin-top: 5px; border-top: 1px solid #e2e8f0; padding-top: 4px;">Source: ${props.source || 'unknown'}</div>
+                </div>`
+              )
+              .addTo(map);
+          };
+          map.on('click', 'reference-points-hit', openPointOfInterest);
+          map.on('mouseenter', 'reference-points-hit', () => { map.getCanvas().style.cursor = 'pointer'; });
+          map.on('mouseleave', 'reference-points-hit', () => { map.getCanvas().style.cursor = ''; });
+        }
+
+        if (map.getLayer('reference-points-hit')) {
+          map.setLayoutProperty('reference-points-hit', 'visibility', layers.referencePoints ? 'visible' : 'none');
         }
 
         if (map.getLayer('reference-points-circle')) {
@@ -652,7 +700,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
       }
     };
 
-    if (map.isStyleLoaded()) {
+    if (map.isStyleLoaded() || mapLoaded) {
       syncReferencePoints();
     } else {
       map.once('load', syncReferencePoints);
@@ -701,7 +749,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
         const existingSource = map.getSource('alerts-source');
         if (existingSource && existingSource.setData) {
           existingSource.setData(geojson);
-        } else if (map.isStyleLoaded()) {
+        } else if (map.isStyleLoaded() || mapLoaded) {
           map.addSource('alerts-source', {
             type: 'geojson',
             data: geojson,
@@ -770,7 +818,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
       }
     };
 
-    if (map.isStyleLoaded()) {
+    if (map.isStyleLoaded() || mapLoaded) {
       syncDeforestationAlerts();
     } else {
       map.once('load', syncDeforestationAlerts);
@@ -807,7 +855,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
         const existingSource = map.getSource('eudr-baseline-source');
         if (existingSource && existingSource.setData) {
           existingSource.setData(geojson);
-        } else if (map.isStyleLoaded()) {
+        } else if (map.isStyleLoaded() || mapLoaded) {
           map.addSource('eudr-baseline-source', {
             type: 'geojson',
             data: geojson,
@@ -871,7 +919,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
       }
     };
 
-    if (map.isStyleLoaded()) {
+    if (map.isStyleLoaded() || mapLoaded) {
       syncEUDRBaseline();
     } else {
       map.once('load', syncEUDRBaseline);
@@ -917,7 +965,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
         const existingSource = map.getSource('canopy-density-source');
         if (existingSource && existingSource.setData) {
           existingSource.setData(geojson);
-        } else if (map.isStyleLoaded()) {
+        } else if (map.isStyleLoaded() || mapLoaded) {
           map.addSource('canopy-density-source', {
             type: 'geojson',
             data: geojson,
@@ -963,7 +1011,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
       }
     };
 
-    if (map.isStyleLoaded()) {
+    if (map.isStyleLoaded() || mapLoaded) {
       syncCanopyDensity();
     } else {
       map.once('load', syncCanopyDensity);
@@ -1009,7 +1057,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
         const existingSource = map.getSource('carbon-heatmap-source');
         if (existingSource && existingSource.setData) {
           existingSource.setData(geojson);
-        } else if (map.isStyleLoaded()) {
+        } else if (map.isStyleLoaded() || mapLoaded) {
           map.addSource('carbon-heatmap-source', {
             type: 'geojson',
             data: geojson,
@@ -1063,7 +1111,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
       }
     };
 
-    if (map.isStyleLoaded()) {
+    if (map.isStyleLoaded() || mapLoaded) {
       syncCarbonHeatmap();
     } else {
       map.once('load', syncCarbonHeatmap);
@@ -1135,8 +1183,11 @@ export const MapViewer: React.FC<MapViewerProps> = ({
                 }`}
               >
                 <div className="flex items-center space-x-1.5 text-[11px] font-bold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  <span className="capitalize">{p.agroforestry_subtype?.replace('_', ' ') || 'Agroforestry'}</span>
+                  <span
+                    className={`w-2 h-2 rounded-full ${isReviewedStatus(p.validation_status) ? 'ring-2 ring-white/80' : 'opacity-60'}`}
+                    style={{ backgroundColor: subtypeHex(p.agroforestry_subtype) }}
+                  />
+                  <span className="capitalize">{subtypeLabel(p.agroforestry_subtype).toLowerCase()}</span>
                 </div>
                 <div className="text-[9px] text-slate-400">
                   {p.area_ha?.toFixed(1) || '15'} ha • {Math.round(p.confidence_score * 100)}% conf

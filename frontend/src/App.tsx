@@ -10,7 +10,7 @@ import { TacticalHUD } from './components/TacticalHUD';
 import { SceneDirector } from './components/SceneDirector';
 import { TemporalScrubber } from './components/TemporalScrubber';
 import { PlotInboxDrawer } from './components/PlotInboxDrawer';
-import { Jurisdiction, Parcel, LayerState, LayerOpacityState, TourWaypoint, AGROFORESTRY_SUBTYPE_COLORS } from './types';
+import { Jurisdiction, Parcel, LayerState, LayerOpacityState, TourWaypoint, AGROFORESTRY_SUBTYPE_COLORS, subtypeColor, subtypeLabel } from './types';
 import { api } from './services/api';
 
 import allParcelsData from './data/allParcels.json';
@@ -421,27 +421,69 @@ export function App() {
           />
           {/* Impact Summary Card */}
           <div className="shrink-0 bg-slate-950/90 backdrop-blur-md border border-slate-800 rounded-xl shadow-2xl p-3 text-xs font-sans">
-          <h2 className="text-slate-100 font-semibold text-[13px] mb-2">Impact summary</h2>
-          <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
-            <span className="text-slate-400">Parcels mapped</span>
-            <span className="text-right text-slate-100 tabular-nums">{impactSummary.parcels}</span>
-            <span className="text-slate-400">Human-validated (demo)</span>
-            <span className="text-right text-emerald-300 tabular-nums">{impactSummary.validated}</span>
-            <span className="text-slate-400">Total area</span>
-            <span className="text-right text-slate-100 tabular-nums">{impactSummary.totalHa.toLocaleString()} ha</span>
+          <div className="flex items-baseline justify-between mb-2">
+            <h2 className="text-slate-100 font-semibold text-[13px]">Impact summary</h2>
+            <span className="text-[10px] text-slate-500 tabular-nums">
+              {impactSummary.parcels} parcels · {impactSummary.totalHa.toLocaleString()} ha
+            </span>
           </div>
+
+          {/* Review progress: validated vs model-labelled, length-encoded. */}
+          <div className="mb-3">
+            <div className="flex justify-between text-[10px] text-slate-400 mb-1">
+              <span>Review progress</span>
+              <span className="tabular-nums">
+                {impactSummary.validated}/{impactSummary.parcels} validated
+              </span>
+            </div>
+            <div className="h-2 w-full rounded-full bg-slate-800 overflow-hidden">
+              <div
+                className="h-full bg-emerald-500"
+                style={{
+                  width: `${Math.round((impactSummary.validated / Math.max(1, impactSummary.parcels)) * 100)}%`,
+                }}
+              />
+            </div>
+            <div className="mt-1 flex items-center gap-3 text-[10px] text-slate-400">
+              <span className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-sm bg-emerald-500" /> Validated {impactSummary.validated}
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-sm bg-slate-600" /> Model label{' '}
+                {impactSummary.parcels - impactSummary.validated}
+              </span>
+            </div>
+          </div>
+
           {impactSummary.subtypes.length > 0 && (
-            <div className="mt-2 pt-2 border-t border-slate-800">
-              <div className="text-slate-400 text-[10px] uppercase tracking-wide mb-1">Agroforestry types</div>
-              <div className="flex flex-wrap gap-1">
-                {impactSummary.subtypes.slice(0, 6).map(([k, n]) => (
-                  <span key={k} className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-300 text-[10px] capitalize">
-                    {k.replace(/_/g, ' ')} <span className="text-slate-500 tabular-nums">{n}</span>
-                  </span>
-                ))}
+            <div className="border-t border-slate-800 pt-2">
+              <div className="text-slate-400 text-[10px] uppercase tracking-wide mb-1.5">
+                Agroforestry types
               </div>
+              <ul className="space-y-1.5">
+                {impactSummary.subtypes.slice(0, 8).map(([k, n]) => {
+                  const max = impactSummary.subtypes[0][1] || 1;
+                  return (
+                    <li key={k} className="flex items-center gap-2">
+                      <span
+                        className="inline-block w-2.5 h-2.5 rounded-sm shrink-0"
+                        style={{ backgroundColor: subtypeColor(k) }}
+                      />
+                      <span className="flex-1 truncate text-slate-300">{subtypeLabel(k)}</span>
+                      <span className="w-12 h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                        <span
+                          className="block h-full"
+                          style={{ width: `${Math.round((n / max) * 100)}%`, backgroundColor: subtypeColor(k) }}
+                        />
+                      </span>
+                      <span className="w-7 text-right text-slate-400 tabular-nums">{n}</span>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           )}
+
           <p className="mt-2 pt-2 border-t border-slate-800 text-[10px] text-slate-500">
             All data is synthetic demo content — validation decisions are illustrative, not field validation.
           </p>
