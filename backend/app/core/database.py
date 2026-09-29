@@ -52,6 +52,7 @@ async def init_db():
     except Exception as e:
         logging.getLogger(__name__).warning(f"Database initialization deferred (database connection not ready: {e})")
     # Reconcile pre-existing tables with ORM columns added after their creation (ADR 0003)
+    from app.core.demo_datapoint_seed import seed_demo_datapoints
     from app.core.demo_validation_seed import seed_demo_validations
     from app.core.provenance_backfill import backfill_provenance
     from app.core.schema_migrations import reconcile_schema
@@ -59,6 +60,7 @@ async def init_db():
     await reconcile_schema(engine)
     await backfill_provenance(engine)
     await seed_demo_validations(engine)
+    await seed_demo_datapoints(engine)
 
 
 async def close_db():

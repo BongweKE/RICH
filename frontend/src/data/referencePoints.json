@@ -1,12 +1,12 @@
 [
   {
     "id": "ref-gh-1",
-    "name": "CIFOR-ICRAF Agroforestry Station Kumasi",
+    "name": "Synthetic reference site GH-AH #305",
     "jurisdiction_code": "GH-AH",
     "class_label": "agroforestry",
     "agroforestry_subtype": "shade_cocoa",
-    "validation_status": "unvalidated",
-    "quality_score": null,
+    "validation_status": "community_validated",
+    "quality_score": 0.56,
     "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 84.5,
     "geometry": {
@@ -18,7 +18,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": "00000000-0000-4000-8000-0000000000c0",
+    "validation_date": "2025-09-02T00:00:00+00:00",
+    "validation_notes": "Synthetic demo decision (community review tier) seeded for PoC \u2014 not field validation"
   },
   {
     "id": "ref-gh-2",
@@ -26,9 +29,9 @@
     "jurisdiction_code": "GH-AH",
     "class_label": "agroforestry",
     "agroforestry_subtype": "shade_cocoa",
-    "validation_status": "unvalidated",
-    "quality_score": null,
-    "source": "Synthetic PoC generator (illustrative)",
+    "validation_status": "community_validated",
+    "quality_score": 0.86,
+    "source": "Synthetic extension survey sample",
     "canopy_cover_pct": 79.2,
     "geometry": {
       "type": "Point",
@@ -39,7 +42,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": "00000000-0000-4000-8000-0000000000c0",
+    "validation_date": "2025-09-20T00:00:00+00:00",
+    "validation_notes": "Synthetic demo decision (community review tier) seeded for PoC \u2014 not field validation"
   },
   {
     "id": "ref-gh-3",
@@ -47,9 +53,9 @@
     "jurisdiction_code": "GH-AH",
     "class_label": "agroforestry",
     "agroforestry_subtype": "alley_cropping",
-    "validation_status": "unvalidated",
-    "quality_score": null,
-    "source": "Synthetic PoC generator (illustrative)",
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.78,
+    "source": "Synthetic community monitoring sample",
     "canopy_cover_pct": 72.0,
     "geometry": {
       "type": "Point",
@@ -60,7 +66,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-04-03T00:00:00+00:00",
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
   },
   {
     "id": "ref-gh-4",
@@ -70,7 +79,7 @@
     "agroforestry_subtype": "riparian_buffer",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Synthetic PoC generator (illustrative)",
+    "source": "Synthetic open-data sample",
     "canopy_cover_pct": 88.0,
     "geometry": {
       "type": "Point",
@@ -81,7 +90,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": null,
+    "validation_date": null,
+    "validation_notes": null
   },
   {
     "id": "ref-gh-5",
@@ -102,7 +114,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": null,
+    "validation_date": null,
+    "validation_notes": null
   },
   {
     "id": "ref-gh-6",
@@ -110,9 +125,9 @@
     "jurisdiction_code": "GH-AH",
     "class_label": "agroforestry",
     "agroforestry_subtype": "forest_buffer",
-    "validation_status": "unvalidated",
-    "quality_score": null,
-    "source": "Synthetic PoC generator (illustrative)",
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.86,
+    "source": "Synthetic community monitoring sample",
     "canopy_cover_pct": 91.4,
     "geometry": {
       "type": "Point",
@@ -123,7 +138,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-02-11T00:00:00+00:00",
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
   },
   {
     "id": "ref-gh-7",
@@ -133,7 +151,7 @@
     "agroforestry_subtype": "alley_cropping",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Synthetic PoC generator (illustrative)",
+    "source": "Synthetic extension survey sample",
     "canopy_cover_pct": 69.5,
     "geometry": {
       "type": "Point",
@@ -144,7 +162,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": null,
+    "validation_date": null,
+    "validation_notes": null
   },
   {
     "id": "ref-gh-8",
@@ -154,7 +175,7 @@
     "agroforestry_subtype": "parkland",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Synthetic PoC generator (illustrative)",
+    "source": "Synthetic open-data sample",
     "canopy_cover_pct": 58.2,
     "geometry": {
       "type": "Point",
@@ -165,17 +186,20 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": null,
+    "validation_date": null,
+    "validation_notes": null
   },
   {
     "id": "ref-es-1",
-    "name": "CSIC Dehesa Experimental Station Cáceres",
+    "name": "CSIC Dehesa Experimental Station C\u00e1ceres",
     "jurisdiction_code": "ES-EX",
     "class_label": "agroforestry",
     "agroforestry_subtype": "dehesa",
-    "validation_status": "unvalidated",
-    "quality_score": null,
-    "source": "Synthetic PoC generator (illustrative)",
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.59,
+    "source": "Synthetic extension survey sample",
     "canopy_cover_pct": 48.5,
     "geometry": {
       "type": "Point",
@@ -186,16 +210,19 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-09-03T00:00:00+00:00",
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
   },
   {
     "id": "ref-es-2",
-    "name": "CICYTEX Agroforestry Research Plot Mérida",
+    "name": "CICYTEX Agroforestry Research Plot M\u00e9rida",
     "jurisdiction_code": "ES-EX",
     "class_label": "agroforestry",
     "agroforestry_subtype": "dehesa",
-    "validation_status": "unvalidated",
-    "quality_score": null,
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.56,
     "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 42.0,
     "geometry": {
@@ -207,16 +234,19 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-04-28T00:00:00+00:00",
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
   },
   {
     "id": "ref-es-3",
-    "name": "Monfragüe Biosphere Oak Canopy Observatory",
+    "name": "Monfrag\u00fce Biosphere Oak Canopy Observatory",
     "jurisdiction_code": "ES-EX",
     "class_label": "agroforestry",
     "agroforestry_subtype": "montado",
-    "validation_status": "unvalidated",
-    "quality_score": null,
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.92,
     "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 56.0,
     "geometry": {
@@ -228,7 +258,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-01-04T00:00:00+00:00",
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
   },
   {
     "id": "ref-es-4",
@@ -236,8 +269,8 @@
     "jurisdiction_code": "ES-EX",
     "class_label": "agroforestry",
     "agroforestry_subtype": "montado",
-    "validation_status": "unvalidated",
-    "quality_score": null,
+    "validation_status": "community_validated",
+    "quality_score": 0.88,
     "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 52.3,
     "geometry": {
@@ -249,7 +282,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": "00000000-0000-4000-8000-0000000000c0",
+    "validation_date": "2025-08-17T00:00:00+00:00",
+    "validation_notes": "Synthetic demo decision (community review tier) seeded for PoC \u2014 not field validation"
   },
   {
     "id": "ref-es-5",
@@ -257,9 +293,9 @@
     "jurisdiction_code": "ES-EX",
     "class_label": "agroforestry",
     "agroforestry_subtype": "silvopasture",
-    "validation_status": "unvalidated",
-    "quality_score": null,
-    "source": "Synthetic PoC generator (illustrative)",
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.65,
+    "source": "Synthetic extension survey sample",
     "canopy_cover_pct": 39.8,
     "geometry": {
       "type": "Point",
@@ -270,7 +306,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-09-07T00:00:00+00:00",
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
   },
   {
     "id": "ref-es-6",
@@ -291,7 +330,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": null,
+    "validation_date": null,
+    "validation_notes": null
   },
   {
     "id": "ref-es-7",
@@ -299,9 +341,9 @@
     "jurisdiction_code": "ES-EX",
     "class_label": "agroforestry",
     "agroforestry_subtype": "dehesa",
-    "validation_status": "unvalidated",
-    "quality_score": null,
-    "source": "Synthetic PoC generator (illustrative)",
+    "validation_status": "community_validated",
+    "quality_score": 0.74,
+    "source": "Synthetic open-data sample",
     "canopy_cover_pct": 51.2,
     "geometry": {
       "type": "Point",
@@ -312,7 +354,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": "00000000-0000-4000-8000-0000000000c0",
+    "validation_date": "2025-05-21T00:00:00+00:00",
+    "validation_notes": "Synthetic demo decision (community review tier) seeded for PoC \u2014 not field validation"
   },
   {
     "id": "ref-et-1",
@@ -320,9 +365,9 @@
     "jurisdiction_code": "ET-OR",
     "class_label": "agroforestry",
     "agroforestry_subtype": "shade_coffee",
-    "validation_status": "unvalidated",
-    "quality_score": null,
-    "source": "Synthetic PoC generator (illustrative)",
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.77,
+    "source": "Synthetic community monitoring sample",
     "canopy_cover_pct": 88.5,
     "geometry": {
       "type": "Point",
@@ -333,7 +378,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-06-15T00:00:00+00:00",
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
   },
   {
     "id": "ref-et-2",
@@ -343,7 +391,7 @@
     "agroforestry_subtype": "forest_farming",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Synthetic PoC generator (illustrative)",
+    "source": "Synthetic extension survey sample",
     "canopy_cover_pct": 92.0,
     "geometry": {
       "type": "Point",
@@ -354,7 +402,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": null,
+    "validation_date": null,
+    "validation_notes": null
   },
   {
     "id": "ref-et-3",
@@ -362,9 +413,9 @@
     "jurisdiction_code": "ET-OR",
     "class_label": "agroforestry",
     "agroforestry_subtype": "shade_coffee",
-    "validation_status": "unvalidated",
-    "quality_score": null,
-    "source": "Synthetic PoC generator (illustrative)",
+    "validation_status": "community_validated",
+    "quality_score": 0.89,
+    "source": "Synthetic extension survey sample",
     "canopy_cover_pct": 84.0,
     "geometry": {
       "type": "Point",
@@ -375,7 +426,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": "00000000-0000-4000-8000-0000000000c0",
+    "validation_date": "2025-08-18T00:00:00+00:00",
+    "validation_notes": "Synthetic demo decision (community review tier) seeded for PoC \u2014 not field validation"
   },
   {
     "id": "ref-et-4",
@@ -396,7 +450,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": null,
+    "validation_date": null,
+    "validation_notes": null
   },
   {
     "id": "ref-et-5",
@@ -404,9 +461,9 @@
     "jurisdiction_code": "ET-OR",
     "class_label": "agroforestry",
     "agroforestry_subtype": "forest_farming",
-    "validation_status": "unvalidated",
-    "quality_score": null,
-    "source": "Synthetic PoC generator (illustrative)",
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.97,
+    "source": "Synthetic open-data sample",
     "canopy_cover_pct": 79.5,
     "geometry": {
       "type": "Point",
@@ -417,7 +474,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-05-06T00:00:00+00:00",
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
   },
   {
     "id": "ref-et-6",
@@ -427,7 +487,7 @@
     "agroforestry_subtype": "shade_coffee",
     "validation_status": "unvalidated",
     "quality_score": null,
-    "source": "Synthetic PoC generator (illustrative)",
+    "source": "Synthetic extension survey sample",
     "canopy_cover_pct": 86.4,
     "geometry": {
       "type": "Point",
@@ -438,7 +498,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": null,
+    "validation_date": null,
+    "validation_notes": null
   },
   {
     "id": "ref-et-7",
@@ -446,8 +509,8 @@
     "jurisdiction_code": "ET-OR",
     "class_label": "agroforestry",
     "agroforestry_subtype": "shade_coffee",
-    "validation_status": "unvalidated",
-    "quality_score": null,
+    "validation_status": "community_validated",
+    "quality_score": 0.81,
     "source": "Synthetic PoC generator (illustrative)",
     "canopy_cover_pct": 82.7,
     "geometry": {
@@ -459,7 +522,10 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": "00000000-0000-4000-8000-0000000000c0",
+    "validation_date": "2025-06-30T00:00:00+00:00",
+    "validation_notes": "Synthetic demo decision (community review tier) seeded for PoC \u2014 not field validation"
   },
   {
     "id": "ref-et-8",
@@ -467,9 +533,9 @@
     "jurisdiction_code": "ET-OR",
     "class_label": "agroforestry",
     "agroforestry_subtype": "shade_coffee",
-    "validation_status": "unvalidated",
-    "quality_score": null,
-    "source": "Synthetic PoC generator (illustrative)",
+    "validation_status": "expert_reviewed",
+    "quality_score": 0.67,
+    "source": "Synthetic open-data sample",
     "canopy_cover_pct": 87.1,
     "geometry": {
       "type": "Point",
@@ -480,6 +546,897 @@
     },
     "data_origin": "synthetic",
     "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
-    "source_url": null
+    "source_url": null,
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-08-05T00:00:00+00:00",
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
+  },
+  {
+    "id": "ref-gh-1-x1",
+    "name": "Synthetic reference site GH-AH #1",
+    "jurisdiction_code": "GH-AH",
+    "class_label": "cropland",
+    "agroforestry_subtype": "homegarden",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic community monitoring sample",
+    "canopy_cover_pct": 71.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.652797,
+        6.728331
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-gh-2-x2",
+    "name": "Synthetic reference site GH-AH #2",
+    "jurisdiction_code": "GH-AH",
+    "class_label": "forest",
+    "agroforestry_subtype": "shade_coffee",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic extension survey sample",
+    "canopy_cover_pct": 54.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.511493,
+        6.781792
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-gh-3-x3",
+    "name": "Synthetic reference site GH-AH #3",
+    "jurisdiction_code": "GH-AH",
+    "class_label": "forest",
+    "agroforestry_subtype": "parkland",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic community monitoring sample",
+    "canopy_cover_pct": 61.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.633374,
+        6.802762
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-gh-4-x4",
+    "name": "Synthetic reference site GH-AH #4",
+    "jurisdiction_code": "GH-AH",
+    "class_label": "cropland",
+    "agroforestry_subtype": "parkland",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic extension survey sample",
+    "canopy_cover_pct": 59.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.722854,
+        6.589687
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-gh-5-x5",
+    "name": "Synthetic reference site GH-AH #5",
+    "jurisdiction_code": "GH-AH",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "shade_coffee",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic open-data sample",
+    "canopy_cover_pct": 85.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.536576,
+        6.440268
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-gh-6-x6",
+    "name": "Synthetic reference site GH-AH #6",
+    "jurisdiction_code": "GH-AH",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "parkland",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic PoC generator (illustrative)",
+    "canopy_cover_pct": 80.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.347888,
+        6.712246
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-gh-7-x7",
+    "name": "Synthetic reference site GH-AH #7",
+    "jurisdiction_code": "GH-AH",
+    "class_label": "grassland",
+    "agroforestry_subtype": "woodlot",
+    "validation_status": "expert_reviewed",
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-03-31T00:00:00+00:00",
+    "quality_score": 0.75,
+    "source": "Synthetic extension survey sample",
+    "canopy_cover_pct": 77.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.49894,
+        6.754492
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
+  },
+  {
+    "id": "ref-gh-8-x8",
+    "name": "Synthetic reference site GH-AH #8",
+    "jurisdiction_code": "GH-AH",
+    "class_label": "grassland",
+    "agroforestry_subtype": "woodlot",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic extension survey sample",
+    "canopy_cover_pct": 39.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.40757,
+        7.328487
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-gh-1-x9",
+    "name": "Synthetic reference site GH-AH #9",
+    "jurisdiction_code": "GH-AH",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "woodlot",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic PoC generator (illustrative)",
+    "canopy_cover_pct": 43.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.650415,
+        6.7244
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-gh-2-x10",
+    "name": "Synthetic reference site GH-AH #10",
+    "jurisdiction_code": "GH-AH",
+    "class_label": "forest",
+    "agroforestry_subtype": "homegarden",
+    "validation_status": "community_validated",
+    "validator_id": "00000000-0000-4000-8000-0000000000c0",
+    "validation_date": "2025-10-14T00:00:00+00:00",
+    "quality_score": 0.76,
+    "source": "Synthetic community monitoring sample",
+    "canopy_cover_pct": 52.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.544184,
+        6.742454
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": "Synthetic demo decision (community review tier) seeded for PoC \u2014 not field validation"
+  },
+  {
+    "id": "ref-gh-3-x11",
+    "name": "Synthetic reference site GH-AH #11",
+    "jurisdiction_code": "GH-AH",
+    "class_label": "grassland",
+    "agroforestry_subtype": "parkland",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic open-data sample",
+    "canopy_cover_pct": 90.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.568418,
+        6.676751
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-gh-4-x12",
+    "name": "Synthetic reference site GH-AH #12",
+    "jurisdiction_code": "GH-AH",
+    "class_label": "cropland",
+    "agroforestry_subtype": "parkland",
+    "validation_status": "expert_reviewed",
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-01-12T00:00:00+00:00",
+    "quality_score": 0.87,
+    "source": "Synthetic community monitoring sample",
+    "canopy_cover_pct": 87.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.772519,
+        6.538672
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
+  },
+  {
+    "id": "ref-es-1-x1",
+    "name": "Synthetic reference site ES-EX #1",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "cropland",
+    "agroforestry_subtype": "alley_cropping",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic open-data sample",
+    "canopy_cover_pct": 83.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -6.303836,
+        39.484176
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-es-2-x2",
+    "name": "Synthetic reference site ES-EX #2",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "cropland",
+    "agroforestry_subtype": "dehesa",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic community monitoring sample",
+    "canopy_cover_pct": 80.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -6.24062,
+        38.972604
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-es-3-x3",
+    "name": "Synthetic reference site ES-EX #3",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "grassland",
+    "agroforestry_subtype": "alley_cropping",
+    "validation_status": "expert_reviewed",
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-08-14T00:00:00+00:00",
+    "quality_score": 0.86,
+    "source": "Synthetic community monitoring sample",
+    "canopy_cover_pct": 53.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -6.013477,
+        39.748285
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
+  },
+  {
+    "id": "ref-es-4-x4",
+    "name": "Synthetic reference site ES-EX #4",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "forest",
+    "agroforestry_subtype": "parkland",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic open-data sample",
+    "canopy_cover_pct": 95.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -6.794518,
+        39.297147
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-es-5-x5",
+    "name": "Synthetic reference site ES-EX #5",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "cropland",
+    "agroforestry_subtype": "silvopasture",
+    "validation_status": "expert_reviewed",
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-09-26T00:00:00+00:00",
+    "quality_score": 0.66,
+    "source": "Synthetic extension survey sample",
+    "canopy_cover_pct": 41.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -6.356283,
+        38.384698
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
+  },
+  {
+    "id": "ref-es-6-x6",
+    "name": "Synthetic reference site ES-EX #6",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "grassland",
+    "agroforestry_subtype": "parkland",
+    "validation_status": "expert_reviewed",
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-03-03T00:00:00+00:00",
+    "quality_score": 0.57,
+    "source": "Synthetic PoC generator (illustrative)",
+    "canopy_cover_pct": 85.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -5.830586,
+        39.452942
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
+  },
+  {
+    "id": "ref-es-7-x7",
+    "name": "Synthetic reference site ES-EX #7",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "parkland",
+    "validation_status": "expert_reviewed",
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-02-05T00:00:00+00:00",
+    "quality_score": 0.89,
+    "source": "Synthetic extension survey sample",
+    "canopy_cover_pct": 30.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -6.686493,
+        38.23789
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
+  },
+  {
+    "id": "ref-es-1-x8",
+    "name": "Synthetic reference site ES-EX #8",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "cropland",
+    "agroforestry_subtype": "dehesa",
+    "validation_status": "community_validated",
+    "validator_id": "00000000-0000-4000-8000-0000000000c0",
+    "validation_date": "2025-06-04T00:00:00+00:00",
+    "quality_score": 0.56,
+    "source": "Synthetic PoC generator (illustrative)",
+    "canopy_cover_pct": 63.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -6.264368,
+        39.418378
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": "Synthetic demo decision (community review tier) seeded for PoC \u2014 not field validation"
+  },
+  {
+    "id": "ref-es-2-x9",
+    "name": "Synthetic reference site ES-EX #9",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "grassland",
+    "agroforestry_subtype": "dehesa",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic open-data sample",
+    "canopy_cover_pct": 84.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -6.244258,
+        38.852871
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-es-3-x10",
+    "name": "Synthetic reference site ES-EX #10",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "cropland",
+    "agroforestry_subtype": "silvopasture",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic extension survey sample",
+    "canopy_cover_pct": 45.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -5.966213,
+        39.865665
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-es-4-x11",
+    "name": "Synthetic reference site ES-EX #11",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "cropland",
+    "agroforestry_subtype": "alley_cropping",
+    "validation_status": "expert_reviewed",
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-04-27T00:00:00+00:00",
+    "quality_score": 0.56,
+    "source": "Synthetic PoC generator (illustrative)",
+    "canopy_cover_pct": 84.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -6.934167,
+        39.358291
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
+  },
+  {
+    "id": "ref-es-5-x12",
+    "name": "Synthetic reference site ES-EX #12",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "cropland",
+    "agroforestry_subtype": "alley_cropping",
+    "validation_status": "expert_reviewed",
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-02-07T00:00:00+00:00",
+    "quality_score": 0.66,
+    "source": "Synthetic extension survey sample",
+    "canopy_cover_pct": 77.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -6.369307,
+        38.50666
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
+  },
+  {
+    "id": "ref-es-6-x13",
+    "name": "Synthetic reference site ES-EX #13",
+    "jurisdiction_code": "ES-EX",
+    "class_label": "grassland",
+    "agroforestry_subtype": "silvopasture",
+    "validation_status": "community_validated",
+    "validator_id": "00000000-0000-4000-8000-0000000000c0",
+    "validation_date": "2025-01-02T00:00:00+00:00",
+    "quality_score": 0.81,
+    "source": "Synthetic PoC generator (illustrative)",
+    "canopy_cover_pct": 63.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -5.847639,
+        39.480958
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": "Synthetic demo decision (community review tier) seeded for PoC \u2014 not field validation"
+  },
+  {
+    "id": "ref-et-1-x1",
+    "name": "Synthetic reference site ET-OR #1",
+    "jurisdiction_code": "ET-OR",
+    "class_label": "cropland",
+    "agroforestry_subtype": "parkland",
+    "validation_status": "expert_reviewed",
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-05-07T00:00:00+00:00",
+    "quality_score": 0.62,
+    "source": "Synthetic open-data sample",
+    "canopy_cover_pct": 40.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        36.780625,
+        7.641565
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
+  },
+  {
+    "id": "ref-et-2-x2",
+    "name": "Synthetic reference site ET-OR #2",
+    "jurisdiction_code": "ET-OR",
+    "class_label": "forest",
+    "agroforestry_subtype": "homegarden",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic extension survey sample",
+    "canopy_cover_pct": 94.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        36.04978,
+        8.317043
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-et-3-x3",
+    "name": "Synthetic reference site ET-OR #3",
+    "jurisdiction_code": "ET-OR",
+    "class_label": "cropland",
+    "agroforestry_subtype": "parkland",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic open-data sample",
+    "canopy_cover_pct": 84.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        36.997345,
+        8.125105
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-et-4-x4",
+    "name": "Synthetic reference site ET-OR #4",
+    "jurisdiction_code": "ET-OR",
+    "class_label": "cropland",
+    "agroforestry_subtype": "shade_coffee",
+    "validation_status": "expert_reviewed",
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-06-16T00:00:00+00:00",
+    "quality_score": 0.57,
+    "source": "Synthetic community monitoring sample",
+    "canopy_cover_pct": 62.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        36.256808,
+        7.668798
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
+  },
+  {
+    "id": "ref-et-5-x5",
+    "name": "Synthetic reference site ET-OR #5",
+    "jurisdiction_code": "ET-OR",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "homegarden",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic PoC generator (illustrative)",
+    "canopy_cover_pct": 93.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        36.394377,
+        8.463017
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-et-6-x6",
+    "name": "Synthetic reference site ET-OR #6",
+    "jurisdiction_code": "ET-OR",
+    "class_label": "agroforestry",
+    "agroforestry_subtype": "parkland",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic community monitoring sample",
+    "canopy_cover_pct": 48.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        36.777657,
+        7.756979
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-et-7-x7",
+    "name": "Synthetic reference site ET-OR #7",
+    "jurisdiction_code": "ET-OR",
+    "class_label": "forest",
+    "agroforestry_subtype": "homegarden",
+    "validation_status": "expert_reviewed",
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-06-11T00:00:00+00:00",
+    "quality_score": 0.8,
+    "source": "Synthetic PoC generator (illustrative)",
+    "canopy_cover_pct": 73.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        36.727326,
+        7.844329
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
+  },
+  {
+    "id": "ref-et-8-x8",
+    "name": "Synthetic reference site ET-OR #8",
+    "jurisdiction_code": "ET-OR",
+    "class_label": "forest",
+    "agroforestry_subtype": "parkland",
+    "validation_status": "community_validated",
+    "validator_id": "00000000-0000-4000-8000-0000000000c0",
+    "validation_date": "2025-06-15T00:00:00+00:00",
+    "quality_score": 0.87,
+    "source": "Synthetic extension survey sample",
+    "canopy_cover_pct": 85.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        36.667976,
+        7.864825
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": "Synthetic demo decision (community review tier) seeded for PoC \u2014 not field validation"
+  },
+  {
+    "id": "ref-et-1-x9",
+    "name": "Synthetic reference site ET-OR #9",
+    "jurisdiction_code": "ET-OR",
+    "class_label": "grassland",
+    "agroforestry_subtype": "alley_cropping",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic extension survey sample",
+    "canopy_cover_pct": 90.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        36.885414,
+        7.736861
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-et-2-x10",
+    "name": "Synthetic reference site ET-OR #10",
+    "jurisdiction_code": "ET-OR",
+    "class_label": "forest",
+    "agroforestry_subtype": "shade_coffee",
+    "validation_status": "expert_reviewed",
+    "validator_id": "00000000-0000-4000-8000-0000000000e0",
+    "validation_date": "2025-02-05T00:00:00+00:00",
+    "quality_score": 0.87,
+    "source": "Synthetic PoC generator (illustrative)",
+    "canopy_cover_pct": 73.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        36.016058,
+        8.320514
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": "Synthetic demo decision (expert review tier) seeded for PoC \u2014 not field validation"
+  },
+  {
+    "id": "ref-et-3-x11",
+    "name": "Synthetic reference site ET-OR #11",
+    "jurisdiction_code": "ET-OR",
+    "class_label": "forest",
+    "agroforestry_subtype": "homegarden",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic community monitoring sample",
+    "canopy_cover_pct": 50.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        36.906075,
+        8.201566
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
+  },
+  {
+    "id": "ref-et-4-x12",
+    "name": "Synthetic reference site ET-OR #12",
+    "jurisdiction_code": "ET-OR",
+    "class_label": "cropland",
+    "agroforestry_subtype": "homegarden",
+    "validation_status": "unvalidated",
+    "validator_id": null,
+    "validation_date": null,
+    "quality_score": null,
+    "source": "Synthetic PoC generator (illustrative)",
+    "canopy_cover_pct": 80.0,
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        36.269621,
+        7.700547
+      ]
+    },
+    "data_origin": "synthetic",
+    "generation_method": "Procedural generator (synthetic demo corpus v2, no real-world data)",
+    "source_url": null,
+    "validation_notes": null
   }
 ]

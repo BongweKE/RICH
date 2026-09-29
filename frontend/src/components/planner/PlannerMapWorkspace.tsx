@@ -193,13 +193,20 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onS
         const f = e.features?.[0];
         if (!f) return;
         const props = f.properties as any;
-        new maplibregl.Popup({ closeButton: true, maxWidth: '260px' })
+        const reviewed = props.validation_status === 'community_validated' || props.validation_status === 'expert_reviewed' || props.validation_status === 'final';
+        new maplibregl.Popup({ closeButton: true, maxWidth: '280px' })
           .setLngLat(e.lngLat)
           .setHTML(
-            `<div style="font-family:inherit"><strong>Reference point</strong><br/>` +
-            `<span style="color:#57534e;font-size:12px">class: ${props.class_label || '—'}<br/>` +
+            `<div style="font-family:inherit"><strong>Reference point</strong>` +
+            (reviewed
+              ? ` <span style="font-size:10px;color:#065f46;background:#d1fae5;padding:1px 5px;border-radius:8px">validated</span>`
+              : '') +
+            `<br/><span style="color:#57534e;font-size:12px">class: ${props.class_label || '—'}<br/>` +
             `status: ${props.validation_status || 'unvalidated'}<br/>` +
-            `source: ${props.source || 'unknown'}</span></div>`,
+            `source: ${props.source || 'unknown'}</span>` +
+            `<div style="margin-top:6px;font-size:10px;color:#92400e;background:#fef3c7;border:1px solid #fcd34d;border-radius:6px;padding:4px 6px">` +
+            `Synthetic PoC demo data — validation decisions are illustrative, not field validation.` +
+            `</div></div>`,
           )
           .addTo(map);
       });
@@ -365,7 +372,7 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onS
           <ul className="space-y-0.5">
             <li className="flex items-center gap-1.5">
               <span aria-hidden="true" className="inline-block w-3 h-3 rounded-sm" style={{ backgroundColor: '#065f46' }} />
-              Validated (human-reviewed)
+              Validated (synthetic demo)
             </li>
             <li className="flex items-center gap-1.5">
               <span aria-hidden="true" className="inline-block w-3 h-3 rounded-sm border border-stone-300 bg-white" />
@@ -376,6 +383,9 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onS
               Reference point
             </li>
           </ul>
+          <p className="mt-2 text-[10px] leading-snug text-amber-800 bg-amber-50 border border-amber-200 rounded px-2 py-1">
+            Validation shown here is synthetic demo data for the PoC — not field validation.
+          </p>
         </div>
 
         <p className="absolute top-2 left-2 bg-white/95 border border-stone-200 rounded-lg shadow px-2 py-1 text-xs text-stone-600 z-10">

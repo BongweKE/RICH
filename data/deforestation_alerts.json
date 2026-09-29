@@ -1,1 +1,2162 @@
-[{"id": "alert-gh-01", "jurisdiction_code": "GH-AH", "coordinates": [-1.5048, 5.74], "date": "2023-04-05", "confidence": "highest", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 3.11, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-02", "jurisdiction_code": "GH-AH", "coordinates": [-1.1509, 5.8391], "date": "2023-01-03", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 2.37, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-03", "jurisdiction_code": "GH-AH", "coordinates": [-2.3628, 6.0181], "date": "2023-09-14", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 2.73, "status": "False Positive: Cocoa Rejuvenation", "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.", "data_origin": "synthetic"}, {"id": "alert-gh-04", "jurisdiction_code": "GH-AH", "coordinates": [-1.2668, 5.7104], "date": "2023-12-14", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 0.87, "status": "False Positive: Ephemeral Cloud Shadow", "details": "Cloud boundary misclassified by optical sensor; multi-temporal composite confirms intact canopy.", "data_origin": "synthetic"}, {"id": "alert-gh-05", "jurisdiction_code": "GH-AH", "coordinates": [-1.0599, 6.2386], "date": "2023-02-12", "confidence": "high", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 1.34, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-06", "jurisdiction_code": "GH-AH", "coordinates": [-2.3392, 6.4351], "date": "2023-07-03", "confidence": "highest", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 3.77, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-07", "jurisdiction_code": "GH-AH", "coordinates": [-1.5341, 7.0787], "date": "2023-12-03", "confidence": "nominal", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 1.18, "status": "False Positive: Cocoa Rejuvenation", "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.", "data_origin": "synthetic"}, {"id": "alert-gh-08", "jurisdiction_code": "GH-AH", "coordinates": [-1.9949, 5.8277], "date": "2023-02-13", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 2.93, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-09", "jurisdiction_code": "GH-AH", "coordinates": [-1.8892, 6.2923], "date": "2023-05-23", "confidence": "highest", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 0.51, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-10", "jurisdiction_code": "GH-AH", "coordinates": [-1.511, 6.5546], "date": "2023-08-13", "confidence": "high", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 3.16, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-11", "jurisdiction_code": "GH-AH", "coordinates": [-2.0925, 6.2189], "date": "2023-01-08", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 1.93, "status": "False Positive: Ephemeral Cloud Shadow", "details": "Cloud boundary misclassified by optical sensor; multi-temporal composite confirms intact canopy.", "data_origin": "synthetic"}, {"id": "alert-gh-12", "jurisdiction_code": "GH-AH", "coordinates": [-2.3073, 7.161], "date": "2023-12-11", "confidence": "nominal", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 2.35, "status": "False Positive: Cocoa Rejuvenation", "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.", "data_origin": "synthetic"}, {"id": "alert-gh-13", "jurisdiction_code": "GH-AH", "coordinates": [-1.1614, 6.7286], "date": "2023-03-08", "confidence": "highest", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 2.52, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-14", "jurisdiction_code": "GH-AH", "coordinates": [-1.3542, 6.3855], "date": "2023-06-08", "confidence": "nominal", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 2.32, "status": "False Positive: Cocoa Rejuvenation", "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.", "data_origin": "synthetic"}, {"id": "alert-gh-15", "jurisdiction_code": "GH-AH", "coordinates": [-1.3419, 7.0778], "date": "2023-03-26", "confidence": "highest", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 2.76, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-16", "jurisdiction_code": "GH-AH", "coordinates": [-1.8613, 6.6534], "date": "2023-05-18", "confidence": "nominal", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 3.3, "status": "False Positive: Cocoa Rejuvenation", "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.", "data_origin": "synthetic"}, {"id": "alert-gh-17", "jurisdiction_code": "GH-AH", "coordinates": [-1.4456, 6.5592], "date": "2023-11-11", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 2.07, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-18", "jurisdiction_code": "GH-AH", "coordinates": [-1.7648, 7.2261], "date": "2023-05-17", "confidence": "nominal", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 4.12, "status": "Verified Smallholder Encroachment (Art. 9 Flag)", "details": "Clearing detected along forest reserve boundary; parcel flagged for manual verification.", "data_origin": "synthetic"}, {"id": "alert-gh-19", "jurisdiction_code": "GH-AH", "coordinates": [-1.1813, 6.1775], "date": "2023-10-07", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 3.48, "status": "False Positive: Cocoa Rejuvenation", "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.", "data_origin": "synthetic"}, {"id": "alert-gh-20", "jurisdiction_code": "GH-AH", "coordinates": [-1.6449, 6.9458], "date": "2023-01-20", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 0.28, "status": "False Positive: Cocoa Rejuvenation", "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.", "data_origin": "synthetic"}, {"id": "alert-gh-21", "jurisdiction_code": "GH-AH", "coordinates": [-1.0993, 7.106], "date": "2023-05-08", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 3.98, "status": "False Positive: Ephemeral Cloud Shadow", "details": "Cloud boundary misclassified by optical sensor; multi-temporal composite confirms intact canopy.", "data_origin": "synthetic"}, {"id": "alert-gh-22", "jurisdiction_code": "GH-AH", "coordinates": [-1.0743, 5.837], "date": "2023-02-25", "confidence": "highest", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 0.75, "status": "False Positive: Cocoa Rejuvenation", "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.", "data_origin": "synthetic"}, {"id": "alert-gh-23", "jurisdiction_code": "GH-AH", "coordinates": [-1.7346, 6.5797], "date": "2023-10-14", "confidence": "nominal", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 3.45, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-24", "jurisdiction_code": "GH-AH", "coordinates": [-1.4342, 6.8407], "date": "2023-11-21", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 4.07, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-25", "jurisdiction_code": "GH-AH", "coordinates": [-1.7679, 6.0966], "date": "2023-01-19", "confidence": "highest", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 2.73, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-26", "jurisdiction_code": "GH-AH", "coordinates": [-2.3899, 6.8325], "date": "2023-02-02", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 2.41, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-27", "jurisdiction_code": "GH-AH", "coordinates": [-2.0101, 6.4767], "date": "2023-12-19", "confidence": "highest", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 1.24, "status": "False Positive: Cocoa Rejuvenation", "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.", "data_origin": "synthetic"}, {"id": "alert-gh-28", "jurisdiction_code": "GH-AH", "coordinates": [-1.7378, 6.3513], "date": "2023-11-14", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 1.97, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-29", "jurisdiction_code": "GH-AH", "coordinates": [-1.1906, 5.7867], "date": "2023-11-04", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 3.33, "status": "False Positive: Cocoa Rejuvenation", "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.", "data_origin": "synthetic"}, {"id": "alert-gh-30", "jurisdiction_code": "GH-AH", "coordinates": [-1.2792, 5.8748], "date": "2023-09-15", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 0.99, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-31", "jurisdiction_code": "GH-AH", "coordinates": [-1.7523, 7.0992], "date": "2023-09-04", "confidence": "nominal", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 4.5, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-32", "jurisdiction_code": "GH-AH", "coordinates": [-1.2296, 7.2504], "date": "2023-04-06", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 2.27, "status": "Verified Smallholder Encroachment (Art. 9 Flag)", "details": "Clearing detected along forest reserve boundary; parcel flagged for manual verification.", "data_origin": "synthetic"}, {"id": "alert-gh-33", "jurisdiction_code": "GH-AH", "coordinates": [-1.1895, 7.1439], "date": "2023-01-13", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 1.43, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-34", "jurisdiction_code": "GH-AH", "coordinates": [-1.4248, 6.8688], "date": "2023-11-23", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 1.02, "status": "False Positive: Ephemeral Cloud Shadow", "details": "Cloud boundary misclassified by optical sensor; multi-temporal composite confirms intact canopy.", "data_origin": "synthetic"}, {"id": "alert-gh-35", "jurisdiction_code": "GH-AH", "coordinates": [-2.0952, 5.7936], "date": "2023-01-24", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 0.42, "status": "False Positive: Ephemeral Cloud Shadow", "details": "Cloud boundary misclassified by optical sensor; multi-temporal composite confirms intact canopy.", "data_origin": "synthetic"}, {"id": "alert-gh-36", "jurisdiction_code": "GH-AH", "coordinates": [-1.7325, 7.171], "date": "2023-01-17", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 0.49, "status": "False Positive: Cocoa Rejuvenation", "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.", "data_origin": "synthetic"}, {"id": "alert-gh-37", "jurisdiction_code": "GH-AH", "coordinates": [-2.3049, 7.0789], "date": "2023-10-08", "confidence": "highest", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 0.37, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-38", "jurisdiction_code": "GH-AH", "coordinates": [-2.2852, 6.7518], "date": "2023-06-09", "confidence": "nominal", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 3.28, "status": "False Positive: Cocoa Rejuvenation", "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.", "data_origin": "synthetic"}, {"id": "alert-gh-39", "jurisdiction_code": "GH-AH", "coordinates": [-2.0658, 6.3333], "date": "2023-05-15", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 0.24, "status": "False Positive: Cocoa Rejuvenation", "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.", "data_origin": "synthetic"}, {"id": "alert-gh-40", "jurisdiction_code": "GH-AH", "coordinates": [-1.5304, 6.6008], "date": "2023-09-07", "confidence": "highest", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 0.77, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-41", "jurisdiction_code": "GH-AH", "coordinates": [-1.9114, 5.8101], "date": "2023-05-06", "confidence": "high", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 3.23, "status": "False Positive: Shade Tree Pruning", "details": "Periodic canopy management on certified shade cocoa farm. Sentinel-1 SAR confirms persistent woody biomass.", "data_origin": "synthetic"}, {"id": "alert-gh-42", "jurisdiction_code": "GH-AH", "coordinates": [-1.5437, 7.2796], "date": "2023-01-22", "confidence": "highest", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 4.21, "status": "False Positive: Cocoa Rejuvenation", "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.", "data_origin": "synthetic"}, {"id": "alert-es-01", "jurisdiction_code": "ES-EX", "coordinates": [-6.9928, 39.9563], "date": "2023-02-24", "confidence": "highest", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 2.05, "status": "False Positive: Quercus Ilex Phenological Thinning", "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.", "data_origin": "synthetic"}, {"id": "alert-es-02", "jurisdiction_code": "ES-EX", "coordinates": [-5.9903, 39.6352], "date": "2023-11-28", "confidence": "high", "sensor": "Landsat-8/9 OLI", "loss_ha": 3.28, "status": "False Positive: Quercus Ilex Phenological Thinning", "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.", "data_origin": "synthetic"}, {"id": "alert-es-03", "jurisdiction_code": "ES-EX", "coordinates": [-5.3893, 39.8922], "date": "2023-07-27", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 0.52, "status": "False Positive: Quercus Ilex Phenological Thinning", "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.", "data_origin": "synthetic"}, {"id": "alert-es-04", "jurisdiction_code": "ES-EX", "coordinates": [-5.6578, 39.4742], "date": "2023-12-15", "confidence": "highest", "sensor": "Landsat-8/9 OLI", "loss_ha": 2.94, "status": "False Positive: Quercus Ilex Phenological Thinning", "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.", "data_origin": "synthetic"}, {"id": "alert-es-05", "jurisdiction_code": "ES-EX", "coordinates": [-7.1807, 38.3505], "date": "2023-03-18", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 3.82, "status": "Verified Oak Wilt Disturbance (Seca)", "details": "Phytophthora cinnamomi oak mortality cluster detected; flagged for regional phytosanitary treatment.", "data_origin": "synthetic"}, {"id": "alert-es-06", "jurisdiction_code": "ES-EX", "coordinates": [-6.9038, 38.4549], "date": "2023-01-12", "confidence": "nominal", "sensor": "Landsat-8/9 OLI", "loss_ha": 1.92, "status": "False Positive: Quercus Ilex Phenological Thinning", "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.", "data_origin": "synthetic"}, {"id": "alert-es-07", "jurisdiction_code": "ES-EX", "coordinates": [-6.9944, 39.7602], "date": "2023-07-20", "confidence": "highest", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 5.78, "status": "Verified Oak Wilt Disturbance (Seca)", "details": "Phytophthora cinnamomi oak mortality cluster detected; flagged for regional phytosanitary treatment.", "data_origin": "synthetic"}, {"id": "alert-es-08", "jurisdiction_code": "ES-EX", "coordinates": [-6.7265, 38.525], "date": "2023-03-14", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 4.7, "status": "False Positive: Silvopastoral Understory Grazing", "details": "Livestock grazing cleared dry herbaceous understory; mature oak canopy density (>45%) preserved.", "data_origin": "synthetic"}, {"id": "alert-es-09", "jurisdiction_code": "ES-EX", "coordinates": [-6.5356, 40.0616], "date": "2023-12-26", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 1.41, "status": "Verified Oak Wilt Disturbance (Seca)", "details": "Phytophthora cinnamomi oak mortality cluster detected; flagged for regional phytosanitary treatment.", "data_origin": "synthetic"}, {"id": "alert-es-10", "jurisdiction_code": "ES-EX", "coordinates": [-5.7974, 38.9651], "date": "2023-08-08", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 2.49, "status": "False Positive: Quercus Ilex Phenological Thinning", "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.", "data_origin": "synthetic"}, {"id": "alert-es-11", "jurisdiction_code": "ES-EX", "coordinates": [-5.5589, 39.9426], "date": "2023-11-07", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 2.09, "status": "False Positive: Quercus Ilex Phenological Thinning", "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.", "data_origin": "synthetic"}, {"id": "alert-es-12", "jurisdiction_code": "ES-EX", "coordinates": [-7.0612, 39.7467], "date": "2023-09-13", "confidence": "highest", "sensor": "Landsat-8/9 OLI", "loss_ha": 2.39, "status": "False Positive: Quercus Ilex Phenological Thinning", "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.", "data_origin": "synthetic"}, {"id": "alert-es-13", "jurisdiction_code": "ES-EX", "coordinates": [-7.1448, 39.9541], "date": "2023-10-09", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 3.9, "status": "False Positive: Quercus Ilex Phenological Thinning", "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.", "data_origin": "synthetic"}, {"id": "alert-es-14", "jurisdiction_code": "ES-EX", "coordinates": [-6.5086, 39.7729], "date": "2023-09-04", "confidence": "high", "sensor": "Landsat-8/9 OLI", "loss_ha": 1.58, "status": "False Positive: Quercus Ilex Phenological Thinning", "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.", "data_origin": "synthetic"}, {"id": "alert-es-15", "jurisdiction_code": "ES-EX", "coordinates": [-7.1112, 39.0721], "date": "2023-09-22", "confidence": "highest", "sensor": "Landsat-8/9 OLI", "loss_ha": 4.7, "status": "False Positive: Silvopastoral Understory Grazing", "details": "Livestock grazing cleared dry herbaceous understory; mature oak canopy density (>45%) preserved.", "data_origin": "synthetic"}, {"id": "alert-es-16", "jurisdiction_code": "ES-EX", "coordinates": [-6.8059, 39.0626], "date": "2023-06-20", "confidence": "high", "sensor": "Landsat-8/9 OLI", "loss_ha": 5.33, "status": "Controlled Bushfire Prevention Clearing", "details": "Mandatory regional wildfire fuel break cleared under Extremadura forestry regulations.", "data_origin": "synthetic"}, {"id": "alert-es-17", "jurisdiction_code": "ES-EX", "coordinates": [-5.7605, 38.8006], "date": "2023-07-11", "confidence": "high", "sensor": "Landsat-8/9 OLI", "loss_ha": 2.19, "status": "False Positive: Quercus Ilex Phenological Thinning", "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.", "data_origin": "synthetic"}, {"id": "alert-es-18", "jurisdiction_code": "ES-EX", "coordinates": [-6.9454, 39.0409], "date": "2023-11-24", "confidence": "nominal", "sensor": "Landsat-8/9 OLI", "loss_ha": 3.74, "status": "Controlled Bushfire Prevention Clearing", "details": "Mandatory regional wildfire fuel break cleared under Extremadura forestry regulations.", "data_origin": "synthetic"}, {"id": "alert-es-19", "jurisdiction_code": "ES-EX", "coordinates": [-6.3878, 39.8675], "date": "2023-04-14", "confidence": "highest", "sensor": "Landsat-8/9 OLI", "loss_ha": 4.23, "status": "False Positive: Quercus Ilex Phenological Thinning", "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.", "data_origin": "synthetic"}, {"id": "alert-es-20", "jurisdiction_code": "ES-EX", "coordinates": [-6.27, 39.0843], "date": "2023-08-26", "confidence": "highest", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 4.26, "status": "False Positive: Quercus Ilex Phenological Thinning", "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.", "data_origin": "synthetic"}, {"id": "alert-es-21", "jurisdiction_code": "ES-EX", "coordinates": [-6.6324, 39.5277], "date": "2023-02-27", "confidence": "nominal", "sensor": "Landsat-8/9 OLI", "loss_ha": 2.27, "status": "False Positive: Silvopastoral Understory Grazing", "details": "Livestock grazing cleared dry herbaceous understory; mature oak canopy density (>45%) preserved.", "data_origin": "synthetic"}, {"id": "alert-es-22", "jurisdiction_code": "ES-EX", "coordinates": [-5.5869, 38.4947], "date": "2023-08-20", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 2.86, "status": "False Positive: Quercus Ilex Phenological Thinning", "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.", "data_origin": "synthetic"}, {"id": "alert-es-23", "jurisdiction_code": "ES-EX", "coordinates": [-5.9405, 38.5889], "date": "2023-08-13", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 4.24, "status": "False Positive: Silvopastoral Understory Grazing", "details": "Livestock grazing cleared dry herbaceous understory; mature oak canopy density (>45%) preserved.", "data_origin": "synthetic"}, {"id": "alert-es-24", "jurisdiction_code": "ES-EX", "coordinates": [-7.1889, 39.7019], "date": "2023-02-25", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 1.5, "status": "False Positive: Silvopastoral Understory Grazing", "details": "Livestock grazing cleared dry herbaceous understory; mature oak canopy density (>45%) preserved.", "data_origin": "synthetic"}, {"id": "alert-et-01", "jurisdiction_code": "ET-OR", "coordinates": [38.3739, 8.1323], "date": "2023-04-28", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 0.59, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-02", "jurisdiction_code": "ET-OR", "coordinates": [36.8939, 8.156], "date": "2023-06-25", "confidence": "high", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 3.12, "status": "False Positive: Coffee Bush Stumping", "details": "Agronomic rejuvenation of Coffea arabica shrubs; overstory Podocarpus / Albizia (>28m) completely preserved.", "data_origin": "synthetic"}, {"id": "alert-et-03", "jurisdiction_code": "ET-OR", "coordinates": [38.1761, 7.9681], "date": "2023-08-06", "confidence": "highest", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 1.77, "status": "Enset & Agroforest Intercropping Cycle", "details": "Rotational planting of Ensete ventricosum within multi-tier agroforestry system; soil cover maintained.", "data_origin": "synthetic"}, {"id": "alert-et-04", "jurisdiction_code": "ET-OR", "coordinates": [37.7553, 8.7118], "date": "2023-09-16", "confidence": "highest", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 1.12, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-05", "jurisdiction_code": "ET-OR", "coordinates": [35.7325, 7.7143], "date": "2023-06-18", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 0.66, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-06", "jurisdiction_code": "ET-OR", "coordinates": [36.6491, 7.475], "date": "2023-07-14", "confidence": "high", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 1.82, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-07", "jurisdiction_code": "ET-OR", "coordinates": [35.6868, 8.6992], "date": "2023-10-23", "confidence": "nominal", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 1.51, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-08", "jurisdiction_code": "ET-OR", "coordinates": [35.5177, 7.8332], "date": "2023-07-18", "confidence": "highest", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 2.12, "status": "False Positive: Coffee Bush Stumping", "details": "Agronomic rejuvenation of Coffea arabica shrubs; overstory Podocarpus / Albizia (>28m) completely preserved.", "data_origin": "synthetic"}, {"id": "alert-et-09", "jurisdiction_code": "ET-OR", "coordinates": [37.3098, 7.597], "date": "2023-07-16", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 1.34, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-10", "jurisdiction_code": "ET-OR", "coordinates": [37.5374, 7.9278], "date": "2023-08-05", "confidence": "highest", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 0.2, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-11", "jurisdiction_code": "ET-OR", "coordinates": [36.6821, 8.2159], "date": "2023-11-14", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 0.77, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-12", "jurisdiction_code": "ET-OR", "coordinates": [36.2805, 7.7892], "date": "2023-06-25", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 2.88, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-13", "jurisdiction_code": "ET-OR", "coordinates": [37.9958, 7.6541], "date": "2023-01-24", "confidence": "highest", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 3.8, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-14", "jurisdiction_code": "ET-OR", "coordinates": [36.5499, 8.3703], "date": "2023-11-02", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 0.84, "status": "False Positive: Coffee Bush Stumping", "details": "Agronomic rejuvenation of Coffea arabica shrubs; overstory Podocarpus / Albizia (>28m) completely preserved.", "data_origin": "synthetic"}, {"id": "alert-et-15", "jurisdiction_code": "ET-OR", "coordinates": [35.5611, 7.4743], "date": "2023-11-04", "confidence": "highest", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 1.82, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-16", "jurisdiction_code": "ET-OR", "coordinates": [36.2687, 7.864], "date": "2023-12-23", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 3.67, "status": "False Positive: Coffee Bush Stumping", "details": "Agronomic rejuvenation of Coffea arabica shrubs; overstory Podocarpus / Albizia (>28m) completely preserved.", "data_origin": "synthetic"}, {"id": "alert-et-17", "jurisdiction_code": "ET-OR", "coordinates": [35.8243, 7.2462], "date": "2023-11-13", "confidence": "high", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 0.83, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-18", "jurisdiction_code": "ET-OR", "coordinates": [37.2763, 8.695], "date": "2023-12-25", "confidence": "high", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 2.32, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-19", "jurisdiction_code": "ET-OR", "coordinates": [35.8632, 8.9709], "date": "2023-06-18", "confidence": "high", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 1.47, "status": "False Positive: Coffee Bush Stumping", "details": "Agronomic rejuvenation of Coffea arabica shrubs; overstory Podocarpus / Albizia (>28m) completely preserved.", "data_origin": "synthetic"}, {"id": "alert-et-20", "jurisdiction_code": "ET-OR", "coordinates": [37.0179, 7.8142], "date": "2023-08-04", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 2.45, "status": "Verified Highland Edge Disturbance", "details": "Localized clearance at forest-agriculture transition zone flagged for cooperative community audit.", "data_origin": "synthetic"}, {"id": "alert-et-21", "jurisdiction_code": "ET-OR", "coordinates": [37.9861, 8.4732], "date": "2023-12-17", "confidence": "highest", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 2.38, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-22", "jurisdiction_code": "ET-OR", "coordinates": [38.2589, 8.5944], "date": "2023-12-19", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 3.25, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-23", "jurisdiction_code": "ET-OR", "coordinates": [37.9922, 7.356], "date": "2023-04-25", "confidence": "high", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 2.36, "status": "Verified Highland Edge Disturbance", "details": "Localized clearance at forest-agriculture transition zone flagged for cooperative community audit.", "data_origin": "synthetic"}, {"id": "alert-et-24", "jurisdiction_code": "ET-OR", "coordinates": [36.637, 7.2517], "date": "2023-03-16", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 3.05, "status": "Verified Highland Edge Disturbance", "details": "Localized clearance at forest-agriculture transition zone flagged for cooperative community audit.", "data_origin": "synthetic"}, {"id": "alert-et-25", "jurisdiction_code": "ET-OR", "coordinates": [36.521, 8.7846], "date": "2023-05-18", "confidence": "nominal", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 3.61, "status": "False Positive: Coffee Bush Stumping", "details": "Agronomic rejuvenation of Coffea arabica shrubs; overstory Podocarpus / Albizia (>28m) completely preserved.", "data_origin": "synthetic"}, {"id": "alert-et-26", "jurisdiction_code": "ET-OR", "coordinates": [35.7568, 8.4961], "date": "2023-04-23", "confidence": "high", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 2.73, "status": "False Positive: Coffee Bush Stumping", "details": "Agronomic rejuvenation of Coffea arabica shrubs; overstory Podocarpus / Albizia (>28m) completely preserved.", "data_origin": "synthetic"}, {"id": "alert-et-27", "jurisdiction_code": "ET-OR", "coordinates": [36.8445, 7.231], "date": "2023-07-23", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 2.56, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-28", "jurisdiction_code": "ET-OR", "coordinates": [36.6071, 8.1963], "date": "2023-12-18", "confidence": "high", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 2.7, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-29", "jurisdiction_code": "ET-OR", "coordinates": [36.3127, 7.6525], "date": "2023-04-11", "confidence": "nominal", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 2.08, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-30", "jurisdiction_code": "ET-OR", "coordinates": [37.7866, 7.5333], "date": "2023-08-09", "confidence": "highest", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 3.71, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-31", "jurisdiction_code": "ET-OR", "coordinates": [37.0739, 7.7094], "date": "2023-04-10", "confidence": "nominal", "sensor": "Synthetic PoC generator (illustrative)", "loss_ha": 0.76, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}, {"id": "alert-et-32", "jurisdiction_code": "ET-OR", "coordinates": [35.5424, 8.1614], "date": "2023-01-18", "confidence": "high", "sensor": "Landsat-8/9 OLI (GLAD-L)", "loss_ha": 3.59, "status": "False Positive: Montane Cloud Shadow", "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.", "data_origin": "synthetic"}]
+[
+  {
+    "id": "alert-gh-01",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.5048,
+      5.74
+    ],
+    "date": "2023-04-05",
+    "confidence": "low",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 3.11,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-02",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.1509,
+      5.8391
+    ],
+    "date": "2023-01-03",
+    "confidence": "low",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 2.37,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-03",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -2.3628,
+      6.0181
+    ],
+    "date": "2023-09-14",
+    "confidence": "low",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 2.73,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-04",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.2668,
+      5.7104
+    ],
+    "date": "2023-12-14",
+    "confidence": "nominal",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 0.87,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Cloud boundary misclassified by optical sensor; multi-temporal composite confirms intact canopy.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-05",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.0599,
+      6.2386
+    ],
+    "date": "2023-02-12",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 1.34,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-06",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -2.3392,
+      6.4351
+    ],
+    "date": "2023-07-03",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 3.77,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-07",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.5341,
+      7.0787
+    ],
+    "date": "2023-12-03",
+    "confidence": "highest",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 1.18,
+    "status": "Active: Under review",
+    "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-08",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.9949,
+      5.8277
+    ],
+    "date": "2023-02-13",
+    "confidence": "nominal",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 2.93,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-09",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.8892,
+      6.2923
+    ],
+    "date": "2023-05-23",
+    "confidence": "highest",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 0.51,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-10",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.511,
+      6.5546
+    ],
+    "date": "2023-08-13",
+    "confidence": "low",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 3.16,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-11",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -2.0925,
+      6.2189
+    ],
+    "date": "2023-01-08",
+    "confidence": "nominal",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 1.93,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Cloud boundary misclassified by optical sensor; multi-temporal composite confirms intact canopy.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-12",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -2.3073,
+      7.161
+    ],
+    "date": "2023-12-11",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 2.35,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-13",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.1614,
+      6.7286
+    ],
+    "date": "2023-03-08",
+    "confidence": "nominal",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 2.52,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-14",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.3542,
+      6.3855
+    ],
+    "date": "2023-06-08",
+    "confidence": "nominal",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 2.32,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-15",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.3419,
+      7.0778
+    ],
+    "date": "2023-03-26",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 2.76,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-16",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.8613,
+      6.6534
+    ],
+    "date": "2023-05-18",
+    "confidence": "high",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 3.3,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-17",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.4456,
+      6.5592
+    ],
+    "date": "2023-11-11",
+    "confidence": "low",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 2.07,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-18",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.7648,
+      7.2261
+    ],
+    "date": "2023-05-17",
+    "confidence": "highest",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 4.12,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Clearing detected along forest reserve boundary; parcel flagged for manual verification.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-19",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.1813,
+      6.1775
+    ],
+    "date": "2023-10-07",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 3.48,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-20",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.6449,
+      6.9458
+    ],
+    "date": "2023-01-20",
+    "confidence": "nominal",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 0.28,
+    "status": "Active: Under review",
+    "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-21",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.0993,
+      7.106
+    ],
+    "date": "2023-05-08",
+    "confidence": "highest",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 3.98,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Cloud boundary misclassified by optical sensor; multi-temporal composite confirms intact canopy.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-22",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.0743,
+      5.837
+    ],
+    "date": "2023-02-25",
+    "confidence": "highest",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 0.75,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-23",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.7346,
+      6.5797
+    ],
+    "date": "2023-10-14",
+    "confidence": "highest",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 3.45,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-24",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.4342,
+      6.8407
+    ],
+    "date": "2023-11-21",
+    "confidence": "high",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 4.07,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-25",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.7679,
+      6.0966
+    ],
+    "date": "2023-01-19",
+    "confidence": "low",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 2.73,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-26",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -2.3899,
+      6.8325
+    ],
+    "date": "2023-02-02",
+    "confidence": "highest",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 2.41,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-27",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -2.0101,
+      6.4767
+    ],
+    "date": "2023-12-19",
+    "confidence": "low",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 1.24,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-28",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.7378,
+      6.3513
+    ],
+    "date": "2023-11-14",
+    "confidence": "high",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 1.97,
+    "status": "Active: Under review",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-29",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.1906,
+      5.7867
+    ],
+    "date": "2023-11-04",
+    "confidence": "high",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 3.33,
+    "status": "Active: Under review",
+    "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-30",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.2792,
+      5.8748
+    ],
+    "date": "2023-09-15",
+    "confidence": "high",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 0.99,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-31",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.7523,
+      7.0992
+    ],
+    "date": "2023-09-04",
+    "confidence": "high",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 4.5,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-32",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.2296,
+      7.2504
+    ],
+    "date": "2023-04-06",
+    "confidence": "low",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 2.27,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Clearing detected along forest reserve boundary; parcel flagged for manual verification.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-33",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.1895,
+      7.1439
+    ],
+    "date": "2023-01-13",
+    "confidence": "highest",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 1.43,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-34",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.4248,
+      6.8688
+    ],
+    "date": "2023-11-23",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 1.02,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Cloud boundary misclassified by optical sensor; multi-temporal composite confirms intact canopy.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-35",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -2.0952,
+      5.7936
+    ],
+    "date": "2023-01-24",
+    "confidence": "highest",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 0.42,
+    "status": "Active: Under review",
+    "details": "Cloud boundary misclassified by optical sensor; multi-temporal composite confirms intact canopy.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-36",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.7325,
+      7.171
+    ],
+    "date": "2023-01-17",
+    "confidence": "nominal",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 0.49,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-37",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -2.3049,
+      7.0789
+    ],
+    "date": "2023-10-08",
+    "confidence": "low",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 0.37,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-38",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -2.2852,
+      6.7518
+    ],
+    "date": "2023-06-09",
+    "confidence": "high",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 3.28,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-39",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -2.0658,
+      6.3333
+    ],
+    "date": "2023-05-15",
+    "confidence": "low",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 0.24,
+    "status": "Active: Under review",
+    "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-40",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.5304,
+      6.6008
+    ],
+    "date": "2023-09-07",
+    "confidence": "nominal",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 0.77,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-41",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.9114,
+      5.8101
+    ],
+    "date": "2023-05-06",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 3.23,
+    "status": "Active: Under review",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-42",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.5437,
+      7.2796
+    ],
+    "date": "2023-01-22",
+    "confidence": "high",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 4.21,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Phased replanting of aging cocoa trees under Albizia shade cover; no forest conversion detected.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-01",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.9928,
+      39.9563
+    ],
+    "date": "2023-02-24",
+    "confidence": "highest",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 2.05,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-02",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -5.9903,
+      39.6352
+    ],
+    "date": "2023-11-28",
+    "confidence": "low",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 3.28,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-03",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -5.3893,
+      39.8922
+    ],
+    "date": "2023-07-27",
+    "confidence": "nominal",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 0.52,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-04",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -5.6578,
+      39.4742
+    ],
+    "date": "2023-12-15",
+    "confidence": "nominal",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 2.94,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-05",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -7.1807,
+      38.3505
+    ],
+    "date": "2023-03-18",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 3.82,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Phytophthora cinnamomi oak mortality cluster detected; flagged for regional phytosanitary treatment.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-06",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.9038,
+      38.4549
+    ],
+    "date": "2023-01-12",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 1.92,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-07",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.9944,
+      39.7602
+    ],
+    "date": "2023-07-20",
+    "confidence": "nominal",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 5.78,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Phytophthora cinnamomi oak mortality cluster detected; flagged for regional phytosanitary treatment.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-08",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.7265,
+      38.525
+    ],
+    "date": "2023-03-14",
+    "confidence": "nominal",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 4.7,
+    "status": "Active: Under review",
+    "details": "Livestock grazing cleared dry herbaceous understory; mature oak canopy density (>45%) preserved.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-09",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.5356,
+      40.0616
+    ],
+    "date": "2023-12-26",
+    "confidence": "low",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 1.41,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Phytophthora cinnamomi oak mortality cluster detected; flagged for regional phytosanitary treatment.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-10",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -5.7974,
+      38.9651
+    ],
+    "date": "2023-08-08",
+    "confidence": "low",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 2.49,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-11",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -5.5589,
+      39.9426
+    ],
+    "date": "2023-11-07",
+    "confidence": "nominal",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 2.09,
+    "status": "Active: Under review",
+    "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-12",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -7.0612,
+      39.7467
+    ],
+    "date": "2023-09-13",
+    "confidence": "low",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 2.39,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-13",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -7.1448,
+      39.9541
+    ],
+    "date": "2023-10-09",
+    "confidence": "low",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 3.9,
+    "status": "Active: Under review",
+    "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-14",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.5086,
+      39.7729
+    ],
+    "date": "2023-09-04",
+    "confidence": "highest",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 1.58,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-15",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -7.1112,
+      39.0721
+    ],
+    "date": "2023-09-22",
+    "confidence": "low",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 4.7,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Livestock grazing cleared dry herbaceous understory; mature oak canopy density (>45%) preserved.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-16",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.8059,
+      39.0626
+    ],
+    "date": "2023-06-20",
+    "confidence": "high",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 5.33,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Mandatory regional wildfire fuel break cleared under Extremadura forestry regulations.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-17",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -5.7605,
+      38.8006
+    ],
+    "date": "2023-07-11",
+    "confidence": "nominal",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 2.19,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-18",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.9454,
+      39.0409
+    ],
+    "date": "2023-11-24",
+    "confidence": "nominal",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 3.74,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Mandatory regional wildfire fuel break cleared under Extremadura forestry regulations.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-19",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.3878,
+      39.8675
+    ],
+    "date": "2023-04-14",
+    "confidence": "high",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 4.23,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-20",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.27,
+      39.0843
+    ],
+    "date": "2023-08-26",
+    "confidence": "high",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 4.26,
+    "status": "Active: Under review",
+    "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-21",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.6324,
+      39.5277
+    ],
+    "date": "2023-02-27",
+    "confidence": "high",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 2.27,
+    "status": "Active: Under review",
+    "details": "Livestock grazing cleared dry herbaceous understory; mature oak canopy density (>45%) preserved.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-22",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -5.5869,
+      38.4947
+    ],
+    "date": "2023-08-20",
+    "confidence": "highest",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 2.86,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Seasonal leaf shedding and acorn harvest thinning under Mediterranean drought stress; root system intact.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-23",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -5.9405,
+      38.5889
+    ],
+    "date": "2023-08-13",
+    "confidence": "highest",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 4.24,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Livestock grazing cleared dry herbaceous understory; mature oak canopy density (>45%) preserved.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-24",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -7.1889,
+      39.7019
+    ],
+    "date": "2023-02-25",
+    "confidence": "low",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 1.5,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Livestock grazing cleared dry herbaceous understory; mature oak canopy density (>45%) preserved.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-01",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      38.3739,
+      8.1323
+    ],
+    "date": "2023-04-28",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 0.59,
+    "status": "Active: Under review",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-02",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      36.8939,
+      8.156
+    ],
+    "date": "2023-06-25",
+    "confidence": "highest",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 3.12,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Agronomic rejuvenation of Coffea arabica shrubs; overstory Podocarpus / Albizia (>28m) completely preserved.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-03",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      38.1761,
+      7.9681
+    ],
+    "date": "2023-08-06",
+    "confidence": "high",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 1.77,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Rotational planting of Ensete ventricosum within multi-tier agroforestry system; soil cover maintained.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-04",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      37.7553,
+      8.7118
+    ],
+    "date": "2023-09-16",
+    "confidence": "highest",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 1.12,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-05",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      35.7325,
+      7.7143
+    ],
+    "date": "2023-06-18",
+    "confidence": "high",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 0.66,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-06",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      36.6491,
+      7.475
+    ],
+    "date": "2023-07-14",
+    "confidence": "low",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 1.82,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-07",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      35.6868,
+      8.6992
+    ],
+    "date": "2023-10-23",
+    "confidence": "highest",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 1.51,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-08",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      35.5177,
+      7.8332
+    ],
+    "date": "2023-07-18",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 2.12,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Agronomic rejuvenation of Coffea arabica shrubs; overstory Podocarpus / Albizia (>28m) completely preserved.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-09",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      37.3098,
+      7.597
+    ],
+    "date": "2023-07-16",
+    "confidence": "high",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 1.34,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-10",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      37.5374,
+      7.9278
+    ],
+    "date": "2023-08-05",
+    "confidence": "highest",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 0.2,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-11",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      36.6821,
+      8.2159
+    ],
+    "date": "2023-11-14",
+    "confidence": "high",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 0.77,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-12",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      36.2805,
+      7.7892
+    ],
+    "date": "2023-06-25",
+    "confidence": "nominal",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 2.88,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-13",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      37.9958,
+      7.6541
+    ],
+    "date": "2023-01-24",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 3.8,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-14",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      36.5499,
+      8.3703
+    ],
+    "date": "2023-11-02",
+    "confidence": "highest",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 0.84,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Agronomic rejuvenation of Coffea arabica shrubs; overstory Podocarpus / Albizia (>28m) completely preserved.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-15",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      35.5611,
+      7.4743
+    ],
+    "date": "2023-11-04",
+    "confidence": "low",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 1.82,
+    "status": "Active: Under review",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-16",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      36.2687,
+      7.864
+    ],
+    "date": "2023-12-23",
+    "confidence": "low",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 3.67,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Agronomic rejuvenation of Coffea arabica shrubs; overstory Podocarpus / Albizia (>28m) completely preserved.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-17",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      35.8243,
+      7.2462
+    ],
+    "date": "2023-11-13",
+    "confidence": "highest",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 0.83,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-18",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      37.2763,
+      8.695
+    ],
+    "date": "2023-12-25",
+    "confidence": "highest",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 2.32,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-19",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      35.8632,
+      8.9709
+    ],
+    "date": "2023-06-18",
+    "confidence": "high",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 1.47,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Agronomic rejuvenation of Coffea arabica shrubs; overstory Podocarpus / Albizia (>28m) completely preserved.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-20",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      37.0179,
+      7.8142
+    ],
+    "date": "2023-08-04",
+    "confidence": "highest",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 2.45,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Localized clearance at forest-agriculture transition zone flagged for cooperative community audit.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-21",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      37.9861,
+      8.4732
+    ],
+    "date": "2023-12-17",
+    "confidence": "nominal",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 2.38,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-22",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      38.2589,
+      8.5944
+    ],
+    "date": "2023-12-19",
+    "confidence": "low",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 3.25,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-23",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      37.9922,
+      7.356
+    ],
+    "date": "2023-04-25",
+    "confidence": "high",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 2.36,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Localized clearance at forest-agriculture transition zone flagged for cooperative community audit.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-24",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      36.637,
+      7.2517
+    ],
+    "date": "2023-03-16",
+    "confidence": "nominal",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 3.05,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Localized clearance at forest-agriculture transition zone flagged for cooperative community audit.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-25",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      36.521,
+      8.7846
+    ],
+    "date": "2023-05-18",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 3.61,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Agronomic rejuvenation of Coffea arabica shrubs; overstory Podocarpus / Albizia (>28m) completely preserved.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-26",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      35.7568,
+      8.4961
+    ],
+    "date": "2023-04-23",
+    "confidence": "nominal",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 2.73,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Agronomic rejuvenation of Coffea arabica shrubs; overstory Podocarpus / Albizia (>28m) completely preserved.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-27",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      36.8445,
+      7.231
+    ],
+    "date": "2023-07-23",
+    "confidence": "high",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 2.56,
+    "status": "Active: Under review",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-28",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      36.6071,
+      8.1963
+    ],
+    "date": "2023-12-18",
+    "confidence": "nominal",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 2.7,
+    "status": "Active: Under review",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-29",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      36.3127,
+      7.6525
+    ],
+    "date": "2023-04-11",
+    "confidence": "highest",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 2.08,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-30",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      37.7866,
+      7.5333
+    ],
+    "date": "2023-08-09",
+    "confidence": "low",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 3.71,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-31",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      37.0739,
+      7.7094
+    ],
+    "date": "2023-04-10",
+    "confidence": "low",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 0.76,
+    "status": "Active: Under review",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-32",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      35.5424,
+      8.1614
+    ],
+    "date": "2023-01-18",
+    "confidence": "highest",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 3.59,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Topographic ridge cloud shadow in moist Afromontane highland misclassified by single optical pass.",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-01-x1",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.574896,
+      5.670656
+    ],
+    "date": "2024-05-18",
+    "confidence": "low",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 7.4,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-02-x2",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.073838,
+      5.842778
+    ],
+    "date": "2024-04-22",
+    "confidence": "highest",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 4.0,
+    "status": "Active: Under review",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-03-x3",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -2.399545,
+      5.995281
+    ],
+    "date": "2024-05-30",
+    "confidence": "nominal",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 3.4,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-04-x4",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.307592,
+      5.637896
+    ],
+    "date": "2023-06-17",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 11.3,
+    "status": "Active: Under review",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-05-x5",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -1.047906,
+      6.177158
+    ],
+    "date": "2023-04-07",
+    "confidence": "high",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 4.1,
+    "status": "Active: Under review",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-gh-06-x6",
+    "jurisdiction_code": "GH-AH",
+    "coordinates": [
+      -2.395177,
+      6.52191
+    ],
+    "date": "2023-04-04",
+    "confidence": "low",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 6.9,
+    "status": "Active: Under review",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-01-x1",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.963261,
+      39.926055
+    ],
+    "date": "2022-05-27",
+    "confidence": "high",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 4.8,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-02-x2",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -5.940957,
+      39.686229
+    ],
+    "date": "2022-01-20",
+    "confidence": "highest",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 12.2,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-03-x3",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -5.3995,
+      39.906436
+    ],
+    "date": "2023-12-24",
+    "confidence": "highest",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 11.5,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-04-x4",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -5.707963,
+      39.435459
+    ],
+    "date": "2024-02-18",
+    "confidence": "highest",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 7.7,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-05-x5",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -7.258429,
+      38.290733
+    ],
+    "date": "2024-10-26",
+    "confidence": "nominal",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 5.9,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-06-x6",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.872712,
+      38.374984
+    ],
+    "date": "2023-12-05",
+    "confidence": "highest",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 9.8,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-07-x7",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -7.048783,
+      39.736759
+    ],
+    "date": "2024-10-23",
+    "confidence": "nominal",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 9.4,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-08-x8",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.741158,
+      38.476658
+    ],
+    "date": "2021-03-20",
+    "confidence": "highest",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 1.6,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-09-x9",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.446344,
+      40.10251
+    ],
+    "date": "2023-05-17",
+    "confidence": "highest",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 3.9,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-10-x10",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -5.730531,
+      38.913945
+    ],
+    "date": "2022-02-16",
+    "confidence": "nominal",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 3.3,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-11-x11",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -5.618822,
+      40.01696
+    ],
+    "date": "2022-03-12",
+    "confidence": "low",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 5.6,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-12-x12",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -7.085011,
+      39.726037
+    ],
+    "date": "2024-10-27",
+    "confidence": "highest",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 11.5,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-13-x13",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -7.061283,
+      39.879924
+    ],
+    "date": "2021-03-31",
+    "confidence": "high",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 9.4,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-14-x14",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.5955,
+      39.821004
+    ],
+    "date": "2021-07-30",
+    "confidence": "low",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 11.7,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-15-x15",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -7.097385,
+      39.161618
+    ],
+    "date": "2021-04-06",
+    "confidence": "highest",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 1.6,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-16-x16",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.790286,
+      39.072573
+    ],
+    "date": "2022-05-26",
+    "confidence": "highest",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 2.3,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-17-x17",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -5.782509,
+      38.850611
+    ],
+    "date": "2024-03-21",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 8.8,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-18-x18",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.944641,
+      39.055096
+    ],
+    "date": "2022-05-16",
+    "confidence": "nominal",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 1.1,
+    "status": "Active: Under review",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-19-x19",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.318873,
+      39.915409
+    ],
+    "date": "2022-09-07",
+    "confidence": "highest",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 10.6,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-20-x20",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.352272,
+      39.049552
+    ],
+    "date": "2022-09-03",
+    "confidence": "low",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 11.6,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-21-x21",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -6.615853,
+      39.491807
+    ],
+    "date": "2024-02-19",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 10.3,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-22-x22",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -5.503725,
+      38.561208
+    ],
+    "date": "2024-01-30",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 10.6,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-23-x23",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -5.992467,
+      38.583664
+    ],
+    "date": "2022-03-09",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 3.7,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-es-24-x24",
+    "jurisdiction_code": "ES-EX",
+    "coordinates": [
+      -7.128224,
+      39.626589
+    ],
+    "date": "2022-07-04",
+    "confidence": "low",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 1.3,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-01-x1",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      38.336317,
+      8.169193
+    ],
+    "date": "2022-01-19",
+    "confidence": "nominal",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 4.5,
+    "status": "Active: Under review",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-02-x2",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      36.836432,
+      8.158967
+    ],
+    "date": "2023-03-15",
+    "confidence": "low",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 7.7,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-03-x3",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      38.176212,
+      8.014252
+    ],
+    "date": "2023-12-21",
+    "confidence": "nominal",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 1.4,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-04-x4",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      37.820046,
+      8.760336
+    ],
+    "date": "2024-02-27",
+    "confidence": "low",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 2.9,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-05-x5",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      35.769858,
+      7.790981
+    ],
+    "date": "2022-05-25",
+    "confidence": "highest",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 8.8,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-06-x6",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      36.717537,
+      7.44585
+    ],
+    "date": "2022-01-10",
+    "confidence": "high",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 9.2,
+    "status": "False Positive: Cloud Shadow",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-07-x7",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      35.615722,
+      8.773817
+    ],
+    "date": "2023-01-08",
+    "confidence": "low",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 10.4,
+    "status": "Active: Under review",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-08-x8",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      35.527184,
+      7.870632
+    ],
+    "date": "2024-04-05",
+    "confidence": "low",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 3.1,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-09-x9",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      37.275949,
+      7.553454
+    ],
+    "date": "2024-02-24",
+    "confidence": "high",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 2.1,
+    "status": "Monitored: Awaiting ground verification",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-10-x10",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      37.452949,
+      7.903756
+    ],
+    "date": "2021-12-23",
+    "confidence": "low",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 4.8,
+    "status": "False Positive: Shade Tree Pruning",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-11-x11",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      36.652673,
+      8.150359
+    ],
+    "date": "2021-09-01",
+    "confidence": "high",
+    "sensor": "Landsat-9 (synthetic)",
+    "loss_ha": 6.8,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-12-x12",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      36.260817,
+      7.779249
+    ],
+    "date": "2023-01-25",
+    "confidence": "low",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 1.2,
+    "status": "Active: Under review",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-13-x13",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      38.028231,
+      7.565993
+    ],
+    "date": "2022-05-01",
+    "confidence": "low",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 1.0,
+    "status": "False Positive: Seasonal Crop Residue",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-14-x14",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      36.553477,
+      8.454198
+    ],
+    "date": "2022-03-10",
+    "confidence": "low",
+    "sensor": "Sentinel-2 (synthetic)",
+    "loss_ha": 4.5,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-15-x15",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      35.512474,
+      7.445684
+    ],
+    "date": "2021-10-06",
+    "confidence": "highest",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 10.2,
+    "status": "Resolved: Confirmed deforestation",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  },
+  {
+    "id": "alert-et-16-x16",
+    "jurisdiction_code": "ET-OR",
+    "coordinates": [
+      36.263211,
+      7.854798
+    ],
+    "date": "2024-06-22",
+    "confidence": "nominal",
+    "sensor": "GFW GLAD-S2 (synthetic)",
+    "loss_ha": 8.5,
+    "status": "Active: Under review",
+    "details": "Illustrative demo alert (synthetic).",
+    "data_origin": "synthetic"
+  }
+]

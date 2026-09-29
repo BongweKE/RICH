@@ -322,9 +322,20 @@ def test_schema_reconciliation_covers_orm_columns():
 
 
 def test_reference_point_corpus_is_honest():
-    """No institutional attribution or fabricated validation on synthetic demo points."""
+    """Synthetic reference points must never imply real attribution or validation.
+
+    A synthetic *demo* validation decision is allowed so the PoC can show the
+    validation workflow end to end, but it must be attributed to one of the
+    named synthetic demo validators and carry a note stating it is not field
+    validation. Institutional names on a synthetic record are never allowed.
+    """
     import json
     from pathlib import Path
+
+    from app.core.demo_datapoint_seed import COMMUNITY_VALIDATOR_ID, EXPERT_VALIDATOR_ID
+
+    demo_validators = {str(COMMUNITY_VALIDATOR_ID), str(EXPERT_VALIDATOR_ID)}
+    allowed_statuses = {"unvalidated", "community_validated", "expert_reviewed", "ai_reviewed", "final"}
 
     for rel in ("../../data/reference_points.json", "../../frontend/src/data/referencePoints.json"):
         path = (Path(__file__).parent / rel).resolve()
@@ -332,10 +343,15 @@ def test_reference_point_corpus_is_honest():
         points = data if isinstance(data, list) else data.get("reference_points", [])
         assert points, f"no reference points in {path}"
         for p in points:
-            assert p.get("source") == "Synthetic PoC generator (illustrative)", p.get("source")
+            assert "synthetic" in str(p.get("source", "")).lower(), p.get("source")
             assert p.get("data_origin") == "synthetic"
-            assert p.get("validation_status") == "unvalidated", p.get("validation_status")
-            assert p.get("quality_score") is None
+            status = p.get("validation_status")
+            assert status in allowed_statuses, status
+            if status == "unvalidated":
+                assert not p.get("validator_id")
+            else:
+                assert str(p.get("validator_id")) in demo_validators, p.get("validator_id")
+                assert "synthetic demo" in str(p.get("validation_notes", "")).lower()
 
 
 def test_backfill_sql_targets_only_unvalidated_rows():

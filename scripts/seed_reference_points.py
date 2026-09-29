@@ -8,6 +8,7 @@ import json
 import logging
 import os
 import uuid
+from datetime import datetime
 from pathlib import Path
 
 import asyncpg
@@ -65,16 +66,19 @@ async def seed():
                     "source": p.get("source"),
                     "canopy_cover_pct": p.get("canopy_cover_pct"),
                     "ref_id": str_id,
+                    "validation_notes": p.get("validation_notes"),
                 }
             )
 
             query = """
             INSERT INTO land_cover_reference_points (
                 id, jurisdiction_id, geometry, class_label, agroforestry_subtype,
-                validation_status, quality_score, metadata
+                validation_status, quality_score, source, data_origin,
+                generation_method, validator_id, validation_date, metadata
             ) VALUES (
                 $1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326), $5::land_cover_class,
-                $6::agroforestry_subtype, $7::validation_status, $8, $9::jsonb
+                $6::agroforestry_subtype, $7::validation_status, $8, $9, $10,
+                $11, $12, $13, $14::jsonb
             )
             ON CONFLICT (id) DO UPDATE SET
                 jurisdiction_id = EXCLUDED.jurisdiction_id,
@@ -83,6 +87,11 @@ async def seed():
                 agroforestry_subtype = EXCLUDED.agroforestry_subtype,
                 validation_status = EXCLUDED.validation_status,
                 quality_score = EXCLUDED.quality_score,
+                source = EXCLUDED.source,
+                data_origin = EXCLUDED.data_origin,
+                generation_method = EXCLUDED.generation_method,
+                validator_id = EXCLUDED.validator_id,
+                validation_date = EXCLUDED.validation_date,
                 metadata = EXCLUDED.metadata,
                 updated_at = NOW();
             """
@@ -102,6 +111,19 @@ async def seed():
             raw_subtype = p.get("agroforestry_subtype", "other")
             enum_subtype = raw_subtype if raw_subtype in VALID_SUBTYPES else "other"
 
+            raw_validator = p.get("validator_id")
+            validator_id = uuid.UUID(raw_validator) if raw_validator else None
+            raw_date = p.get("validation_date")
+            validation_date = None
+            if raw_date:
+                try:
+                    validation_date = datetime.fromisoformat(raw_date)
+                except ValueError:
+                    validation_date = None
+
+            raw_quality = p.get("quality_score")
+            quality_score = float(raw_quality) if raw_quality is not None else None
+
             await conn.execute(
                 query,
                 point_uuid,
@@ -110,8 +132,13 @@ async def seed():
                 lat,
                 p.get("class_label", "agroforestry"),
                 enum_subtype,
-                p.get("validation_status", "expert_reviewed"),
-                float(p.get("quality_score", 0.9)),
+                p.get("validation_status", "unvalidated"),
+                quality_score,
+                p.get("source"),
+                p.get("data_origin", "synthetic"),
+                p.get("generation_method"),
+                validator_id,
+                validation_date,
                 metadata,
             )
             inserted += 1

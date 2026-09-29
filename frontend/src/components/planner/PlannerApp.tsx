@@ -238,7 +238,7 @@ export function PlannerApp() {
                   connectivity windows without losing progress.
                   {' '}
                   <span className="text-amber-800 font-medium">
-                    All parcels here are synthetic demo records — field validation has not started.
+                    All parcels and validation decisions here are synthetic demo records — not real field validation.
                   </span>
                 </p>
                 {pageItems.length === 0 ? (

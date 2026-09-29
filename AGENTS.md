@@ -182,3 +182,60 @@ then load the page headless (Playwright) and assert there is no
 - The app's `.env` `DATABASE_URL` password can be stale. Get a fresh one with
   `neonctl connection-string --project-id floral-union-19484203 --pooled` and strip
   `&channel_binding=require` (asyncpg rejects it).
+
+### Global CSS trap: `overflow-hidden select-none` on `<body>`
+
+`index.html` once put `overflow-hidden select-none` on `<body>`, which locks
+page scroll **and** text selection on every route. That is only wanted for the
+full-screen 3D impact viewer; the planner/landing are normal document-flow
+pages and became unscrollable (very visible on mobile). Those classes now live
+only on the impact viewer's own root (`App.tsx`), and `<body>` is unadorned.
+When adding document-flow pages, never lock scroll/selection globally.
+
+### Impact-view overlay zones (do not stack cards)
+
+Overlays are absolutely positioned inside the map area, below the `h-14`
+header. Keep them in these non-overlapping zones (verified at 1280 and 1024):
+left rail `top-16 left-4 w-80` (Layer Panel then Impact Summary stacked; the
+layer list scrolls internally via `max-h-[45vh]`), right stack `top-16 right-4`
+(compass + telemetry), bottom-centre `bottom-10` (timeline) and `bottom-28`
+(Active Parcels selector), bottom-right `bottom-10 right-4` (Parcel Dossier).
+The timeline and quick-selector reserve `md:right-[26rem]` when a parcel is
+selected so they never sit under the dossier (`reservedRight` prop /
+`selectedParcel` check).
+
+---
+
+## 7. Synthetic / Demo Data Contract
+
+All PoC data is synthetic and this is enforced by tests
+(`backend/tests/test_geospatial.py::test_reference_point_corpus_is_honest`):
+
+- **No institutional attribution.** Synthetic records must never name a real
+  institution (CIFOR/ICRAF/GEDI/CERSGIS/Sentinel/GFW/…): use non-institutional
+  synthetic source labels and names only.
+- **Validation is allowed, but must be honestly labelled.** A synthetic record
+  may carry a *demo* validation decision **only if** `validator_id` is one of
+  the named synthetic demo validators (`...c0` community, `...e0` expert, `...d0`
+  parcels) and a note says it is a synthetic demo, not field validation.
+  `unvalidated` records must have no `validator_id`.
+- **UI must show it.** Planner reference-point popups, the map legend, the
+  validation inbox and the impact summary all state that validation is synthetic
+  demo data.
+
+Datasets live in `frontend/src/data/{allParcels,referencePoints,deforestationAlerts}.json`,
+mirrored for the API in `data/{reference_points,deforestation_alerts}.json`.
+Regenerate deterministically with:
+
+```bash
+.venv/bin/python scripts/enrich_demo_datapoints.py
+# then apply to Neon:
+.venv/bin/python scripts/seed_reference_points.py           # reference points
+# parcels + reference-point provenance are also self-healed at startup by
+# backend/app/core/demo_datapoint_seed.py (idempotent, stable-hash based).
+```
+
+The DB needs the synthetic demo validator rows to exist first (FK to `users`);
+`demo_datapoint_seed._ensure_demo_users` creates them. `users.role` is checked
+against `{guest, researcher, policy_maker, admin}`.
+

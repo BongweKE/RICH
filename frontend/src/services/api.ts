@@ -395,7 +395,7 @@ export const api = {
           compliance_status: 'COMPLIANT_ZERO_DEFORESTATION',
           risk_level: 'LOW_RISK',
           audit_timestamp: '2024-09-12T12:00:00Z',
-          issuing_authority: 'CIFOR-ICRAF RICH Hub Verification Pipeline',
+          issuing_authority: 'RICH PoC (synthetic demo) — illustrative only, not a compliance authority',
           legal_notice: 'Parcel demonstrated continuous agricultural agroforestry canopy with tree cover exceeding 10% prior to Dec 31, 2020, qualifying as legitimate agricultural production under EUDR Article 2.',
         },
       };
