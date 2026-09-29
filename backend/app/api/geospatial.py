@@ -333,7 +333,7 @@ async def get_jurisdiction(
 ):
     """Get jurisdiction details with geometry"""
 
-    stmt = select(Jurisdiction).where(Jurisdiction.code == code)
+    stmt = select(Jurisdiction).options(selectinload(Jurisdiction.parent)).where(Jurisdiction.code == code)
     result = await db.execute(stmt)
     jurisdiction = result.scalar_one_or_none()
 
