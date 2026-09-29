@@ -946,6 +946,7 @@ async def list_reference_points(
         "reference_points": [
             {
                 "id": str(p.id),
+                "name": (p.metadata_ or {}).get("name"),
                 "jurisdiction_code": safe_jurisdiction_code(p),
                 "geometry": GeospatialService.geometry_to_geojson(p.geometry),
                 "class_label": p.class_label.value if hasattr(p.class_label, "value") else str(p.class_label),
@@ -959,7 +960,9 @@ async def list_reference_points(
                 ),
                 "validator_id": str(p.validator_id) if p.validator_id else None,
                 "validation_date": p.validation_date.isoformat() if p.validation_date else None,
+                "validation_notes": (p.metadata_ or {}).get("validation_notes"),
                 "quality_score": p.quality_score,
+                "canopy_cover_pct": (p.metadata_ or {}).get("canopy_cover_pct"),
                 "data_origin": (
                     p.data_origin.value
                     if hasattr(p.data_origin, "value")
