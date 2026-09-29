@@ -224,3 +224,36 @@ async def test_hydrology_endpoint(async_client):
     assert data["jurisdiction_code"] == "GH-AH"
     assert "mean_soil_loss_t_ha_yr" in data
     assert "avoided_erosion_tons_yr" in data
+
+
+@pytest.mark.asyncio
+async def test_scenario_endpoint_honest_and_parameterized(async_client):
+    """Scenario endpoint must carry the demo disclaimer and respond to levers."""
+    resp = await async_client.post(
+        "/api/lumens/scenario",
+        json={
+            "jurisdiction_code": "GH-AH",
+            "conservation_target_pct": 10.0,
+            "agroforestry_expansion_pct": 5.0,
+            "intensification": True,
+            "years": 10,
+        },
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["mode"] == "illustrative_demo"
+    assert "must not be used for policy" in data["disclaimer"]
+    assert data["parcels_considered"] > 0
+    assert data["deltas"]["carbon_tco2e"] > 0
+    assert data["deltas"]["profit_usd"] != 0
+    assert data["major_transitions"], "levers should produce transitions"
+
+
+@pytest.mark.asyncio
+async def test_scenario_endpoint_rejects_bad_params(async_client):
+    resp = await async_client.post(
+        "/api/lumens/scenario",
+        json={"jurisdiction_code": "GH-AH", "conservation_target_pct": 99.0},
+    )
+    assert resp.status_code == 422
+
