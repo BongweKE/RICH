@@ -213,36 +213,36 @@ async def list_layers(
             "attribution": "Powered by Esri",
         },
         {
-            "id": "hansen-gfw-2020",
-            "name": "EUDR 2020 Deforestation Baseline (Hansen GFW)",
+            "id": "synthetic-alerts",
+            "name": "Deforestation Alerts (Synthetic Demo)",
             "type": "deforestation-alert",
-            "source": "hansen_gfw",
-            "attribution": "Global Forest Watch / Hansen et al. (Univ. of Maryland)",
-            "description": "Spatial baseline separating 2020 forest from deforestation frontiers with optical canopy loss alerts.",
+            "source": "rich_demo_corpus",
+            "attribution": "Synthetic PoC generator (illustrative)",
+            "description": "Illustrative alert points for the demo. Not GFW/RADD data; no real alert feed is connected in this PoC.",
         },
         {
-            "id": "sentinel2-canopy",
-            "name": "Tree Canopy Cover % (Sentinel-2 / Lang et al.)",
-            "type": "canopy-density",
-            "source": "sentinel2_gedi",
-            "attribution": "Lang et al. (ETH Zurich) / ESA Copernicus",
-            "description": "Multi-temporal Sentinel-2 and GEDI LiDAR canopy top height (RH98) and % crown cover density.",
+            "id": "synthetic-parcels",
+            "name": "Agroforestry Parcels (Synthetic Demo)",
+            "type": "parcel-catalogue",
+            "source": "rich_demo_corpus",
+            "attribution": "Synthetic PoC generator (illustrative)",
+            "description": "Procedurally generated parcel polygons for the demo. Not derived from Sentinel-2, GEDI, or any real satellite product.",
         },
         {
-            "id": "ques-c-carbon",
-            "name": "LUMENS QUES-C Biomass Carbon Density Heatmap",
+            "id": "scenario-carbon-demo",
+            "name": "Scenario Carbon Figures (Illustrative Demo)",
             "type": "carbon-stock",
-            "source": "lumens_ques_c",
-            "attribution": "CIFOR-ICRAF LUMENS / IPCC Tier 2",
-            "description": "Aboveground + Belowground + Soil Organic Carbon density gradient in tCO2e/ha.",
+            "source": "rich_demo_corpus",
+            "attribution": "Synthetic PoC generator (illustrative)",
+            "description": "Illustrative carbon figures from the scenario workbench demo. Not a LUMENS QUES-C product; no real biomass measurements exist in this PoC.",
         },
         {
-            "id": "cifor-reference",
-            "name": "CIFOR-ICRAF Ground Reference Points",
+            "id": "synthetic-reference",
+            "name": "Reference Points (Synthetic Demo)",
             "type": "ground-truth",
-            "source": "cifor_reference",
-            "attribution": "CIFOR-ICRAF / CRIG / Jimma University / SITEX",
-            "description": "Expert-validated field reference plots with measured canopy cover % and biophysical calibration.",
+            "source": "rich_demo_corpus",
+            "attribution": "Synthetic PoC generator (illustrative)",
+            "description": "Demo reference points for the validation workflow. Not expert-validated; no field data exists in this PoC.",
         },
     ]
 
@@ -960,6 +960,14 @@ async def list_reference_points(
                 "validator_id": str(p.validator_id) if p.validator_id else None,
                 "validation_date": p.validation_date.isoformat() if p.validation_date else None,
                 "quality_score": p.quality_score,
+                "data_origin": (
+                    p.data_origin.value
+                    if hasattr(p.data_origin, "value")
+                    else (str(p.data_origin) if p.data_origin else None)
+                ),
+                "generation_method": p.generation_method,
+                "source": p.source,
+                "source_url": p.source_url,
             }
             for p in points
         ],
