@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+// Side-effect: register MapLibre GL's web worker URL before any map is created.
+import './utils/maplibreSetup';
 import App from './App';
 import { PlannerApp } from './components/planner/PlannerApp';
 import { LandingPage } from './components/LandingPage';

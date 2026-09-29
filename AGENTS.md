@@ -135,3 +135,50 @@ railway variables --set MISTRAL_MODEL="mistral-tiny"
 # Modal Cloud Secret (for Modal container DB connection)
 modal secret create rich-db-secrets DATABASE_URL="postgresql://..."
 ```
+
+---
+
+## 6. Frontend Build Gotchas
+
+### MapLibre GL v6 + Vite: blank map (worker 404)
+
+**Symptom:** `/planner` loads, the UI/stats render, but the map canvas is blank —
+no parcels, no reference points. Browser console shows:
+
+```
+GET /assets/maplibre-gl-worker.mjs 404
+Error: Worker failed to load. Check that the worker URL is correct.
+```
+
+**Cause:** `maplibre-gl` v6 resolves its web worker with a *dynamic* path
+(`new URL('./maplibre-gl-worker.mjs', import.meta.url)`, see `dist/maplibre-gl.mjs`).
+Vite cannot statically analyse that template, so it never emits the worker asset
+into `dist/assets/`, and MapLibre refuses to render. The v6 worker also imports
+`./maplibre-gl-shared.mjs`, so simply copying the worker file is not enough — it
+is not self-contained.
+
+**Fix (already applied):** bundle the worker ourselves and register its URL before
+any map is created, via `frontend/src/utils/maplibreSetup.ts`:
+
+```ts
+import * as maplibregl from 'maplibre-gl';
+import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
+maplibregl.setWorkerUrl(maplibreWorkerUrl);
+```
+
+`main.tsx` imports `./utils/maplibreSetup` for its side effect so the single shared
+maplibre module instance is configured for both the planner (`PlannerMapWorkspace.tsx`)
+and `MapViewer.tsx`. After a build, `dist/assets/maplibre-gl-worker-*.js` must exist.
+
+**Verify a fix:** `cd frontend && npm run build && ls dist/assets | grep worker`,
+then load the page headless (Playwright) and assert there is no
+"Worker failed to load" console error and no 404 on `maplibre-gl-worker-*.js`.
+
+**Related traps**
+- `.gitignore` has a Python `lib/` rule that silently swallows `frontend/src/lib/`.
+  Keep frontend helper modules out of any `lib/` directory (use `src/utils/`).
+- `frontend/node_modules` can lag the lockfile (e.g. maplibre 4.7.1 vs lock 6.11.2);
+  run `npm install` before reproducing build issues, otherwise you test the wrong version.
+- The app's `.env` `DATABASE_URL` password can be stale. Get a fresh one with
+  `neonctl connection-string --project-id floral-union-19484203 --pooled` and strip
+  `&channel_binding=require` (asyncpg rejects it).
