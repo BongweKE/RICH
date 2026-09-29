@@ -1,7 +1,7 @@
 import json
 import logging
 import uuid
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -22,6 +22,7 @@ from app.models import (
     LandCoverReferencePoint,
     SatelliteImagery,
 )
+from app.models.geospatial import ValidationStatus
 from app.services.geospatial import GeospatialService
 
 logger = logging.getLogger(__name__)
@@ -420,6 +421,13 @@ async def list_parcels(
                 "uncertainty": p.uncertainty,
                 "source": p.source,
                 "source_year": p.source_year,
+                "data_origin": (
+                    p.data_origin.value if hasattr(p.data_origin, "value") else (str(p.data_origin) if p.data_origin else None)
+                ),
+                "generation_method": p.generation_method,
+                "validation_status": (
+                    p.validation_status.value if hasattr(p.validation_status, "value") else str(p.validation_status)
+                ),
                 "subtype_color": SUBTYPE_COLORS.get(
                     (
                         p.agroforestry_subtype.value
@@ -531,6 +539,13 @@ async def search_parcels(
                 "uncertainty": p.uncertainty,
                 "source": p.source,
                 "source_year": p.source_year,
+                "data_origin": (
+                    p.data_origin.value if hasattr(p.data_origin, "value") else (str(p.data_origin) if p.data_origin else None)
+                ),
+                "generation_method": p.generation_method,
+                "validation_status": (
+                    p.validation_status.value if hasattr(p.validation_status, "value") else str(p.validation_status)
+                ),
                 "subtype_color": SUBTYPE_COLORS.get(
                     (
                         p.agroforestry_subtype.value
@@ -580,9 +595,11 @@ async def get_parcel(
                 "uncertainty": matched["uncertainty"],
                 "source": matched["source"],
                 "source_year": matched["source_year"],
-                "source_url": "https://rich.cifor-icraf.org",
-                "processing_method": "Multi-Temporal Sentinel-1 SAR & Sentinel-2 Optical",
-                "model_version": "v2.4-lumen",
+                "source_url": matched.get("source_url"),
+                "data_origin": matched.get("data_origin", "synthetic"),
+                "generation_method": matched.get("generation_method"),
+                "processing_method": matched.get("processing_method"),
+                "model_version": matched.get("model_version"),
                 "created_at": "2024-01-01T00:00:00Z",
             }
         raise HTTPException(status_code=404, detail="Parcel not found")
@@ -606,6 +623,55 @@ async def get_parcel(
         "processing_method": parcel.processing_method,
         "model_version": parcel.model_version,
         "created_at": parcel.created_at.isoformat() if parcel.created_at else None,
+    }
+
+
+VALIDATION_DECISIONS = {
+    "confirmed": ValidationStatus.COMMUNITY_VALIDATED,
+    "corrected": ValidationStatus.EXPERT_REVIEWED,
+    "rejected": ValidationStatus.EXPERT_REVIEWED,
+}
+
+
+@router.post("/parcels/{parcel_id}/validate")
+async def validate_parcel(
+    parcel_id: str,
+    decision: str = Body(..., description="One of: confirmed, corrected, rejected"),
+    notes: str | None = Body(None, description="Optional validator notes"),
+    db: AsyncSession = Depends(get_db_session),
+    user: dict = Depends(get_current_user_optional),
+):
+    """Record a planner validation decision against this parcel immediately.
+
+    Decisions are persisted with the acting user id (when authenticated) and a
+    timestamp so the validation inbox survives navigation and device changes.
+    """
+    if decision not in VALIDATION_DECISIONS:
+        raise HTTPException(status_code=422, detail="decision must be one of: confirmed, corrected, rejected")
+    parsed_uuid = safe_uuid(parcel_id)
+    if not parsed_uuid:
+        raise HTTPException(status_code=400, detail="Invalid parcel id")
+    result = await db.execute(select(AgroforestryParcel).where(AgroforestryParcel.id == parsed_uuid))
+    parcel = result.scalar_one_or_none()
+    if not parcel:
+        raise HTTPException(status_code=404, detail="Parcel not found")
+    status = VALIDATION_DECISIONS[decision]
+    parcel.validation_status = status
+    parcel.validation_date = datetime.now(timezone.utc)
+    parcel.validation_notes = notes
+    if user and user.get("id"):
+        try:
+            parcel.validator_id = uuid.UUID(str(user["id"]))
+        except (ValueError, TypeError):
+            pass
+    await db.commit()
+    return {
+        "parcel_id": str(parcel.id),
+        "decision": decision,
+        "validation_status": status.value,
+        "validator_id": str(parcel.validator_id) if parcel.validator_id else None,
+        "validation_date": parcel.validation_date.isoformat() if parcel.validation_date else None,
+        "saved": True,
     }
 
 
