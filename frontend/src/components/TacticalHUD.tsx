@@ -64,45 +64,48 @@ export const TacticalHUD: React.FC<TacticalHUDProps> = ({
         )}
       </div>
 
-      {/* Top Left Telemetry Stream - positioned cleanly to the right of LayerPanel */}
-      <div className="absolute top-16 left-[19.5rem] bg-slate-950/80 backdrop-blur-sm border border-emerald-500/30 rounded p-2 text-emerald-400 shadow-lg space-y-1">
-        <div className="flex items-center space-x-2 text-[10px] tracking-wider text-emerald-300 font-bold uppercase border-b border-emerald-500/20 pb-1">
-          <Radio className="w-3 h-3 animate-pulse text-emerald-400" />
-          <span>RICH Viewer Telemetry</span>
-          {selectedParcel && (
-            <span className="px-1 bg-emerald-500/30 text-emerald-200 border border-emerald-500/40 rounded text-[8px] animate-pulse">
-              SELECTED
-            </span>
-          )}
-        </div>
-        <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[10px]">
-          <span className="text-slate-400">LAT:</span>
-          <span className="text-right text-slate-100">{lat.toFixed(5)}°</span>
-          <span className="text-slate-400">LON:</span>
-          <span className="text-right text-slate-100">{lon.toFixed(5)}°</span>
-          <span className="text-slate-400">ALT / ELEV:</span>
-          <span className="text-right text-slate-100">{Math.round(240 + Math.abs(lat * 10))} m ASL</span>
-          <span className="text-slate-400">ZOOM:</span>
-          <span className="text-right text-slate-100">{cameraZoom.toFixed(1)}x</span>
-        </div>
-      </div>
-
-      {/* Top Right Orientation / Compass */}
+      {/* Top-right HUD stack: orientation + telemetry, clear of the left rail */}
       <div
         className={`absolute top-16 transition-all duration-300 ${
           isChatOpen ? 'right-[25rem]' : 'right-4'
-        } bg-slate-950/70 backdrop-blur-sm border border-emerald-500/30 rounded p-2 text-emerald-400 shadow-lg flex items-center space-x-3`}
+        } flex flex-col items-end gap-2`}
       >
-        <div className="relative w-8 h-8 rounded-full border border-emerald-500/40 flex items-center justify-center">
-          <Compass
-            className="w-5 h-5 text-emerald-400 transition-transform duration-200"
-            style={{ transform: `rotate(${-cameraBearing}deg)` }}
-          />
+        {/* Orientation / Compass */}
+        <div className="bg-slate-950/70 backdrop-blur-sm border border-emerald-500/30 rounded p-2 text-emerald-400 shadow-lg flex items-center space-x-3">
+          <div className="relative w-8 h-8 rounded-full border border-emerald-500/40 flex items-center justify-center">
+            <Compass
+              className="w-5 h-5 text-emerald-400 transition-transform duration-200"
+              style={{ transform: `rotate(${-cameraBearing}deg)` }}
+            />
+          </div>
+          <div className="text-[10px] leading-tight">
+            <div className="text-slate-400">HEADING</div>
+            <div className="font-bold text-slate-100">{normalizedBearing}° {cardinal}</div>
+            <div className="text-[9px] text-slate-400 mt-0.5">PITCH: {Math.round(cameraPitch)}°</div>
+          </div>
         </div>
-        <div className="text-[10px] leading-tight">
-          <div className="text-slate-400">HEADING</div>
-          <div className="font-bold text-slate-100">{normalizedBearing}° {cardinal}</div>
-          <div className="text-[9px] text-slate-400 mt-0.5">PITCH: {Math.round(cameraPitch)}°</div>
+
+        {/* Telemetry stream */}
+        <div className="bg-slate-950/80 backdrop-blur-sm border border-emerald-500/30 rounded p-2 text-emerald-400 shadow-lg space-y-1">
+          <div className="flex items-center space-x-2 text-[10px] tracking-wider text-emerald-300 font-bold uppercase border-b border-emerald-500/20 pb-1">
+            <Radio className="w-3 h-3 animate-pulse text-emerald-400" />
+            <span>RICH Viewer Telemetry</span>
+            {selectedParcel && (
+              <span className="px-1 bg-emerald-500/30 text-emerald-200 border border-emerald-500/40 rounded text-[8px] animate-pulse">
+                SELECTED
+              </span>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[10px]">
+            <span className="text-slate-400">LAT:</span>
+            <span className="text-right text-slate-100">{lat.toFixed(5)}°</span>
+            <span className="text-slate-400">LON:</span>
+            <span className="text-right text-slate-100">{lon.toFixed(5)}°</span>
+            <span className="text-slate-400">ALT / ELEV:</span>
+            <span className="text-right text-slate-100">{Math.round(240 + Math.abs(lat * 10))} m ASL</span>
+            <span className="text-slate-400">ZOOM:</span>
+            <span className="text-right text-slate-100">{cameraZoom.toFixed(1)}x</span>
+          </div>
         </div>
       </div>
 

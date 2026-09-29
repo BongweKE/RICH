@@ -301,7 +301,7 @@ export function App() {
   }, [parcels]);
 
   return (
-    <div className="flex flex-col w-screen h-screen bg-slate-950 text-slate-100 overflow-hidden font-sans">
+    <div className="flex flex-col w-screen h-screen bg-slate-950 text-slate-100 overflow-hidden select-none font-sans">
       {/* Top Navigation Bar */}
       <Header
         jurisdictions={jurisdictions}
@@ -406,23 +406,26 @@ export function App() {
             setIsSplitCompare(!isSplitCompare);
             playSfx('toggle');
           }}
+          reservedRight={Boolean(selectedParcel) || isChatOpen}
         />
 
-        {/* Layer Panel Widget */}
-        <LayerPanel
-          layers={layers}
-          onToggleLayer={toggleLayer}
-          parcelCount={parcels.length}
-          opacities={opacities}
-          onOpacityChange={handleOpacityChange}
-        />
-        {/* Impact Summary Card */}
-        <div className="absolute top-[calc(16rem+1rem)] left-4 z-20 w-80 bg-slate-950/90 backdrop-blur-md border border-slate-800 rounded-xl shadow-2xl p-3 text-xs font-sans">
+        {/* Left rail: layer control + impact summary stacked so they never overlap */}
+        <div className="absolute top-16 left-4 z-20 w-80 max-h-[calc(100vh-7rem)] flex flex-col gap-3 pointer-events-auto">
+          {/* Layer Panel Widget */}
+          <LayerPanel
+            layers={layers}
+            onToggleLayer={toggleLayer}
+            parcelCount={parcels.length}
+            opacities={opacities}
+            onOpacityChange={handleOpacityChange}
+          />
+          {/* Impact Summary Card */}
+          <div className="shrink-0 bg-slate-950/90 backdrop-blur-md border border-slate-800 rounded-xl shadow-2xl p-3 text-xs font-sans">
           <h2 className="text-slate-100 font-semibold text-[13px] mb-2">Impact summary</h2>
           <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
             <span className="text-slate-400">Parcels mapped</span>
             <span className="text-right text-slate-100 tabular-nums">{impactSummary.parcels}</span>
-            <span className="text-slate-400">Human-validated</span>
+            <span className="text-slate-400">Human-validated (demo)</span>
             <span className="text-right text-emerald-300 tabular-nums">{impactSummary.validated}</span>
             <span className="text-slate-400">Total area</span>
             <span className="text-right text-slate-100 tabular-nums">{impactSummary.totalHa.toLocaleString()} ha</span>
@@ -440,8 +443,9 @@ export function App() {
             </div>
           )}
           <p className="mt-2 pt-2 border-t border-slate-800 text-[10px] text-slate-500">
-            Click any parcel on the map to inspect its provenance and validation status. All data is synthetic demo content.
+            All data is synthetic demo content — validation decisions are illustrative, not field validation.
           </p>
+        </div>
         </div>
 
         {/* 2D / 3D Map Component */}

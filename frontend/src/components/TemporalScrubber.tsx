@@ -6,6 +6,7 @@ interface TemporalScrubberProps {
   onYearChange: (year: number) => void;
   isSplitCompare: boolean;
   onToggleSplitCompare: () => void;
+  reservedRight?: boolean;
 }
 
 const EPOCHS = [
@@ -22,6 +23,7 @@ export const TemporalScrubber: React.FC<TemporalScrubberProps> = ({
   onYearChange,
   isSplitCompare,
   onToggleSplitCompare,
+  reservedRight = false,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -36,8 +38,12 @@ export const TemporalScrubber: React.FC<TemporalScrubberProps> = ({
   }, [isPlaying, currentYear, onYearChange]);
 
   return (
-    <div className="absolute bottom-9 left-1/2 -translate-x-1/2 z-20 w-full max-w-2xl px-4 pointer-events-auto">
-      <div className="bg-slate-950/85 backdrop-blur-md border border-slate-800/90 rounded-xl px-4 py-2.5 shadow-2xl flex items-center justify-between space-x-4 text-xs">
+    <div
+      className={`absolute bottom-10 left-4 right-4 z-20 transition-all duration-300 pointer-events-none flex justify-center ${
+        reservedRight ? 'md:right-[26rem]' : ''
+      }`}
+    >
+      <div className="w-full max-w-2xl bg-slate-950/85 backdrop-blur-md border border-slate-800/90 rounded-xl px-4 py-2.5 shadow-2xl flex items-center justify-between space-x-4 text-xs pointer-events-auto">
         {/* Play / Pause button */}
         <div className="flex items-center space-x-2">
           <button

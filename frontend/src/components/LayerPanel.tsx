@@ -36,7 +36,7 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({
   };
 
   return (
-    <div className="absolute top-16 left-4 z-20 w-80 bg-slate-950/90 backdrop-blur-md border border-slate-800 rounded-xl shadow-2xl overflow-hidden text-xs font-sans select-none">
+    <div className="shrink-0 w-full flex flex-col bg-slate-950/90 backdrop-blur-md border border-slate-800 rounded-xl shadow-2xl overflow-hidden text-xs font-sans select-none">
       {/* Panel Header */}
       <div className="px-3.5 py-2.5 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
         <div className="flex items-center space-x-2 text-slate-200 font-semibold">
@@ -57,7 +57,7 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({
       </div>
 
       {isExpanded && (
-        <div className="p-3 space-y-3">
+        <div className="p-3 space-y-3 overflow-y-auto max-h-[45vh] overscroll-contain">
           {/* Layer List */}
           <div className="space-y-2">
             {/* 1. Agroforestry Parcels */}
@@ -100,7 +100,7 @@ export const LayerPanel: React.FC<LayerPanelProps> = ({
               >
                 <div className="flex items-center space-x-2">
                   <MapPin className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="text-slate-200 font-medium">CIFOR Field Reference Points</span>
+                  <span className="text-slate-200 font-medium">Ground Reference Points (synthetic demo)</span>
                 </div>
                 {layers.referencePoints ? (
                   <Eye className="w-3.5 h-3.5 text-amber-400" />

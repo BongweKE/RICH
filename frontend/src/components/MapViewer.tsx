@@ -626,11 +626,12 @@ export const MapViewer: React.FC<MapViewerProps> = ({
                 .setLngLat(e.lngLat)
                 .setHTML(
                   `<div style="font-family: ui-sans-serif, system-ui, sans-serif; padding: 6px; color: #0f172a; max-width: 260px;">
-                    <div style="font-size: 10px; font-weight: 800; color: #d97706; text-transform: uppercase; letter-spacing: 0.05em;">CIFOR Reference Point</div>
+                    <div style="font-size: 10px; font-weight: 800; color: #d97706; text-transform: uppercase; letter-spacing: 0.05em;">Reference point &middot; synthetic demo</div>
                     <div style="font-size: 12px; font-weight: 700; margin: 3px 0; color: #020617;">${props.name}</div>
-                    <div style="font-size: 11px; color: #334155; margin-top: 2px;">Validation: <span style="color: #059669; font-weight: 600;">${props.validation_status} (${Math.round(props.quality_score * 100)}%)</span></div>
-                    <div style="font-size: 11px; color: #334155;">Canopy Cover: <b>${props.canopy_cover_pct}%</b></div>
-                    <div style="font-size: 10px; color: #64748b; margin-top: 4px; border-top: 1px solid #e2e8f0; pt: 4px;">Source: ${props.source}</div>
+                    <div style="font-size: 11px; color: #334155; margin-top: 2px;">Validation: <span style="color: #059669; font-weight: 600;">${props.validation_status}${props.quality_score != null ? ` (${Math.round(props.quality_score * 100)}%)` : ''}</span></div>
+                    <div style="font-size: 11px; color: #334155;">Canopy Cover: <b>${props.canopy_cover_pct != null ? `${props.canopy_cover_pct}%` : '—'}</b></div>
+                    <div style="font-size: 10px; color: #92400e; background:#fef3c7; border:1px solid #fcd34d; border-radius:6px; padding:4px 6px; margin-top:6px;">Synthetic PoC demo data — validation decisions are illustrative, not field validation.</div>
+                    <div style="font-size: 10px; color: #64748b; margin-top: 4px; border-top: 1px solid #e2e8f0;">Source: ${props.source}</div>
                   </div>`
                 )
                 .addTo(map);
@@ -1084,7 +1085,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
           className="absolute inset-y-0 right-0 pointer-events-none border-l-2 border-amber-400 bg-emerald-950/20 backdrop-blur-[1px] shadow-2xl transition-all"
           style={{ width: `${100 - splitPos}%` }}
         >
-          <div className="absolute top-16 right-4 px-3 py-1.5 rounded-lg bg-slate-950/90 border border-amber-500/50 text-amber-300 text-[11px] font-mono shadow-xl">
+          <div className="absolute top-[15rem] right-4 px-3 py-1.5 rounded-lg bg-slate-950/90 border border-amber-500/50 text-amber-300 text-[11px] font-mono shadow-xl">
             2024 Agroforestry Present
           </div>
           <div className="absolute top-16 left-4 -translate-x-full px-3 py-1.5 rounded-lg bg-slate-950/90 border border-slate-700 text-slate-300 text-[11px] font-mono shadow-xl mr-4">
@@ -1106,14 +1107,18 @@ export const MapViewer: React.FC<MapViewerProps> = ({
 
       {/* Temporal Year Badge */}
       {currentYear !== 2024 && (
-        <div className="absolute top-16 left-80 z-10 px-2.5 py-1 rounded bg-amber-600/30 border border-amber-500/50 text-amber-300 text-[10px] font-mono font-bold tracking-wider uppercase">
+        <div className="absolute top-16 left-[21.5rem] z-10 px-2.5 py-1 rounded bg-amber-600/30 border border-amber-500/50 text-amber-300 text-[10px] font-mono font-bold tracking-wider uppercase">
           EPOCH: {currentYear} OBSERVATION
         </div>
       )}
 
       {/* Interactive Parcel Quick Selector Overlay */}
-      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10 pointer-events-auto flex items-center space-x-2">
-        <div className="flex items-center space-x-2 bg-slate-950/80 backdrop-blur-md border border-slate-800 px-3 py-2 rounded-xl shadow-2xl">
+      <div
+        className={`absolute bottom-28 left-4 right-4 z-10 flex justify-center pointer-events-none ${
+          selectedParcel ? 'md:right-[26rem]' : ''
+        }`}
+      >
+        <div className="pointer-events-auto flex items-center space-x-2 bg-slate-950/80 backdrop-blur-md border border-slate-800 px-3 py-2 rounded-xl shadow-2xl">
           <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider hidden sm:inline">
             Active Parcels ({parcels.length}):
           </span>
