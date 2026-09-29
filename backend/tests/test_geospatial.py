@@ -343,9 +343,19 @@ def test_backfill_sql_targets_only_unvalidated_rows():
     from app.core.provenance_backfill import (
         PARCEL_BACKFILL,
         PARCEL_SOURCE_BACKFILL_NULLS,
+        PARCEL_INSTITUTIONAL_SOURCE_NULLER,
         REFERENCE_POINT_BACKFILL,
     )
 
     assert "validator_id IS NULL" in PARCEL_BACKFILL
     assert "validator_id IS NULL" in PARCEL_SOURCE_BACKFILL_NULLS
+    assert "validator_id IS NULL" in PARCEL_INSTITUTIONAL_SOURCE_NULLER
     assert "validator_id IS NULL" in REFERENCE_POINT_BACKFILL
+
+
+def test_backfill_guarantees_no_null_data_origin():
+    """Completeness: every synthetic parcel must end with a non-null data_origin."""
+    from app.core.provenance_backfill import PARCEL_SOURCE_BACKFILL_NULLS
+
+    assert "data_origin IS NULL" in PARCEL_SOURCE_BACKFILL_NULLS
+    assert "SET data_origin = 'synthetic'" in PARCEL_SOURCE_BACKFILL_NULLS

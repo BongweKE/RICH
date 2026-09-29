@@ -63,8 +63,10 @@ def get(p):
     with urllib.request.urlopen(base + p, timeout=20) as r:
         return json.loads(r.read())
 print('health:', get('/api/health')['status'])
-d = get('/api/geospatial/parcels?limit=1')
-p = (d.get('parcels') or d)[0]
-print('parcel has data_origin:', 'data_origin' in p)
+d = get('/api/geospatial/parcels?limit=100')
+parcels = (d.get('parcels') or d)
+nulls = [x for x in parcels if not x.get('data_origin')]
+assert not nulls, str(len(nulls)) + ' parcels missing data_origin - provenance backfill incomplete'
+print('provenance OK: ' + str(len(parcels)) + ' sampled parcels all carry data_origin')
 EOF
 ```

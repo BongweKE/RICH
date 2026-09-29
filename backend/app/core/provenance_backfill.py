@@ -68,12 +68,28 @@ WHERE data_origin IS NULL
   AND validator_id IS NULL
 """
 
+PARCEL_INSTITUTIONAL_SOURCE_NULLER = f"""
+UPDATE agroforestry_parcels
+SET source = '{HONEST_SOURCE}',
+    source_url = NULL,
+    data_origin = COALESCE(data_origin, 'synthetic'),
+    generation_method = COALESCE(generation_method, '{HONEST_METHOD}'),
+    processing_method = NULL,
+    model_version = NULL
+WHERE source_url IS NULL
+  AND validator_id IS NULL
+  AND source IS NOT NULL
+  AND source <> '{HONEST_SOURCE}'
+  AND source !~ '(openstreetmap|copernicus|esa|usgs|nasa)'
+"""
+
 
 async def backfill_provenance(engine: AsyncEngine) -> None:
     """Correct fabricated provenance on synthetic rows. Never touches human decisions."""
     statements = [
         ("parcels_fabricated_sources", PARCEL_BACKFILL, {"sources": list(FABRICATED_PARCEL_SOURCES)}),
         ("parcels_null_data_origin", PARCEL_SOURCE_BACKFILL_NULLS, None),
+        ("parcels_unverifiable_institutional_sources", PARCEL_INSTITUTIONAL_SOURCE_NULLER, None),
         ("reference_points_fabricated_validation", REFERENCE_POINT_BACKFILL, None),
     ]
     try:
