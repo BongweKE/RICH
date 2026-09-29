@@ -79,8 +79,10 @@ def load_fallback_parcels(jurisdiction_code: str | None = None) -> list[dict[str
                     "confidence_score": conf,
                     "area_ha": area,
                     "uncertainty": float(props.get("uncertainty", 0.05)),
-                    "source": props.get("source", "Multi-Sensor Satellite + GEDI LiDAR"),
+                    "source": props.get("source", "Synthetic PoC generator (illustrative)"),
                     "source_year": int(props.get("source_year", 2023)),
+                    "data_origin": props.get("data_origin", "synthetic"),
+                    "generation_method": props.get("generation_method"),
                     "subtype_color": SUBTYPE_COLORS.get(subtype, "#10b981"),
                     "height": parcel_height(area),
                 }

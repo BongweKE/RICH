@@ -42,6 +42,8 @@ class Parcel:
     source: str
     source_year: int
     source_url: Optional[str]
+    data_origin: str
+    generation_method: str
     processing_method: str
     model_version: str
     created_at: str
@@ -55,13 +57,11 @@ REGION_CONFIGS: Dict[str, Dict[str, Any]] = {
         "center": [-1.624, 6.712],
         "subtypes": ["shade_cocoa", "alley_cropping", "homegarden", "parkland"],
         "subtype_weights": {"shade_cocoa": 0.7, "alley_cropping": 0.2, "homegarden": 0.08, "parkland": 0.02},
-        "area_range": (0.5, 50.0),  # Hectares
-        "confidence_range": (0.75, 0.98),
+        # Smallholder-dominated cocoa landscape: most plots 0.5-15 ha (RICH proposal context)
+        "area_range": (0.5, 15.0),  # Hectares
+        "confidence_range": (0.55, 0.92),
         "sources": [
-            "CERSGIS Sentinel-2 Classification",
-            "Planet NICFI High-Resolution",
-            "GEDI Canopy LiDAR Validation",
-            "CIFOR Ground Truth Survey",
+            "Synthetic PoC generator (illustrative)",
         ],
     },
     "ET-OR": {
@@ -85,13 +85,11 @@ REGION_CONFIGS: Dict[str, Dict[str, Any]] = {
         "center": [-6.3, 39.2],
         "subtypes": ["dehesa", "montado", "silvopasture", "woodlot"],
         "subtype_weights": {"dehesa": 0.6, "montado": 0.2, "silvopasture": 0.15, "woodlot": 0.05},
-        "area_range": (10.0, 200.0),  # Dehesa parcels are typically larger
-        "confidence_range": (0.85, 0.99),
+        # Dehesa estates: typically 20-300 ha
+        "area_range": (20.0, 300.0),  # Hectares
+        "confidence_range": (0.60, 0.95),
         "sources": [
-            "SITEX Extremadura Geospatial",
-            "IDEE Land Cover 2023",
-            "Copernicus Sentinel-2",
-            "Spanish Forest Inventory",
+            "Synthetic PoC generator (illustrative)",
         ],
     },
 }
@@ -241,27 +239,27 @@ def generate_parcel(region_code: str, index: int) -> Parcel:
     weights = [config["subtype_weights"].get(st, 0.0) for st in subtypes]
     selected_subtype = random.choices(subtypes, weights=weights, k=1)[0]
 
-    # Generate confidence score
+    # Generate confidence score: bimodal distribution - most parcels are
+    # model-uncertain, a smaller anchor set is high-confidence (reference-anchored)
     min_conf, max_conf = config["confidence_range"]
-    confidence = round(random.uniform(min_conf, max_conf), 3)
+    if random.random() < 0.75:
+        # model-uncertain mode: cluster near the lower bound
+        confidence = round(min_conf + random.uniform(0.0, 0.25) * (max_conf - min_conf), 3)
+    else:
+        # reference-anchored mode: cluster near the upper bound
+        confidence = round(max_conf - random.uniform(0.0, 0.2) * (max_conf - min_conf), 3)
 
-    # Calculate uncertainty (inverse of confidence, scaled)
-    uncertainty = round((1.0 - confidence) * random.uniform(0.5, 1.5), 3)
+    # Derived uncertainty: deterministic function of confidence, not independent noise
+    uncertainty = round(1.0 - confidence, 3)
 
     # Select random source
     source = random.choice(config["sources"])
     source_year = random.randint(2020, 2024)
-    source_url = None
+    source_url = None  # synthetic records carry no external provenance URL
 
-    # Add source URL based on source
-    if "CERSGIS" in source:
-        source_url = "https://zenodo.org/records/16579443"
-    elif "SITEX" in source:
-        source_url = "https://sitex.gobex.es/"
-    elif "Planet" in source:
-        source_url = "https://www.planet.com/"
-    elif "GEDI" in source:
-        source_url = "https://gedi.umd.edu/"
+    # Provenance: synthetic PoC data, clearly labeled
+    data_origin = "synthetic"
+    generation_method = "scripts/generate_sample_parcels.py (v2, illustrative PoC)"
 
     # Processing metadata
     processing_method = random.choice(
@@ -291,6 +289,8 @@ def generate_parcel(region_code: str, index: int) -> Parcel:
         source=source,
         source_year=source_year,
         source_url=source_url,
+        data_origin=data_origin,
+        generation_method=generation_method,
         processing_method=processing_method,
         model_version=model_version,
         created_at=datetime.utcnow().isoformat() + "Z",
@@ -328,6 +328,8 @@ def parcels_to_geojson(parcels: List[Parcel]) -> Dict[str, Any]:
                 "confidence_score": parcel.confidence_score,
                 "area_ha": parcel.area_ha,
                 "uncertainty": parcel.uncertainty,
+                "data_origin": parcel.data_origin,
+                "generation_method": parcel.generation_method,
                 "source": parcel.source,
                 "source_year": parcel.source_year,
                 "source_url": parcel.source_url,
