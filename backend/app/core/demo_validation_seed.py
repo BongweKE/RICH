@@ -28,6 +28,12 @@ async def seed_demo_validations(engine: AsyncEngine) -> None:
     """Give ~50% of unvalidated synthetic parcels a demo decision (idempotent)."""
     try:
         async with engine.begin() as conn:
+            already_seeded = await conn.execute(
+                text("SELECT 1 FROM agroforestry_parcels WHERE validator_id = :vid LIMIT 1"),
+                {"vid": str(DEMO_VALIDATOR_ID)},
+            )
+            if already_seeded.first():
+                return
             unvalidated = await conn.execute(
                 text(
                     "SELECT id FROM agroforestry_parcels "
@@ -41,7 +47,7 @@ async def seed_demo_validations(engine: AsyncEngine) -> None:
             n = len(ids)
             community = ids[: n // 4]
             expert = ids[n // 4 : n // 2]
-            now = datetime.now(timezone.utc).isoformat()
+            now = datetime.now(timezone.utc)
 
             for parcel_ids, status in ((community, "community_validated"), (expert, "expert_reviewed")):
                 for pid in parcel_ids:
