@@ -79,8 +79,15 @@ export const Header: React.FC<HeaderProps> = ({
           </p>
         </div>
         <a
+          href="/"
+          className="ml-2 text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded bg-slate-500/20 text-slate-300 border border-slate-500/40 hover:bg-slate-500/30"
+          title="RICH home"
+        >
+          Home
+        </a>
+        <a
           href="/planner"
-          className="ml-2 text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30"
+          className="ml-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30"
           title="Open the governance planner workspace (map, validation inbox, assistant)"
         >
           Planner

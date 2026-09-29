@@ -457,7 +457,9 @@ POST   /api/policy/finance-check   # Climate finance eligibility
 
 - **Staging**: `rich-staging.railway.app` (Railway default)
 - **Production**: `rich-production-d1d3.up.railway.app` (Railway) — eventual target `rich.acaicia.org`
+- **Landing page**: `<deployment>/` (feature links, learn section, honest data-cost labels)
 - **Governance planner**: `<deployment>/planner` (same app, planner workspace)
+- **Impact viewer**: `<deployment>/impact` (3D map experience; was previously at `/`)
 - **Development**: `localhost:4173` (Vite frontend) + `localhost:8000` (FastAPI backend)
 
 ---

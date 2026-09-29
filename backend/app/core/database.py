@@ -51,6 +51,10 @@ async def init_db():
             await conn.run_sync(Base.metadata.create_all)
     except Exception as e:
         logging.getLogger(__name__).warning(f"Database initialization deferred (database connection not ready: {e})")
+    # Reconcile pre-existing tables with ORM columns added after their creation (ADR 0003)
+    from app.core.schema_migrations import reconcile_schema
+
+    await reconcile_schema(engine)
 
 
 async def close_db():

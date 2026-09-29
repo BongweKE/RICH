@@ -19,6 +19,7 @@ from sqlalchemy import (
     Index,
     Integer,
     String,
+    Text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
@@ -233,6 +234,14 @@ class AgroforestryParcel(Base):
     generation_method: Mapped[str | None] = mapped_column(String(255), nullable=True)
     processing_method: Mapped[str | None] = mapped_column(String(255), nullable=True)
     model_version: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    validation_status: Mapped[ValidationStatus] = mapped_column(
+        String(50), default=ValidationStatus.UNVALIDATED, nullable=False
+    )
+    validator_id: Mapped[UUID | None] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+    validation_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    validation_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

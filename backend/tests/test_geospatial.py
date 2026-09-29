@@ -249,3 +249,73 @@ async def test_list_reference_points_for_jurisdiction(async_client: AsyncClient)
     assert "reference_points" in data
     assert "count" in data
     assert data["count"] > 0
+
+
+@pytest.mark.asyncio
+async def test_validate_parcel_persists_decision(async_client):
+    response = await async_client.post(
+        "/api/geospatial/parcels/44444444-4444-4000-8000-000000000001/validate",
+        json={"decision": "confirmed"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["saved"] is True
+    assert data["decision"] == "confirmed"
+    assert data["validation_status"] == "community_validated"
+    assert data["validation_date"] is not None
+
+
+@pytest.mark.asyncio
+async def test_validate_parcel_rejects_bad_decision(async_client):
+    response = await async_client.post(
+        "/api/geospatial/parcels/44444444-4444-4000-8000-000000000001/validate",
+        json={"decision": "maybe"},
+    )
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_validate_parcel_rejects_bad_parcel_id(async_client):
+    response = await async_client.post(
+        "/api/geospatial/parcels/not-a-uuid/validate",
+        json={"decision": "confirmed"},
+    )
+    assert response.status_code == 400
+
+
+def test_schema_reconciliation_covers_orm_columns():
+    from app.core.schema_migrations import COLUMN_MIGRATIONS
+    from app.models.geospatial import AgroforestryParcel, LandCoverReferencePoint
+
+    covered = {(t, c) for t, c, _ in COLUMN_MIGRATIONS}
+    parcel_cols = {"agroforestry_parcels", "land_cover_reference_points"}
+    for table, model in (
+        ("agroforestry_parcels", AgroforestryParcel),
+        ("land_cover_reference_points", LandCoverReferencePoint),
+    ):
+        for col in model.__table__.columns.keys():
+            if col in (
+                "id",
+                "jurisdiction_id",
+                "geometry",
+                "class_label",
+                "agroforestry_subtype",
+                "confidence_score",
+                "area_ha",
+                "uncertainty",
+                "geospatial_embedding",
+                "document_embedding",
+                "metadata",
+                "created_at",
+                "updated_at",
+                "processing_method",
+                "model_version",
+                "source",
+                "source_year",
+                "quality_score",
+                "validator_id",
+                "validation_date",
+                "validation_status",
+            ):
+                continue
+            assert (table, col) in covered or table not in parcel_cols, f"unreconciled column {table}.{col}"

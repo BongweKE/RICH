@@ -198,6 +198,20 @@ export const api = {
     }
   },
 
+  // Validate a parcel (planner inbox decision) - persisted immediately
+  async validateParcel(parcelId: string, decision: 'confirmed' | 'corrected' | 'rejected', notes?: string): Promise<boolean> {
+    try {
+      const res = await fetch(`${API_BASE}/geospatial/parcels/${encodeURIComponent(parcelId)}/validate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ decision, notes }),
+      });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  },
+
   // AI Chat & Prompt Pills
   async getPromptPills(jurisdictionCode?: string): Promise<PromptPill[]> {
     try {

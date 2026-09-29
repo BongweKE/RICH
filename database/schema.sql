@@ -181,6 +181,11 @@ CREATE TABLE agroforestry_parcels (
     -- Processing metadata
     processing_method VARCHAR(255),
     model_version VARCHAR(50),
+    -- Planner validation audit trail (ADR 0003)
+    validation_status VARCHAR(50) NOT NULL DEFAULT 'unvalidated',
+    validator_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    validation_date TIMESTAMP WITH TIME ZONE,
+    validation_notes TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
