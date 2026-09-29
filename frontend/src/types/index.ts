@@ -26,6 +26,9 @@ export interface Parcel {
   uncertainty?: number | null;
   source?: string | null;
   source_year?: number | null;
+  data_origin?: string | null;
+  generation_method?: string | null;
+  source_url?: string | null;
   subtype_color?: string;
   height?: number;
 }
