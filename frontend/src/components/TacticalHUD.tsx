@@ -120,6 +120,7 @@ export const TacticalHUD: React.FC<TacticalHUDProps> = ({
           </span>
           <span>SYS TIME: <strong className="text-slate-200">{utcTime}</strong></span>
           <span>PARCELS IN VIEW: <strong className="text-emerald-400">{parcelCount}</strong> | DATAPOINTS: <strong className="text-emerald-400">{totalDatapoints || parcelCount}</strong></span>
+          <span title="All parcels in this demo are synthetic illustrations" className="text-[9px] px-1 py-0.5 rounded bg-amber-900/60 border border-amber-700 text-amber-300 font-semibold">DEMO DATA</span>
           <span>MODE: <strong className="text-slate-200">{is3DMode ? '3D PERSPECTIVE' : '2D ORTHO'}</strong></span>
         </div>
         <div className="hidden md:flex items-center space-x-3 text-slate-400">

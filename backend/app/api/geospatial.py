@@ -776,17 +776,27 @@ async def get_parcel_telemetry(
     import hashlib
 
     ref_num = abs(int(hashlib.md5(str(parcel_id).encode("utf-8")).hexdigest(), 16)) % 90000 + 10000
+    p_origin = None
+    if parcel is not None and getattr(parcel, "data_origin", None) is not None:
+        p_origin = parcel.data_origin.value if hasattr(parcel.data_origin, "value") else str(parcel.data_origin)
     eudr_audit = {
         "reference_id": f"DDS-RICH-2024-{ref_num}",
         "cutoff_date": "2020-12-31",
-        "forest_loss_post_cutoff": False,
-        "degradation_detected": False,
-        "jrc_forest_baseline_intersection_pct": 0.0,
-        "compliance_status": "COMPLIANT_ZERO_DEFORESTATION",
-        "risk_level": "LOW_RISK",
-        "audit_timestamp": "2024-09-12T12:00:00Z",
-        "issuing_authority": "CIFOR-ICRAF RICH Hub Verification Pipeline",
-        "legal_notice": "Parcel demonstrated continuous agricultural agroforestry canopy with tree cover exceeding 10% prior to Dec 31, 2020, qualifying as legitimate agricultural production under EUDR Article 2.",
+        "compliance_status": "NOT_ASSESSED",
+        "risk_level": "UNKNOWN",
+        "assessment_endpoint": "/api/policy/eudr-check",
+        "note": (
+            "No automated compliance verdict is issued for this parcel. Use the "
+            "evidence-gated EUDR check endpoint to obtain an assessment; it will "
+            "return INSUFFICIENT_DATA unless geolocation, land-cover history, and "
+            "legality documentation are provided."
+        ),
+        "legal_notice": (
+            "Telemetry values on this endpoint are illustrative demo values and do "
+            "not constitute verification of canopy persistence or legality."
+            if p_origin in (None, "synthetic")
+            else "Parcel telemetry reflects catalogued record origin: " + str(p_origin) + "."
+        ),
     }
 
     return {

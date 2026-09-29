@@ -78,7 +78,10 @@ async def test_get_parcel_telemetry(async_client: AsyncClient):
     assert any(pt.get("is_eudr_cutoff") for pt in telemetry["ndvi_history"])
     assert "canopy_strata" in telemetry
     assert "gedi_profile" in telemetry
-    assert telemetry["eudr_audit"]["compliance_status"] == "COMPLIANT_ZERO_DEFORESTATION"
+    assert telemetry["eudr_audit"]["compliance_status"] == "NOT_ASSESSED"
+    assert telemetry["eudr_audit"]["risk_level"] == "UNKNOWN"
+    assert telemetry["eudr_audit"]["assessment_endpoint"] == "/api/policy/eudr-check"
+    assert "illustrative demo values" in telemetry["eudr_audit"]["legal_notice"]
 
 
 @pytest.mark.asyncio
