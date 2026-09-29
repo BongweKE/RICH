@@ -34,7 +34,7 @@ async def chat_status():
             "EUDR Deforestation Compliance Verification",
             "LUMENS Land Use Scenario Analysis",
             "QUES-C Carbon Accounting",
-            "God's Eye View Tactical Intelligence",
+            "Landscape Intelligence Overview",
         ],
     }
 

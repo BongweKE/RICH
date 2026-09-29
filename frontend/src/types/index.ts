@@ -63,7 +63,6 @@ export interface ChatMessage {
   rating?: number;
 }
 
-export type SensorMode = 'normal' | 'nvg' | 'flir' | 'crt' | 'noir';
 
 export interface NDVIHistoryPoint {
   year: number;
@@ -294,6 +293,7 @@ export interface LayerState {
   canopyDensity: boolean;
   satelliteBasemap: boolean;
   carbonDensityHeatmap?: boolean;
+  uncertaintyOverlay?: boolean;
   deforestationAlerts?: boolean;
 }
 
@@ -304,6 +304,7 @@ export interface LayerOpacityState {
   canopyDensity: number;
   satelliteBasemap: number;
   carbonDensityHeatmap?: number;
+  uncertaintyOverlay?: number;
   deforestationAlerts?: number;
 }
 

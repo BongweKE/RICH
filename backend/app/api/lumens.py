@@ -788,3 +788,134 @@ async def delete_scenario(
     await db.commit()
 
     return {"message": "Scenario deleted"}
+
+
+# Illustrative coefficients for synthetic scenario modelling (documented, not empirical).
+# Per-subtype proxies: tCO2e/ha carbon stock and USD/ha/yr smallholder gross margin.
+SCENARIO_COEFFICIENTS = {
+    "shade_cocoa": {"carbon": 120.0, "profit": 1450.0},
+    "shade_coffee": {"carbon": 110.0, "profit": 1300.0},
+    "dehesa": {"carbon": 95.0, "profit": 380.0},
+    "montado": {"carbon": 95.0, "profit": 370.0},
+    "silvopasture": {"carbon": 75.0, "profit": 520.0},
+    "alley_cropping": {"carbon": 85.0, "profit": 700.0},
+    "parkland": {"carbon": 60.0, "profit": 300.0},
+    "homegarden": {"carbon": 90.0, "profit": 900.0},
+    "forest_farming": {"carbon": 130.0, "profit": 800.0},
+    "woodlot": {"carbon": 140.0, "profit": 250.0},
+    "other": {"carbon": 70.0, "profit": 400.0},
+}
+NON_AGROFORESTRY_PROXY = {"carbon": 40.0, "profit": 550.0}
+SCENARIO_DISCLAIMER = (
+    "Illustrative scenario on synthetic demo parcels. Coefficients are documented "
+    "proxies, not measured values; outputs must not be used for policy, compliance, "
+    "or finance decisions."
+)
+
+
+@router.post("/scenario")
+async def run_scenario(
+    jurisdiction_code: str = Body("GH-AH", description="Jurisdiction code"),
+    conservation_target_pct: float = Body(
+        0.0, ge=0, le=50, description="Share of lowest-carbon parcels converted to conservation agroforestry"
+    ),
+    agroforestry_expansion_pct: float = Body(
+        0.0, ge=0, le=50, description="Share of non-parcel area converted to agroforestry (adds area)"
+    ),
+    intensification: bool = Body(False, description="Raise productivity/profit on existing agroforestry"),
+    years: int = Body(10, ge=1, le=30, description="Planning horizon"),
+    db: AsyncSession = Depends(get_db_session),
+):
+    """DEMO (illustrative): parameterized scenario over the synthetic parcel catalogue.
+
+    Converts real catalogue rows under user-defined levers and reports carbon
+    and profitability deltas from documented per-subtype proxy coefficients.
+    """
+    from app.models import AgroforestryParcel, Jurisdiction
+
+    jur = await db.execute(select(Jurisdiction).where(Jurisdiction.code == jurisdiction_code))
+    jurisdiction = jur.scalar_one_or_none()
+    if not jurisdiction:
+        raise HTTPException(status_code=404, detail="Unknown jurisdiction")
+
+    result = await db.execute(select(AgroforestryParcel).where(AgroforestryParcel.jurisdiction_id == jurisdiction.id))
+    parcels = list(result.scalars().all())
+    if not parcels:
+        raise HTTPException(status_code=404, detail="No parcels for jurisdiction")
+
+    def coeff(subtype):
+        return SCENARIO_COEFFICIENTS.get(subtype, SCENARIO_COEFFICIENTS["other"])
+
+    baseline_carbon = 0.0
+    baseline_profit = 0.0
+    for p in parcels:
+        c = coeff(p.agroforestry_subtype)
+        baseline_carbon += c["carbon"] * (p.area_ha or 0)
+        baseline_profit += c["profit"] * (p.area_ha or 0) * years
+
+    scenario_carbon = baseline_carbon
+    scenario_profit = baseline_profit
+    transitions = []
+
+    if conservation_target_pct > 0:
+        by_carbon = sorted(parcels, key=lambda p: coeff(p.agroforestry_subtype)["carbon"])
+        target_area = sum((p.area_ha or 0) for p in parcels) * conservation_target_pct / 100
+        converted = 0.0
+        for p in by_carbon:
+            if converted >= target_area:
+                break
+            ha = min(p.area_ha or 0, target_area - converted)
+            old_c = coeff(p.agroforestry_subtype)
+            scenario_carbon += (SCENARIO_COEFFICIENTS["woodlot"]["carbon"] - old_c["carbon"]) * ha
+            scenario_profit += (SCENARIO_COEFFICIENTS["woodlot"]["profit"] - old_c["profit"]) * ha * years
+            transitions.append(
+                {
+                    "from": p.agroforestry_subtype or "other",
+                    "to": "woodlot (conservation)",
+                    "area_ha": round(ha, 1),
+                }
+            )
+            converted += ha
+
+    if agroforestry_expansion_pct > 0:
+        total_area = sum((p.area_ha or 0) for p in parcels)
+        new_area = total_area * agroforestry_expansion_pct / 100
+        target = SCENARIO_COEFFICIENTS["shade_cocoa"]
+        scenario_carbon += (target["carbon"] - NON_AGROFORESTRY_PROXY["carbon"]) * new_area
+        scenario_profit += (target["profit"] - NON_AGROFORESTRY_PROXY["profit"]) * new_area * years
+        transitions.append(
+            {
+                "from": "non-parcel land (proxy)",
+                "to": "shade_cocoa (expansion)",
+                "area_ha": round(new_area, 1),
+            }
+        )
+
+    if intensification:
+        scenario_profit *= 1.15
+
+    return {
+        "jurisdiction_code": jurisdiction_code,
+        "mode": "illustrative_demo",
+        "disclaimer": SCENARIO_DISCLAIMER,
+        "parameters": {
+            "conservation_target_pct": conservation_target_pct,
+            "agroforestry_expansion_pct": agroforestry_expansion_pct,
+            "intensification": intensification,
+            "years": years,
+        },
+        "parcels_considered": len(parcels),
+        "baseline": {
+            "carbon_tco2e": round(baseline_carbon, 0),
+            "profit_usd": round(baseline_profit, 0),
+        },
+        "scenario": {
+            "carbon_tco2e": round(scenario_carbon, 0),
+            "profit_usd": round(scenario_profit, 0),
+        },
+        "deltas": {
+            "carbon_tco2e": round(scenario_carbon - baseline_carbon, 0),
+            "profit_usd": round(scenario_profit - baseline_profit, 0),
+        },
+        "major_transitions": sorted(transitions, key=lambda t: -t["area_ha"])[:8],
+    }

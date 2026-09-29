@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { api } from '../../services/api';
 import type { Jurisdiction, Parcel } from '../../types';
 
 interface ChatTurn {
   role: 'user' | 'assistant';
   content: string;
+  source?: 'mistral' | 'local' | null;
 }
 
 const SUGGESTED_QUESTIONS = [
@@ -63,6 +65,12 @@ interface Props {
 
 export function PlannerAssistant({ jurisdiction, parcels }: Props) {
   const [turns, setTurns] = useState<ChatTurn[]>([]);
+  const [pills, setPills] = useState<Array<{ id: string; label: string; prompt: string }>>([]);
+  useEffect(() => {
+    api.getPromptPills(jurisdiction.code)
+      .then((p) => setPills((p || []).slice(0, 6)))
+      .catch(() => setPills([]));
+  }, [jurisdiction.code]);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
 
@@ -73,28 +81,22 @@ export function PlannerAssistant({ jurisdiction, parcels }: Props) {
     setInput('');
     setTurns((prev) => [...prev, { role: 'user', content: q }]);
     let answer: string;
+    let source: 'mistral' | 'local' = 'local';
     try {
-      const res = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          query: q,
-          jurisdiction_code: jurisdiction.code,
-          conversation_history: turns.slice(-6).map((t) => ({ role: t.role, content: t.content })),
-        }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        answer = data.response || 'No response text was returned.';
-        const origins = [...new Set(parcels.map((p) => (p as any).data_origin || 'unknown'))].join(', ');
-        answer += `\n\n---\n_Data provenance: catalogue records for ${jurisdiction.code} (origins: ${origins}). Figures above are drawn from these records only._`;
-      } else {
-        answer = buildLocalGroundedAnswer(q, parcels, jurisdiction);
-      }
+      const data = await api.sendChatMessage(
+        q,
+        turns.slice(-6).map((t) => ({ role: t.role, content: t.content })),
+        jurisdiction.code,
+      );
+      answer = data.response || 'No response text was returned.';
+      source = (data.model && !String(data.model).includes('fallback')) ? 'mistral' : 'local';
+      const origins = [...new Set(parcels.map((p) => (p as any).data_origin || 'unknown'))].join(', ');
+      answer += `\n\n---\n_Data provenance: catalogue records for ${jurisdiction.code} (origins: ${origins}). Figures above are drawn from these records only._`;
     } catch {
       answer = buildLocalGroundedAnswer(q, parcels, jurisdiction);
+      source = 'local';
     }
-    setTurns((prev) => [...prev, { role: 'assistant', content: answer }]);
+    setTurns((prev) => [...prev, { role: 'assistant', content: answer, source }]);
     setBusy(false);
   };
 
@@ -108,6 +110,21 @@ export function PlannerAssistant({ jurisdiction, parcels }: Props) {
         </p>
       </div>
 
+      {pills.length > 0 && (
+        <div className="px-4 pb-2 flex flex-wrap gap-2" aria-label="Suggested prompts">
+          {pills.map((pl) => (
+            <button
+              key={pl.id}
+              type="button"
+              onClick={() => ask(pl.prompt)}
+              disabled={busy}
+              className="rounded-full border border-emerald-200 bg-emerald-50 text-emerald-900 text-xs px-3 py-1.5 hover:bg-emerald-100 disabled:opacity-50"
+            >
+              {pl.label}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="px-4 py-3 flex flex-wrap gap-2" aria-label="Suggested questions">
         {SUGGESTED_QUESTIONS.map((q) => (
           <button
@@ -141,6 +158,11 @@ export function PlannerAssistant({ jurisdiction, parcels }: Props) {
                   {line.replace(/\*\*/g, '')}
                 </p>
               ))}
+              {t.role === 'assistant' && (
+                <p className="mt-1 text-[10px] text-stone-400 border-t border-stone-200 pt-1">
+                  {t.source === 'mistral' ? 'Answered with Mistral AI, grounded in catalogue records' : 'Answered locally from catalogue records (AI service unavailable or fallback)'}
+                </p>
+              )}
             </div>
           </div>
         ))}

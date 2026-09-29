@@ -4,7 +4,6 @@ import {
   Parcel,
   LayerState,
   LayerOpacityState,
-  SensorMode,
   TourWaypoint,
   AGROFORESTRY_SUBTYPE_COLORS,
 } from '../types';
@@ -18,7 +17,6 @@ interface MapViewerProps {
   layers: LayerState;
   opacities: LayerOpacityState;
   is3DMode: boolean;
-  sensorMode: SensorMode;
   currentYear: number;
   isSplitCompare: boolean;
   tourWaypoint: TourWaypoint | null;
@@ -154,7 +152,6 @@ export const MapViewer: React.FC<MapViewerProps> = ({
   layers,
   opacities,
   is3DMode,
-  sensorMode,
   currentYear,
   isSplitCompare,
   tourWaypoint,
@@ -167,78 +164,30 @@ export const MapViewer: React.FC<MapViewerProps> = ({
   const mapInstance = useRef<any>(null);
   const [splitPos, setSplitPos] = useState(50);
 
-  // Dynamic MapLibre expressions for tactical sensor mode shading
-  const getParcelColorExpression = (mode: SensorMode) => {
-    switch (mode) {
-      case 'flir':
-        return [
-          'case',
-          ['boolean', ['get', 'selected'], false],
-          '#ffffff', // Blistering white-hot thermal signature for selected parcel
-          ['>=', ['get', 'height'], 35],
-          '#38bdf8', // Cool upper emergent canopy
-          ['>=', ['get', 'height'], 25],
-          '#fbbf24', // Warm midstory canopy
-          ['>=', ['get', 'height'], 15],
-          '#f97316', // High thermal understory
-          '#ef4444', // Hot ground / soil
-        ];
-      case 'nvg':
-        return [
-          'case',
-          ['boolean', ['get', 'selected'], false],
-          '#bbf7d0', // Ultra-bright luminescent phosphor highlight
-          ['>=', ['get', 'height'], 30],
-          '#4ade80',
-          ['>=', ['get', 'height'], 18],
-          '#22c55e',
-          '#15803d',
-        ];
-      case 'crt':
-        return [
-          'case',
-          ['boolean', ['get', 'selected'], false],
-          '#fde047', // Canary glowing phosphor
-          ['>=', ['get', 'height'], 30],
-          '#f59e0b',
-          ['>=', ['get', 'height'], 18],
-          '#d97706',
-          '#b45309',
-        ];
-      case 'noir':
-        return [
-          'case',
-          ['boolean', ['get', 'selected'], false],
-          '#ffffff', // Pure white contrast highlight
-          ['>=', ['get', 'height'], 30],
-          '#cbd5e1',
-          ['>=', ['get', 'height'], 18],
-          '#94a3b8',
-          '#64748b',
-        ];
-      default:
-        return [
-          'case',
-          ['boolean', ['get', 'selected'], false],
-          '#38bdf8', // Radiant cyan beacon for selected parcel in normal mode
-          ['coalesce', ['get', 'subtype_color'], '#10b981'],
-        ];
+  // MapLibre color expressions for parcels
+  const getParcelColorExpression = () => {
+    if (layers.uncertaintyOverlay) {
+      // Amber ramp by model uncertainty: pale green (certain) -> amber (uncertain)
+      return [
+        'case',
+        ['boolean', ['get', 'selected'], false],
+        '#38bdf8',
+        ['>=', ['coalesce', ['get', 'uncertainty'], 0], 0.05],
+        '#f59e0b',
+        ['>=', ['coalesce', ['get', 'uncertainty'], 0], 0.02],
+        '#fcd34d',
+        '#a3e635',
+      ];
     }
+    return [
+      'case',
+      ['boolean', ['get', 'selected'], false],
+      '#38bdf8',
+      ['coalesce', ['get', 'subtype_color'], '#10b981'],
+    ];
   };
-
-  const getParcelLineColorExpression = (mode: SensorMode) => {
-    switch (mode) {
-      case 'flir':
-        return ['case', ['boolean', ['get', 'selected'], false], '#ffffff', '#fbbf24'];
-      case 'nvg':
-        return ['case', ['boolean', ['get', 'selected'], false], '#ffffff', '#4ade80'];
-      case 'crt':
-        return ['case', ['boolean', ['get', 'selected'], false], '#ffffff', '#f59e0b'];
-      case 'noir':
-        return ['case', ['boolean', ['get', 'selected'], false], '#ffffff', '#f1f5f9'];
-      default:
-        return ['case', ['boolean', ['get', 'selected'], false], '#ffffff', ['coalesce', ['get', 'subtype_color'], '#34d399']];
-    }
+  const getParcelLineColorExpression = () => {
+    return ['case', ['boolean', ['get', 'selected'], false], '#ffffff', ['coalesce', ['get', 'subtype_color'], '#34d399']];
   };
 
   // Initialize MapLibre GL
@@ -284,7 +233,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
 
         map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'bottom-right');
 
-        // Track cursor coordinates for Tactical HUD
+        // Track cursor coordinates for telemetry HUD
         map.on('mousemove', (e: any) => {
           if (onCursorMove) {
             onCursorMove([e.lngLat.lat, e.lngLat.lng]);
@@ -374,7 +323,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     });
   }, [tourWaypoint]);
 
-  // Focus and fly to selected parcel in God's Eye View
+  // Focus and fly to selected parcel
   useEffect(() => {
     if (!mapInstance.current || !selectedParcel) return;
     try {
@@ -477,6 +426,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
                   id: p.id,
                   subtype: p.agroforestry_subtype,
                   confidence: p.confidence_score,
+                  uncertainty: p.uncertainty ?? null,
                   area_ha: p.area_ha || 15.0,
                   height: height,
                   selected: isSelected,
@@ -506,12 +456,12 @@ export const MapViewer: React.FC<MapViewerProps> = ({
               visibility: layers.agroforestryParcels && !is3DMode ? 'visible' : 'none',
             },
             paint: {
-              'fill-color': getParcelColorExpression(sensorMode),
+              'fill-color': getParcelColorExpression(),
               'fill-opacity': ['/', ['get', 'opacity'], 100],
             },
           });
 
-          // 3D Extrusion Layer (God's Eye View 3D Canopy Height with Ambient Vertical Gradient)
+          // 3D Extrusion Layer (3D Canopy Height with Ambient Vertical Gradient)
           map.addLayer({
             id: 'parcels-3d-extrusion',
             type: 'fill-extrusion',
@@ -520,7 +470,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
               visibility: layers.agroforestryParcels && is3DMode ? 'visible' : 'none',
             },
             paint: {
-              'fill-extrusion-color': getParcelColorExpression(sensorMode),
+              'fill-extrusion-color': getParcelColorExpression(),
               'fill-extrusion-height': ['get', 'height'],
               'fill-extrusion-base': 0,
               'fill-extrusion-opacity': ['/', opacities.agroforestryParcels, 100],
@@ -537,7 +487,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
               visibility: layers.agroforestryParcels ? 'visible' : 'none',
             },
             paint: {
-              'line-color': getParcelLineColorExpression(sensorMode),
+              'line-color': getParcelLineColorExpression(),
               'line-width': ['case', ['boolean', ['get', 'selected'], false], 3, 2],
               'line-opacity': ['/', opacities.agroforestryParcels, 100],
             },
@@ -558,21 +508,21 @@ export const MapViewer: React.FC<MapViewerProps> = ({
           });
         }
 
-        // Toggle layer visibility and update responsive opacity & sensor colors
+        // Toggle layer visibility and update responsive opacity
         if (map.getLayer('parcels-fill')) {
           map.setLayoutProperty('parcels-fill', 'visibility', layers.agroforestryParcels && !is3DMode ? 'visible' : 'none');
           map.setPaintProperty('parcels-fill', 'fill-opacity', opacities.agroforestryParcels / 100);
-          map.setPaintProperty('parcels-fill', 'fill-color', getParcelColorExpression(sensorMode));
+          map.setPaintProperty('parcels-fill', 'fill-color', getParcelColorExpression());
         }
         if (map.getLayer('parcels-3d-extrusion')) {
           map.setLayoutProperty('parcels-3d-extrusion', 'visibility', layers.agroforestryParcels && is3DMode ? 'visible' : 'none');
           map.setPaintProperty('parcels-3d-extrusion', 'fill-extrusion-opacity', opacities.agroforestryParcels / 100);
-          map.setPaintProperty('parcels-3d-extrusion', 'fill-extrusion-color', getParcelColorExpression(sensorMode));
+          map.setPaintProperty('parcels-3d-extrusion', 'fill-extrusion-color', getParcelColorExpression());
         }
         if (map.getLayer('parcels-line')) {
           map.setLayoutProperty('parcels-line', 'visibility', layers.agroforestryParcels ? 'visible' : 'none');
           map.setPaintProperty('parcels-line', 'line-opacity', opacities.agroforestryParcels / 100);
-          map.setPaintProperty('parcels-line', 'line-color', getParcelLineColorExpression(sensorMode));
+          map.setPaintProperty('parcels-line', 'line-color', getParcelLineColorExpression());
         }
       } catch (err) {
         console.warn('Parcel sync notice:', err);
@@ -584,7 +534,7 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     } else {
       map.once('load', syncParcels);
     }
-  }, [parcels, selectedParcel, layers.agroforestryParcels, is3DMode, opacities.agroforestryParcels, sensorMode]);
+  }, [parcels, selectedParcel, layers.agroforestryParcels, layers.uncertaintyOverlay, is3DMode, opacities.agroforestryParcels, ]);
 
   // Sync CIFOR-ICRAF Ground Reference Points Layer
   useEffect(() => {
@@ -1116,28 +1066,13 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     }
   }, [parcels, layers.carbonDensityHeatmap, opacities.carbonDensityHeatmap]);
 
-  // Handle Sensor Filter class on map container
-  const getSensorFilterStyle = () => {
-    switch (sensorMode) {
-      case 'nvg':
-        return 'brightness-125 contrast-125 saturate-150';
-      case 'flir':
-        return 'contrast-150 saturate-200 hue-rotate-180';
-      case 'crt':
-        return 'contrast-110 brightness-95';
-      case 'noir':
-        return 'grayscale contrast-125';
-      default:
-        return '';
-    }
-  };
 
   return (
     <div className="relative w-full h-full flex-1 overflow-hidden bg-slate-950 select-none font-sans">
-      {/* MapLibre WebGL Canvas Container with Sensor Filter */}
+      {/* MapLibre WebGL Canvas Container */}
       <div
         ref={mapContainer}
-        className={`w-full h-full transition-all duration-300 ${getSensorFilterStyle()}`}
+        className="w-full h-full transition-all duration-300"
       />
 
       {/* Split-Screen Comparison Curtain (2020 EUDR vs 2024 Present) */}

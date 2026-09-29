@@ -63,7 +63,10 @@ export function PlannerApp() {
   }, [jurisdiction, view]);
 
   const validationQueue = useMemo(
-    () => parcels.filter((p) => !isReviewed(p) && !(p.id in decisions)),
+    () =>
+      parcels
+        .filter((p) => !isReviewed(p) && !(p.id in decisions))
+        .sort((a, b) => (a.confidence_score ?? 1) - (b.confidence_score ?? 1)),
     [parcels, decisions],
   );
 
@@ -227,7 +230,7 @@ export function PlannerApp() {
                 <div className="flex flex-wrap items-end justify-between gap-2 mb-1">
                   <h2 id="validation-heading" className="text-base font-semibold">Validation inbox</h2>
                   <p className="text-xs text-stone-500 tabular-nums">
-                    {stats.queue} awaiting · {stats.saved} saved · {PAGE_SIZE} per page
+                    {stats.queue} awaiting · {stats.saved} saved · {PAGE_SIZE} per page · sorted by lowest confidence first
                   </p>
                 </div>
                 <p className="text-sm text-stone-600 mb-3">

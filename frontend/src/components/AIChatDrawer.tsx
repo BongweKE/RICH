@@ -315,7 +315,7 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({
                             }
                           }}
                           className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-[10px] text-emerald-300 border border-slate-700 cursor-pointer transition-colors"
-                          title={isParcel ? "Focus and inspect parcel in God's Eye View" : "View legal clause / citation details"}
+                          title={isParcel ? "Focus and inspect parcel on the map" : "View legal clause / citation details"}
                         >
                           <span>[{i + 1}] {c.title}</span>
                         </span>
