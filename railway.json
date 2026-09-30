@@ -6,8 +6,10 @@
     "watchPatterns": [
       "backend/**",
       "frontend/**",
+      "data/**",
       "docker-compose.yml",
-      "Dockerfile"
+      "Dockerfile",
+      "railway.json"
     ]
   },
   "deploy": {
