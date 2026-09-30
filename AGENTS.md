@@ -113,23 +113,31 @@ cd ../frontend && npm run build
   + migration lint, ruff/black/mypy + ESLint/Prettier, Trivy scan, backend
   pytest (PostGIS service), frontend tests and build.
 - **`ci.yml`** (push to `main`/`master`): backend pytest + frontend
-  typecheck/build, then a `verify-production` job that polls
-  `/health.commit` until Railway is serving the pushed SHA and smoke-tests the
-  live URL. It only runs when a Railway-watched path changed.
-- **`promote.yml`** (manual): tags a release and verifies production serves
-  `master`, creates a GitHub Release. It does **not** deploy.
+  typecheck/build, plus a manual `workflow_dispatch` production smoke test.
+  **Deliberately does not verify the deployment** — see below.
+- **`promote.yml`** (manual): tags a release, verifies production serves
+  `master` (via `/health.commit`) and creates a GitHub Release. It does **not**
+  deploy.
 - **`main-guard.yml`**: warns when a commit lands on `main` without a PR.
 
 ### Deployment model (important)
 
 **Railway has a single `production` environment and no staging.** Deploys are
-driven by Railway's Git integration, gated by `railway.json ->
-build.watchPatterns` (`backend/**`, `frontend/**`, `data/**`, `Dockerfile`,
-`railway.json`). Pushing to `master` is the deploy trigger; a data-only corpus
-change redeploys because `data/**` is watched. GitHub Actions is **CI only** —
-it never `railway up`s. `/health` returns `commit` (from
-`RAILWAY_GIT_COMMIT_SHA`) and `environment` so CI can verify a rollout.
-Adding a real staging environment is tracked as a low-priority issue.
+driven by Railway's Git integration. Railway is configured to **wait for the
+commit's CI check suite** and skips the deploy when it fails
+(`skippedReason: "CI check suite failed"`), then health-checks the deployment
+(`railway.json -> deploy.healthcheckPath: /health`).
+
+Consequences:
+- Pushing to `master` is the deploy trigger.
+- **CI must never depend on the deploy.** A push-time job that polls
+  `/health.commit` deadlocks (Railway waits for CI, CI waits for Railway).
+  Keep `ci.yml` to tests + build only; verify rollouts in the manual
+  `promote.yml` (or `ci.yml`'s manual smoke job).
+- `/health` returns `commit` (from `RAILWAY_GIT_COMMIT_SHA`) and `environment`
+  so a rollout can be verified.
+- GitHub Actions is **CI only** — it never `railway up`s.
+- Adding a real staging environment is tracked as a low-priority issue (#15).
 
 ---
 
