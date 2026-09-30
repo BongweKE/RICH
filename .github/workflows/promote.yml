@@ -1,18 +1,17 @@
 name: Promote to Production
 
+# Production is deployed automatically by Railway's Git integration on every
+# push to master (gated by railway.json watchPatterns). This workflow cuts a
+# versioned release and verifies that production is actually serving the
+# released commit — it does not need to trigger a deploy itself.
+
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to deploy (e.g., v1.0.0)'
+        description: 'Version to release (e.g., v1.0.0)'
         required: true
         type: string
-
-# Production deployment requires GitHub environment with reviewer
-# This enables required reviews before production deployment
-# environment:
-#   name: production
-#   url: https://rich.acaicia.org
 
 permissions:
   contents: write
@@ -21,100 +20,52 @@ concurrency:
   group: promote-production
   cancel-in-progress: true
 
-env:
-  RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-  RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
-  NEON_DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
-  MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
-  JWT_SECRET: ${{ secrets.JWT_SECRET }}
-
 jobs:
   promote:
-    name: Promote to Production
+    name: Release production
     runs-on: ubuntu-latest
+    env:
+      TARGET: https://rich-production-d1d3.up.railway.app
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           ref: master
 
-      - name: Verify commit arrived via PR
-        id: check
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
-          SHA: ${{ github.sha }}
-        run: |
-          set -euo pipefail
-          if ! prs="$(gh api "repos/$REPO/commits/$SHA/pulls" --jq 'length' 2>/tmp/gh.err)"; then
-            echo "::warning::Could not verify commit/PR association; proceeding with caution"
-            exit 0
-          fi
-          if [ "${prs:-0}" -eq 0 ]; then
-            echo "::warning::Commit $SHA arrived directly on master; proceeding with workflow dispatch release."
-          else
-            echo "OK: $SHA arrived via $prs pull request(s)"
-          fi
-
-      - name: Configure Git for tag creation
+      - name: Create Git tag
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          # Use PAT if available for write operations, otherwise use GITHUB_TOKEN
-          if [ -n "${{ secrets.RAILWAY_GITHUB_PAT }}" ]; then
-            echo "Using PAT for git write operations"
-            git remote set-url origin https://x-access-token:${{ secrets.RAILWAY_GITHUB_PAT }}@github.com/BongweKE/RICH.git
-          else
-            echo "Using GITHUB_TOKEN (may fail on push)"
-          fi
+          git tag -f "${{ inputs.version }}"
+          git push origin "${{ inputs.version }}" --force
 
-      - name: Create Git Tag
-        run: |
-          git tag -f ${{ inputs.version }}
-          git push origin ${{ inputs.version }} --force
-
-      - name: Install Railway CLI
-        run: |
-          curl -fsSL https://railway.com/install.sh | sh -s -- -y
-          echo "$HOME/.railway/bin" >> $GITHUB_PATH
-
-      - name: Run database migrations for production
-        run: |
-          cd backend
-          pip install -r requirements.txt
-          echo "Production migrations would be applied here"
-
-      - name: Deploy to Production
+      - name: Verify production is serving master
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+          SHA: ${{ github.sha }}
         run: |
-          export PATH="$HOME/.railway/bin:$PATH"
-          if [ -n "$RAILWAY_API_TOKEN" ]; then
-            railway up --project "$RAILWAY_PROJECT_ID" --environment production -d -y || echo "::warning::Railway deployment initiated via Git webhook."
-          else
-            echo "::warning::RAILWAY_API_TOKEN not configured; Railway automatically deploys pushed commits."
+          set -euo pipefail
+          commit=""
+          for i in $(seq 1 40); do
+            commit="$(curl -s "$TARGET/health" | python3 -c "import sys,json; print(json.load(sys.stdin).get('commit',''))" 2>/dev/null || true)"
+            echo "attempt $i: deployed commit = ${commit:-<none>}"
+            if [ "$commit" = "$SHA" ]; then
+              echo "Production is serving $SHA"
+              break
+            fi
+            sleep 15
+          done
+          if [ "$commit" != "$SHA" ]; then
+            echo "::error::Production is not serving $SHA within the timeout."
+            exit 1
           fi
 
-      - name: Verify production deployment
+      - name: Production smoke tests
         run: |
-          sleep 60
-          PROD_URL="https://rich-production-d1d3.up.railway.app"
-          curl -I "$PROD_URL/health" || curl -I "$PROD_URL/health/" || echo "Production health check failed"
-          curl -I "$PROD_URL/api/geospatial/parcels" || echo "Production API check failed"
-
-      - name: Run production smoke tests
-        run: |
-          PROD_URL="https://rich-production-d1d3.up.railway.app"
-          # Verify critical endpoints on live Railway URL (with fallback to custom domain if resolving)
-          if curl -sSf https://rich.acaicia.org/health/ >/dev/null 2>&1; then
-            TARGET="https://rich.acaicia.org"
-          else
-            TARGET="$PROD_URL"
-          fi
-          echo "Running smoke tests against $TARGET"
-          curl -sSf "$TARGET/health" || curl -sSf "$TARGET/health/" || curl -sSf "$TARGET/api/health" || exit 1
-          curl -sSf "$TARGET/api/geospatial/jurisdictions" || exit 1
-          curl -sSf "$TARGET/api/geospatial/parcels?limit=5" || exit 1
+          set -e
+          curl -sSf "$TARGET/health" >/dev/null
+          curl -sSf "$TARGET/api/geospatial/jurisdictions" >/dev/null
+          curl -sSf "$TARGET/api/geospatial/parcels?limit=5" >/dev/null
+          curl -sSf "$TARGET/impact" >/dev/null
           echo "Production smoke tests passed"
 
       - name: Create GitHub Release
@@ -123,20 +74,8 @@ jobs:
           tag_name: ${{ inputs.version }}
           name: Release ${{ inputs.version }}
           body: |
-            ## Changes
-            - [List major changes here]
-            
-            ## Deployment
-            - Staging: https://rich-staging.railway.app
-            - Production: https://rich.acaicia.org
+            Released from `master`.
+
+            - Production: https://rich-production-d1d3.up.railway.app
           draft: false
           prerelease: false
-
-      - name: Tag production commit
-        if: success()
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
-          DEPLOYED_SHA=$(git rev-parse HEAD)
-          git tag -a "production-${{ inputs.version }}-$DEPLOYED_SHA" -m "Production deployment: ${{ inputs.version }} ($DEPLOYED_SHA)"
-          git push origin "production-${{ inputs.version }}-$DEPLOYED_SHA"

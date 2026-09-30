@@ -1,5 +1,6 @@
 # RICH Backend - Health Check Endpoint
 
+import os
 from datetime import datetime
 
 from fastapi import APIRouter
@@ -10,11 +11,13 @@ router = APIRouter()
 @router.get("")
 @router.get("/")
 async def health_check():
-    """Basic health check"""
+    """Basic health check, including the deployed commit so CI can verify rollouts."""
     return {
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat(),
         "service": "RICH API",
+        "commit": os.getenv("RAILWAY_GIT_COMMIT_SHA", os.getenv("GIT_COMMIT", "unknown")),
+        "environment": os.getenv("RAILWAY_ENVIRONMENT_NAME", os.getenv("APP_ENV", "unknown")),
     }
 
 

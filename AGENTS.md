@@ -109,14 +109,27 @@ cd ../frontend && npm run build
 ```
 
 ### GitHub Actions Pipeline
-- **`pr.yml`**:
-  - `migrations`: Validates `database/schema.sql` and migrations for forbidden destructive statements (`DROP DATABASE`, `TRUNCATE`) and balanced single quotes.
-  - `concurrency`: Cancels stale runs with `group: pr-${{ github.ref }}`, `cancel-in-progress: true`.
-  - `lint`: Ruff, Black, Mypy, ESLint.
-  - `test-backend`: PostGIS container service running pytest.
-  - `test-frontend`: Vitest + TypeScript compilation.
-- **`deploy-staging.yml`**: Triggers on push to `main` and deploys to Railway staging.
-- **`promote.yml`**: Manual workflow dispatch with version tag to deploy to Railway production.
+- **`pr.yml`** (pull requests): conventional PR title, gitleaks secret scan, ADR
+  + migration lint, ruff/black/mypy + ESLint/Prettier, Trivy scan, backend
+  pytest (PostGIS service), frontend tests and build.
+- **`ci.yml`** (push to `main`/`master`): backend pytest + frontend
+  typecheck/build, then a `verify-production` job that polls
+  `/health.commit` until Railway is serving the pushed SHA and smoke-tests the
+  live URL. It only runs when a Railway-watched path changed.
+- **`promote.yml`** (manual): tags a release and verifies production serves
+  `master`, creates a GitHub Release. It does **not** deploy.
+- **`main-guard.yml`**: warns when a commit lands on `main` without a PR.
+
+### Deployment model (important)
+
+**Railway has a single `production` environment and no staging.** Deploys are
+driven by Railway's Git integration, gated by `railway.json ->
+build.watchPatterns` (`backend/**`, `frontend/**`, `data/**`, `Dockerfile`,
+`railway.json`). Pushing to `master` is the deploy trigger; a data-only corpus
+change redeploys because `data/**` is watched. GitHub Actions is **CI only** —
+it never `railway up`s. `/health` returns `commit` (from
+`RAILWAY_GIT_COMMIT_SHA`) and `environment` so CI can verify a rollout.
+Adding a real staging environment is tracked as a low-priority issue.
 
 ---
 

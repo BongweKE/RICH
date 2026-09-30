@@ -1,0 +1,160 @@
+name: CI
+
+# Push CI for direct pushes to the default branch (pull requests are covered by
+# pr.yml). Production is deployed by Railway's Git integration, gated by
+# `railway.json -> build.watchPatterns`; this workflow runs the tests and then
+# verifies that Railway is actually serving the pushed commit.
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detect:
+    name: Detect deployable changes
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    outputs:
+      deployable: ${{ steps.detect.outputs.deployable }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Detect changes
+        id: detect
+        run: |
+          # Mirror railway.json build.watchPatterns.
+          if git diff --name-only HEAD~1 HEAD | grep -qE '^(backend/|frontend/|data/|Dockerfile$|railway\.json$)'; then
+            echo "deployable=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "deployable=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  backend-tests:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:15-3.4
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
+          APP_ENV: test
+        run: |
+          cd backend
+          pytest tests/ -q
+
+  frontend-build:
+    name: Frontend build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Typecheck
+        run: |
+          cd frontend
+          npm run lint
+
+      - name: Build
+        run: |
+          cd frontend
+          npm run build
+
+  verify-production:
+    name: Verify production deploy
+    needs: [detect, backend-tests, frontend-build]
+    if: github.event_name == 'push' && needs.detect.outputs.deployable == 'true'
+    runs-on: ubuntu-latest
+    env:
+      TARGET: https://rich-production-d1d3.up.railway.app
+    steps:
+      - name: Wait for Railway to serve this commit
+        env:
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          commit=""
+          for i in $(seq 1 40); do
+            commit="$(curl -s "$TARGET/health" | python3 -c "import sys,json; print(json.load(sys.stdin).get('commit',''))" 2>/dev/null || true)"
+            echo "attempt $i: deployed commit = ${commit:-<none>}"
+            if [ "$commit" = "$SHA" ]; then
+              echo "Railway is serving $SHA"
+              break
+            fi
+            sleep 15
+          done
+          if [ "$commit" != "$SHA" ]; then
+            echo "::error::Production is not serving $SHA within the timeout."
+            exit 1
+          fi
+
+      - name: Smoke test production
+        run: |
+          set -e
+          curl -sSf "$TARGET/health" >/dev/null
+          curl -sSf "$TARGET/api/geospatial/jurisdictions" >/dev/null
+          curl -sSf "$TARGET/api/geospatial/parcels?limit=5" >/dev/null
+          curl -sSf "$TARGET/impact" >/dev/null
+          echo "Production smoke tests passed"
+
+  smoke:
+    name: Production smoke test
+    needs: [backend-tests, frontend-build]
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    env:
+      TARGET: https://rich-production-d1d3.up.railway.app
+    steps:
+      - name: Smoke test production
+        run: |
+          set -e
+          curl -sSf "$TARGET/health" >/dev/null
+          curl -sSf "$TARGET/api/geospatial/parcels?limit=5" >/dev/null
+          curl -sSf "$TARGET/impact" >/dev/null
+          echo "Production smoke tests passed"
