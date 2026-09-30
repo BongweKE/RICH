@@ -11,6 +11,34 @@ import {
 } from '../types';
 import referencePointsData from '../data/referencePoints.json';
 
+/** One consistent popup card for every clickable geospatial layer. */
+function buildLayerPopup(opts: {
+  eyebrow: string;
+  title: string;
+  rows?: Array<[string, string]>;
+  note?: string;
+  accent?: string;
+}): string {
+  const accent = opts.accent || '#1d4ed8';
+  const rows = (opts.rows || [])
+    .map(
+      ([k, v]) =>
+        `<div style="font-size:11px;color:#334155;display:flex;justify-content:space-between;gap:12px;"><span>${k}</span><b>${v}</b></div>`,
+    )
+    .join('');
+  const note = opts.note
+    ? `<div style="font-size:10px;color:#92400e;background:#fef3c7;border:1px solid #fcd34d;border-radius:6px;padding:4px 6px;margin-top:7px;">${opts.note}</div>`
+    : '';
+  return (
+    `<div style="font-family: ui-sans-serif, system-ui, sans-serif; padding: 8px; color:#0f172a; max-width:280px; min-width:190px;">` +
+    `<div style="font-size:10px;font-weight:800;color:${accent};text-transform:uppercase;letter-spacing:.05em;">${opts.eyebrow}</div>` +
+    `<div style="font-size:13px;font-weight:700;margin:4px 0 3px;color:#020617;">${opts.title}</div>` +
+    rows +
+    note +
+    `</div>`
+  );
+}
+
 interface MapViewerProps {
   jurisdiction: Jurisdiction | null;
   parcels: Parcel[];
@@ -666,15 +694,20 @@ export const MapViewer: React.FC<MapViewerProps> = ({
             new maplibregl.Popup({ offset: 14, className: 'rich-map-popup', maxWidth: '280px' })
               .setLngLat(e.lngLat)
               .setHTML(
-                `<div style="font-family: ui-sans-serif, system-ui, sans-serif; padding: 8px; color: #0f172a;">
-                  <div style="font-size: 10px; font-weight: 800; color: #1d4ed8; text-transform: uppercase; letter-spacing: 0.05em;">Point of interest</div>
-                  <div style="font-size: 13px; font-weight: 700; margin: 4px 0 2px; color: #020617;">${props.name || 'Ground reference point'}</div>
-                  <div style="font-size: 11px; color: #334155;">type: <b style="text-transform:capitalize">${typeLabel}</b></div>
-                  <div style="font-size: 11px; color: #334155;">canopy cover: <b>${props.canopy_cover_pct != null ? `${props.canopy_cover_pct}%` : '—'}</b></div>
-                  <div style="font-size: 11px; color: #334155;">status: <span style="color:${reviewed ? '#059669' : '#b45309'};font-weight:600;">${props.validation_status || 'unvalidated'}${props.quality_score != null ? ` · ${Math.round(props.quality_score * 100)}% quality` : ''}</span></div>
-                  <div style="font-size: 10px; color: #92400e; background:#fef3c7; border:1px solid #fcd34d; border-radius:6px; padding:4px 6px; margin-top:7px;">Synthetic PoC demo data — validation decisions are illustrative, not field validation.</div>
-                  <div style="font-size: 10px; color: #64748b; margin-top: 5px; border-top: 1px solid #e2e8f0; padding-top: 4px;">Source: ${props.source || 'unknown'}</div>
-                </div>`
+                buildLayerPopup({
+                  eyebrow: 'Point of interest',
+                  title: `${props.name || 'Ground reference point'}${reviewed ? ' ✓' : ''}`,
+                  rows: [
+                    ['Type', typeLabel],
+                    ['Canopy cover', props.canopy_cover_pct != null ? `${props.canopy_cover_pct}%` : '—'],
+                    [
+                      'Status',
+                      `${props.validation_status || 'unvalidated'}${props.quality_score != null ? ` · ${Math.round(props.quality_score * 100)}%` : ''}`,
+                    ],
+                    ['Source', props.source || 'unknown'],
+                  ],
+                  note: 'Synthetic PoC demo data — validation decisions are illustrative, not field validation.',
+                }),
               )
               .addTo(map);
           };
@@ -790,20 +823,26 @@ export const MapViewer: React.FC<MapViewerProps> = ({
           map.on('click', 'deforestation-alerts-circle', (e: any) => {
             if (e.features && e.features[0]) {
               const props = e.features[0].properties;
-              new maplibregl.Popup({ offset: 12, className: 'rich-map-popup' })
+              new maplibregl.Popup({ offset: 12, className: 'rich-map-popup', maxWidth: '280px' })
                 .setLngLat(e.lngLat)
                 .setHTML(
-                  `<div style="font-family: ui-sans-serif, system-ui, sans-serif; padding: 6px; color: #0f172a; max-width: 280px;">
-                    <div style="font-size: 10px; font-weight: 800; color: #ef4444; text-transform: uppercase; letter-spacing: 0.05em;">GFW Deforestation Alert</div>
-                    <div style="font-size: 12px; font-weight: 700; margin: 3px 0; color: #020617;">${props.status}</div>
-                    <div style="font-size: 11px; color: #334155; margin-top: 2px;">Sensor: <span style="font-weight: 600;">${props.sensor}</span></div>
-                    <div style="font-size: 11px; color: #334155;">Alert Date: <b>${props.date}</b> | Area: <b>${props.loss_ha} ha</b></div>
-                    <div style="font-size: 10px; color: #475569; margin-top: 4px; border-top: 1px solid #e2e8f0; padding-top: 4px;">${props.details}</div>
-                  </div>`
+                  buildLayerPopup({
+                    eyebrow: 'Deforestation alert',
+                    title: props.status || 'Disturbance alert',
+                    accent: '#ef4444',
+                    rows: [
+                      ['Sensor', props.sensor || 'unknown'],
+                      ['Date', props.date || '—'],
+                      ['Area lost', props.loss_ha != null ? `${props.loss_ha} ha` : '—'],
+                    ],
+                    note: `Synthetic PoC demo alert — ${props.details || 'illustrative, not a real GFW detection.'}`,
+                  }),
                 )
                 .addTo(map);
             }
           });
+          map.on('mouseenter', 'deforestation-alerts-circle', () => { map.getCanvas().style.cursor = 'pointer'; });
+          map.on('mouseleave', 'deforestation-alerts-circle', () => { map.getCanvas().style.cursor = ''; });
         }
 
         if (map.getLayer('deforestation-alerts-circle')) {
@@ -830,8 +869,9 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     const map = mapInstance.current;
     if (!map) return;
 
-    const syncEUDRBaseline = () => {
+    const syncEUDRBaseline = async () => {
       try {
+        const maplibregl = (window as any).maplibregl || (await import('maplibre-gl'));
         const jCode = jurisdiction?.code || 'GH-AH';
         const canonical = jCode.startsWith('GH') ? 'GH-AH' : jCode.startsWith('ES') ? 'ES-EX' : 'ET-OR';
         const baselines = EUDR_BASELINES[canonical] || EUDR_BASELINES['GH-AH'];
@@ -888,6 +928,26 @@ export const MapViewer: React.FC<MapViewerProps> = ({
               'line-opacity': opacities.eudrDeforestationBaseline / 100,
             },
           });
+
+          map.on('click', 'eudr-baseline-fill', (e: any) => {
+            if (e.features && e.features[0]) {
+              const props = e.features[0].properties;
+              new maplibregl.Popup({ offset: 10, className: 'rich-map-popup', maxWidth: '280px' })
+                .setLngLat(e.lngLat)
+                .setHTML(
+                  buildLayerPopup({
+                    eyebrow: 'EUDR 2020 forest baseline',
+                    title: props.name || 'Forest reserve',
+                    accent: '#e11d48',
+                    rows: [['Status', props.status || 'reference boundary']],
+                    note: 'Synthetic PoC demo boundary — illustrative only, not an authoritative EUDR forest map.',
+                  }),
+                )
+                .addTo(map);
+            }
+          });
+          map.on('mouseenter', 'eudr-baseline-fill', () => { map.getCanvas().style.cursor = 'pointer'; });
+          map.on('mouseleave', 'eudr-baseline-fill', () => { map.getCanvas().style.cursor = ''; });
         }
 
         if (map.getLayer('eudr-baseline-fill')) {
@@ -931,8 +991,9 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     const map = mapInstance.current;
     if (!map) return;
 
-    const syncCanopyDensity = () => {
+    const syncCanopyDensity = async () => {
       try {
+        const maplibregl = (window as any).maplibregl || (await import('maplibre-gl'));
         const points: any[] = [];
         for (const p of parcels) {
           if (p.geometry?.coordinates) {
@@ -1000,11 +1061,45 @@ export const MapViewer: React.FC<MapViewerProps> = ({
               'heatmap-opacity': opacities.canopyDensity / 100,
             },
           });
+
+          // Heatmaps are not queryable, so an invisible point layer over the same
+          // source gives every canopy cell a click target + tooltip.
+          map.addLayer({
+            id: 'canopy-density-hit',
+            type: 'circle',
+            source: 'canopy-density-source',
+            layout: { visibility: layers.canopyDensity ? 'visible' : 'none' },
+            paint: { 'circle-radius': 14, 'circle-color': '#000000', 'circle-opacity': 0 },
+          });
+          map.on('click', 'canopy-density-hit', (e: any) => {
+            if (e.features && e.features[0]) {
+              const props = e.features[0].properties;
+              const cover = props.canopy_cover != null ? Number(props.canopy_cover) : null;
+              const band = cover == null ? '—' : cover >= 70 ? 'Dense' : cover >= 40 ? 'Shade' : 'Open';
+              new maplibregl.Popup({ offset: 10, className: 'rich-map-popup', maxWidth: '280px' })
+                .setLngLat(e.lngLat)
+                .setHTML(
+                  buildLayerPopup({
+                    eyebrow: 'Canopy cover',
+                    title: cover != null ? `${cover}% tree cover` : 'Canopy sample',
+                    accent: '#0d9488',
+                    rows: [['Band', band]],
+                    note: 'Synthetic PoC demo sample — illustrative canopy density, not a measurement.',
+                  }),
+                )
+                .addTo(map);
+            }
+          });
+          map.on('mouseenter', 'canopy-density-hit', () => { map.getCanvas().style.cursor = 'pointer'; });
+          map.on('mouseleave', 'canopy-density-hit', () => { map.getCanvas().style.cursor = ''; });
         }
 
         if (map.getLayer('canopy-density-heatmap')) {
           map.setLayoutProperty('canopy-density-heatmap', 'visibility', layers.canopyDensity ? 'visible' : 'none');
           map.setPaintProperty('canopy-density-heatmap', 'heatmap-opacity', opacities.canopyDensity / 100);
+        }
+        if (map.getLayer('canopy-density-hit')) {
+          map.setLayoutProperty('canopy-density-hit', 'visibility', layers.canopyDensity ? 'visible' : 'none');
         }
       } catch (err) {
         console.warn('Canopy density sync notice:', err);
@@ -1023,8 +1118,9 @@ export const MapViewer: React.FC<MapViewerProps> = ({
     const map = mapInstance.current;
     if (!map) return;
 
-    const syncCarbonHeatmap = () => {
+    const syncCarbonHeatmap = async () => {
       try {
+        const maplibregl = (window as any).maplibregl || (await import('maplibre-gl'));
         const points: any[] = [];
         for (const p of parcels) {
           if (p.geometry?.coordinates) {
@@ -1092,6 +1188,36 @@ export const MapViewer: React.FC<MapViewerProps> = ({
               'heatmap-opacity': (opacities.carbonDensityHeatmap || 50) / 100,
             },
           });
+
+          // Invisible hit layer so carbon cells are clickable (heatmaps aren't).
+          map.addLayer({
+            id: 'carbon-density-hit',
+            type: 'circle',
+            source: 'carbon-heatmap-source',
+            layout: { visibility: layers.carbonDensityHeatmap ? 'visible' : 'none' },
+            paint: { 'circle-radius': 16, 'circle-color': '#000000', 'circle-opacity': 0 },
+          });
+          map.on('click', 'carbon-density-hit', (e: any) => {
+            if (e.features && e.features[0]) {
+              const props = e.features[0].properties;
+              const stock = props.carbon_stock != null ? Number(props.carbon_stock) : null;
+              const tier = stock == null ? '—' : stock >= 180 ? 'Tier 2 (high)' : stock >= 85 ? 'Tier 1 (mid)' : 'Low';
+              new maplibregl.Popup({ offset: 10, className: 'rich-map-popup', maxWidth: '280px' })
+                .setLngLat(e.lngLat)
+                .setHTML(
+                  buildLayerPopup({
+                    eyebrow: 'Biomass carbon (QUES-C)',
+                    title: stock != null ? `${stock.toLocaleString()} tCO₂e` : 'Carbon sample',
+                    accent: '#ea580c',
+                    rows: [['Stock tier', tier]],
+                    note: 'Illustrative demo calculation — not a measured carbon stock.',
+                  }),
+                )
+                .addTo(map);
+            }
+          });
+          map.on('mouseenter', 'carbon-density-hit', () => { map.getCanvas().style.cursor = 'pointer'; });
+          map.on('mouseleave', 'carbon-density-hit', () => { map.getCanvas().style.cursor = ''; });
         }
 
         if (map.getLayer('carbon-density-heatmap')) {
@@ -1104,6 +1230,13 @@ export const MapViewer: React.FC<MapViewerProps> = ({
             'carbon-density-heatmap',
             'heatmap-opacity',
             (opacities.carbonDensityHeatmap || 50) / 100
+          );
+        }
+        if (map.getLayer('carbon-density-hit')) {
+          map.setLayoutProperty(
+            'carbon-density-hit',
+            'visibility',
+            layers.carbonDensityHeatmap ? 'visible' : 'none'
           );
         }
       } catch (err) {
@@ -1160,9 +1293,10 @@ export const MapViewer: React.FC<MapViewerProps> = ({
         </div>
       )}
 
-      {/* Interactive Parcel Quick Selector Overlay */}
+      {/* Interactive Parcel Quick Selector Overlay (hidden on small screens —
+          it would overflow the map; tap parcels directly instead). */}
       <div
-        className={`absolute bottom-28 left-4 right-4 z-10 flex justify-center pointer-events-none ${
+        className={`hidden sm:flex absolute bottom-28 left-4 right-4 z-10 justify-center pointer-events-none ${
           selectedParcel ? 'md:right-[26rem]' : ''
         }`}
       >

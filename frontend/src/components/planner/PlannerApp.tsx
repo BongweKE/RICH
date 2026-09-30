@@ -122,32 +122,34 @@ export function PlannerApp() {
         Skip to main content
       </a>
       <header className="bg-emerald-900 text-emerald-50">
-        <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 flex flex-wrap items-center gap-3">
-          <div className="flex-1 min-w-0">
+        <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="sm:flex-1 sm:min-w-0">
             <h1 className="text-lg font-semibold leading-tight">RICH Planner</h1>
             <p className="text-xs text-emerald-200">
               Land-use planning workspace for agroforestry landscapes
             </p>
           </div>
-          <label className="text-xs font-medium" htmlFor="jurisdiction-select">
-            Landscape
-            <select
-              id="jurisdiction-select"
-              className="ml-2 rounded border border-emerald-700 bg-emerald-950 text-emerald-50 text-sm px-2 py-1.5"
-              value={jurisdiction.code}
-              onChange={(e) => {
-                const j = PLANNER_JURISDICTIONS.find((x) => x.code === e.target.value);
-                if (j) setJurisdiction(j);
-              }}
-            >
-              {PLANNER_JURISDICTIONS.map((j) => (
-                <option key={j.code} value={j.code}>{j.name}</option>
-              ))}
-            </select>
-          </label>
-          <a href="/" className="text-xs underline underline-offset-2 text-emerald-200 hover:text-white">
-            Home
-          </a>
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="text-xs font-medium" htmlFor="jurisdiction-select">
+              Landscape
+              <select
+                id="jurisdiction-select"
+                className="ml-2 rounded border border-emerald-700 bg-emerald-950 text-emerald-50 text-sm px-2 py-1.5"
+                value={jurisdiction.code}
+                onChange={(e) => {
+                  const j = PLANNER_JURISDICTIONS.find((x) => x.code === e.target.value);
+                  if (j) setJurisdiction(j);
+                }}
+              >
+                {PLANNER_JURISDICTIONS.map((j) => (
+                  <option key={j.code} value={j.code}>{j.name}</option>
+                ))}
+              </select>
+            </label>
+            <a href="/" className="text-xs underline underline-offset-2 text-emerald-200 hover:text-white">
+              Home
+            </a>
+          </div>
         </div>
       </header>
 

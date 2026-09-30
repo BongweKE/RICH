@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../services/api';
 import type { Jurisdiction, Parcel } from '../../types';
+import { AiMessage } from '../AiMessage';
 
 interface ChatTurn {
   role: 'user' | 'assistant';
@@ -153,11 +154,7 @@ export function PlannerAssistant({ jurisdiction, parcels }: Props) {
                   : 'bg-stone-100 text-stone-800')
               }
             >
-              {t.content.split('\n').map((line, j) => (
-                <p key={j} className={line.startsWith('**') || line.startsWith('_') ? 'my-1' : 'my-0.5'}>
-                  {line.replace(/\*\*/g, '')}
-                </p>
-              ))}
+              <AiMessage content={t.content} variant="light" />
               {t.role === 'assistant' && (
                 <p className="mt-1 text-[10px] text-stone-400 border-t border-stone-200 pt-1">
                   {t.source === 'mistral' ? 'Answered with Mistral AI, grounded in catalogue records' : 'Answered locally from catalogue records (AI service unavailable or fallback)'}

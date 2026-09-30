@@ -317,6 +317,51 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onS
     [parcels],
   );
 
+  // Shared between the desktop overlay and the mobile in-flow card.
+  const legendContent = (
+    <>
+      <div className="flex items-center justify-between mb-1.5">
+        <span className="font-semibold">Agroforestry types</span>
+        <span className="text-[10px] text-stone-400 tabular-nums">{parcels.length} parcels</span>
+      </div>
+      {subtypeCounts.length === 0 ? (
+        <p className="text-stone-400">No parcels loaded yet</p>
+      ) : (
+        <ul className="space-y-1">
+          {subtypeCounts.map(([k, n]) => (
+            <li key={k} className="flex items-center gap-2">
+              <span aria-hidden="true" className="inline-block w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: subtypeColor(k) }} />
+              <span className="flex-1 truncate text-stone-700">{subtypeLabel(k)}</span>
+              <span className="tabular-nums text-stone-500">{n}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className="mt-2 pt-2 border-t border-stone-100">
+        <div className="font-semibold mb-1">
+          Review status <span className="font-normal text-stone-400">({validatedCount} validated)</span>
+        </div>
+        <ul className="space-y-1">
+          <li className="flex items-center gap-2">
+            <span aria-hidden="true" className="inline-block w-3 h-3 rounded-sm shrink-0 border-2" style={{ backgroundColor: subtypeColor('shade_cocoa'), borderColor: VALIDATED_OUTLINE }} />
+            Validated — solid fill, dark outline
+          </li>
+          <li className="flex items-center gap-2">
+            <span aria-hidden="true" className="inline-block w-3 h-3 rounded-sm shrink-0 opacity-40" style={{ backgroundColor: subtypeColor('shade_cocoa') }} />
+            Unvalidated model label — faded
+          </li>
+          <li className="flex items-center gap-2">
+            <span aria-hidden="true" className="inline-block w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: '#1d4ed8' }} />
+            Reference point
+          </li>
+        </ul>
+      </div>
+      <p className="mt-2 text-[10px] leading-snug text-amber-800 bg-amber-50 border border-amber-200 rounded px-2 py-1">
+        Validation is synthetic demo data — not field validation.
+      </p>
+    </>
+  );
+
 
   return (
     <section aria-labelledby="map-heading" className="bg-white rounded-lg border border-stone-200">
@@ -381,51 +426,22 @@ export function PlannerMapWorkspace({ parcels, jurisdiction, selectedParcel, onS
       <div className="relative">
         <div ref={containerRef} className="h-[420px] sm:h-[520px] rounded-b-lg" aria-label="Parcel map" role="region" />
 
-        <div className="absolute bottom-2 left-2 bg-white/95 border border-stone-200 rounded-lg shadow p-2.5 max-h-56 overflow-y-auto text-xs z-10 w-60" aria-label="Map legend">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="font-semibold">Agroforestry types</span>
-            <span className="text-[10px] text-stone-400 tabular-nums">{parcels.length} parcels</span>
-          </div>
-          {subtypeCounts.length === 0 ? (
-            <p className="text-stone-400">No parcels loaded yet</p>
-          ) : (
-            <ul className="space-y-1">
-              {subtypeCounts.map(([k, n]) => (
-                <li key={k} className="flex items-center gap-2">
-                  <span aria-hidden="true" className="inline-block w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: subtypeColor(k) }} />
-                  <span className="flex-1 truncate text-stone-700">{subtypeLabel(k)}</span>
-                  <span className="tabular-nums text-stone-500">{n}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-          <div className="mt-2 pt-2 border-t border-stone-100">
-            <div className="font-semibold mb-1">
-              Review status <span className="font-normal text-stone-400">({validatedCount} validated)</span>
-            </div>
-            <ul className="space-y-1">
-              <li className="flex items-center gap-2">
-                <span aria-hidden="true" className="inline-block w-3 h-3 rounded-sm shrink-0 border-2" style={{ backgroundColor: subtypeColor('shade_cocoa'), borderColor: VALIDATED_OUTLINE }} />
-                Validated — solid fill, dark outline
-              </li>
-              <li className="flex items-center gap-2">
-                <span aria-hidden="true" className="inline-block w-3 h-3 rounded-sm shrink-0 opacity-40" style={{ backgroundColor: subtypeColor('shade_cocoa') }} />
-                Unvalidated model label — faded
-              </li>
-              <li className="flex items-center gap-2">
-                <span aria-hidden="true" className="inline-block w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: '#1d4ed8' }} />
-                Reference point
-              </li>
-            </ul>
-          </div>
-          <p className="mt-2 text-[10px] leading-snug text-amber-800 bg-amber-50 border border-amber-200 rounded px-2 py-1">
-            Validation is synthetic demo data — not field validation.
-          </p>
+        {/* Desktop: overlay legend; hidden on mobile where it would cover the map. */}
+        <div className="hidden sm:block absolute bottom-2 left-2 bg-white/95 border border-stone-200 rounded-lg shadow p-2.5 max-h-56 overflow-y-auto text-xs z-10 w-60" aria-label="Map legend">
+          {legendContent}
         </div>
 
-        <p className="absolute top-2 left-2 bg-white/95 border border-stone-200 rounded-lg shadow px-2 py-1 text-xs text-stone-600 z-10">
+        <p className="hidden sm:block absolute top-2 left-2 bg-white/95 border border-stone-200 rounded-lg shadow px-2 py-1 text-xs text-stone-600 z-10">
           Click a parcel to inspect or validate · all data is synthetic demo content
         </p>
+      </div>
+
+      {/* Mobile: legend in normal flow below the map so it never covers the view. */}
+      <div className="sm:hidden px-3 py-3 border-t border-stone-100 text-xs space-y-2">
+        <p className="text-stone-600">Tap a parcel to inspect or validate · all data is synthetic demo content</p>
+        <div className="bg-stone-50 border border-stone-200 rounded-lg p-2.5" aria-label="Map legend">
+          {legendContent}
+        </div>
       </div>
     </section>
   );

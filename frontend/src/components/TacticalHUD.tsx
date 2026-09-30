@@ -64,11 +64,12 @@ export const TacticalHUD: React.FC<TacticalHUDProps> = ({
         )}
       </div>
 
-      {/* Top-right HUD stack: orientation + telemetry, clear of the left rail */}
+      {/* Top-right HUD stack: orientation + telemetry, clear of the left rail.
+          Hidden on small screens where it would crowd the map. */}
       <div
-        className={`absolute top-16 transition-all duration-300 ${
+        className={`hidden md:flex absolute top-16 transition-all duration-300 ${
           isChatOpen ? 'right-[25rem]' : 'right-4'
-        } flex flex-col items-end gap-2`}
+        } flex-col items-end gap-2`}
       >
         {/* Orientation / Compass */}
         <div className="bg-slate-950/70 backdrop-blur-sm border border-emerald-500/30 rounded p-2 text-emerald-400 shadow-lg flex items-center space-x-3">

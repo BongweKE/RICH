@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { ChatMessage, PromptPill } from '../types';
 import { api } from '../services/api';
+import { AiMessage } from './AiMessage';
 
 interface AIChatDrawerProps {
   isOpen: boolean;
@@ -90,86 +91,6 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({
     },
     [handleCopy]
   );
-
-  const formatInline = (text: string): React.ReactNode => {
-    const parts: React.ReactNode[] = [];
-    const regex = /(\*\*.*?\*\*|`.*?`)/g;
-    let lastIndex = 0;
-    let match;
-
-    while ((match = regex.exec(text)) !== null) {
-      if (match.index > lastIndex) {
-        parts.push(text.substring(lastIndex, match.index));
-      }
-      const token = match[0];
-      if (token.startsWith('**') && token.endsWith('**')) {
-        parts.push(
-          <strong key={match.index} className="font-bold text-white">
-            {token.slice(2, -2)}
-          </strong>
-        );
-      } else if (token.startsWith('`') && token.endsWith('`')) {
-        parts.push(
-          <code key={match.index} className="px-1 py-0.5 rounded bg-slate-800 text-emerald-300 font-mono text-[10px]">
-            {token.slice(1, -1)}
-          </code>
-        );
-      }
-      lastIndex = regex.lastIndex;
-    }
-    if (lastIndex < text.length) {
-      parts.push(text.substring(lastIndex));
-    }
-    return parts.length > 0 ? parts : text;
-  };
-
-  const renderFormattedContent = (content: string) => {
-    const lines = content.split('\n');
-    return lines.map((line, lineIdx) => {
-      if (line.startsWith('### ')) {
-        return (
-          <h3 key={lineIdx} className="font-bold text-sm text-emerald-300 mt-2 mb-1 border-b border-emerald-500/20 pb-0.5">
-            {formatInline(line.slice(4))}
-          </h3>
-        );
-      }
-      if (line.startsWith('#### ')) {
-        return (
-          <h4 key={lineIdx} className="font-bold text-xs text-teal-300 mt-2 mb-0.5">
-            {formatInline(line.slice(5))}
-          </h4>
-        );
-      }
-      if (line.trim() === '---') {
-        return <hr key={lineIdx} className="border-slate-800 my-2" />;
-      }
-      if (line.trim().startsWith('- ')) {
-        return (
-          <div key={lineIdx} className="flex items-start space-x-1.5 ml-1 my-0.5">
-            <span className="text-emerald-400 font-bold shrink-0">•</span>
-            <span className="text-slate-200">{formatInline(line.trim().slice(2))}</span>
-          </div>
-        );
-      }
-      const numMatch = line.trim().match(/^(\d+)\.\s+(.*)/);
-      if (numMatch) {
-        return (
-          <div key={lineIdx} className="flex items-start space-x-1.5 ml-1 my-0.5">
-            <span className="text-emerald-400 font-mono font-bold shrink-0">{numMatch[1]}.</span>
-            <span className="text-slate-200">{formatInline(numMatch[2])}</span>
-          </div>
-        );
-      }
-      if (!line.trim()) {
-        return <div key={lineIdx} className="h-1.5" />;
-      }
-      return (
-        <p key={lineIdx} className="my-0.5 text-slate-200 leading-relaxed">
-          {formatInline(line)}
-        </p>
-      );
-    });
-  };
 
   // Load context-aware prompt pills
   useEffect(() => {
@@ -292,7 +213,7 @@ export const AIChatDrawer: React.FC<AIChatDrawerProps> = ({
               {m.role === 'user' ? (
                 <div className="whitespace-pre-wrap">{m.content}</div>
               ) : (
-                <div className="text-xs space-y-0.5">{renderFormattedContent(m.content)}</div>
+                <AiMessage content={m.content} variant="dark" />
               )}
 
               {/* Citations block */}

@@ -410,7 +410,7 @@ export function App() {
         />
 
         {/* Left rail: layer control + impact summary stacked so they never overlap */}
-        <div className="absolute top-16 left-4 z-20 w-80 max-h-[calc(100vh-7rem)] flex flex-col gap-3 pointer-events-auto">
+        <div className="absolute top-16 left-4 z-20 w-80 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-7rem)] flex flex-col gap-3 pointer-events-auto">
           {/* Layer Panel Widget */}
           <LayerPanel
             layers={layers}
