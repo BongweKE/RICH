@@ -57,7 +57,7 @@ SET source = '{HONEST_SOURCE}',
 WHERE (validation_status IN ('expert_reviewed', 'community_validated', 'final')
        AND validator_id IS NULL)
    OR (source IS NOT NULL
-       AND source <> '{HONEST_SOURCE}')
+       AND source !~* 'synthetic')
 """
 
 PARCEL_SOURCE_BACKFILL_NULLS = f"""
