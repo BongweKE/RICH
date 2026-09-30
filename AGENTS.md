@@ -204,6 +204,27 @@ The timeline and quick-selector reserve `md:right-[26rem]` when a parcel is
 selected so they never sit under the dossier (`reservedRight` prop /
 `selectedParcel` check).
 
+### MapLibre `isStyleLoaded()` race (silently missing layers)
+
+`map.isStyleLoaded()` can return `false` even *after* the map's `load` event
+has fired. The common guard
+`if (map.isStyleLoaded()) { add() } else { map.once('load', add) }` then
+never runs `add()` (the `load` event already passed), so the layer is never
+added. In the impact viewer this silently dropped the reference-point,
+deforestation-alert, EUDR-baseline and canopy/carbon layers. Treat the React
+`mapLoaded` state (set inside `map.on('load')`) as authoritative:
+`if (map.isStyleLoaded() || mapLoaded)` — in `MapViewer.tsx`.
+
+### One categorical colour language
+
+Subtype hues live in `AGROFORESTRY_SUBTYPE_COLORS` (`types/index.ts`) and are
+shared by the map, legends, filter, chips and analytics. Validation is a
+secondary channel — solid fill + dark outline (validated) vs a faded model
+label (unvalidated) — never a replacement for the subtype hue, so a validated
+Homegarden stays distinguishable from Shade cocoa. Read colour via
+`subtypeColor(subtype)`, not `parcel.subtype_color` (which the demo data may
+carry with a stale palette).
+
 ---
 
 ## 7. Synthetic / Demo Data Contract
